@@ -1,21 +1,21 @@
 # BD2_PROJECT
 
-Projekt z przedmiotu Bazy Danych, realizowany w 4 semestrze studiów na AGH.
+Database project, carried out in the 4th semester of studies at AGH.
 
-1) Skład grupy: 
+1) Team members: 
    - Stas Kochevenko | skochevenko@student.agh.edu.pl
-   - Wiktor Dybalski | ...@student.agh.edu.pl
+   - Wiktor Dybalski | wdybalski@student.agh.edu.pl
 
-2) Temat (tytuł) projektu: 
-   - Strona internetowa - strona kina (funkcje rezerwacji/zakupu miejsc)
+2) Project topic: 
+   - Cinema web page (reservations, purchase of tickets, canceling reservations)
 
-3) Informacje o wykorzystywanej technologii i SZBD:
-   - Server bazy danych:
-     MS SQL Server
+3) Information about the technology and DBMS used:
+   - Data base server:
+     PostgreSQL
    - Framework:
      React JS
-   - Cześć serwerowa:
+   - Server part:
      Flask (Python)
 
-4) Link do repozytorium (GitHub, Bitbucket, GitLab, itp.): 
+4) Link to the repository (GitHub, Bitbucket, GitLab, itp.): 
    - https://github.com/skochv04/BD2_PROJECT
