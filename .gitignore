@@ -1,0 +1,71 @@
+# Node (for React)
+node_modules/
+build/
+npm-debug.log
+yarn-error.log
+
+# Python (for Flask)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+ENV/
+env/
+.virtualenv/
+
+# PostgreSQL (DataGrip and general)
+*.sql
+*.backup
+
+# PyCharm
+.idea/
+*.iml
+
+# WebStorm
+.idea/
+*.iml
+
+# DataGrip
+.idea/
+dataSources/
+dataSources.local.xml
+sqlDataSources.xml
+sqlDataSources.local.xml
+dynamic.xml
+workspace.xml
+
+# Logs
+*.log
+logs
+
+# Operating System generated files
+.DS_Store
+Thumbs.db
+
+# Other files and folders to ignore
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+config/dev.env
+config/test.env
+config/prod.env
+
+# Dependency directories
+jspm_packages/
+bower_components/
+
+# Optional: ignore debug files and directories
+debug/
+*.map
+
+# Optional: ignore production files like minified CSS and JS
+*.min.js
+*.min.css
+
+# Optional: If using Docker, you might want to ignore
+# Docker debug logs and environment files
+docker-compose.override.yml
