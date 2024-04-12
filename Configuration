@@ -1,0 +1,10 @@
+Server Configuration:
+
+Start client app ->
+    npm run dev
+
+Start Server in Powershell ->
+    cd server
+    .\venv\Scripts\Activate.ps1
+
+
