@@ -6,5 +6,5 @@ Start client app ->
 Start Server in Powershell ->
     cd server
     .\venv\Scripts\Activate.ps1
-
+    python main.py
 
