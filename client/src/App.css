@@ -8,27 +8,21 @@
 html, body {
     height: 100%;
     width: 100%;
-    overflow-x: hidden; /* Zapobiega pojawianiu się poziomego paska przewijania */
+    overflow-x: hidden;
     color: #fff;
 }
 
-#root {
-    min-height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    line-height: 1.5;
-    font-weight: 400;
-    color-scheme: light dark;
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+body {
+    background-image: url('client/src/assets/town.jpg'); /* Ustaw ścieżkę do obrazu tła */
+    background-size: cover; /* Zapewnia, że obraz tła wypełnia i pokrywa całą dostępną przestrzeń */
+    background-position: center; /* Centruje obraz tła */
+    background-repeat: no-repeat; /* Zapobiega powtarzaniu obrazu tła */
 }
 
+
+
 header {
-    flex: 0 0 10vh; /* 20% of the viewport height */
+    flex: 0 0 10vh;
     width: 100%;
     color: #fff;
     display: flex;
@@ -38,15 +32,17 @@ header {
 }
 
 main {
-    flex: 1 0 auto; /* Flexibly fills the available space */
+    flex: 1 0 auto;
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100vw;
+    height: 100%;
 }
 
 footer {
-    flex: 0 0 10vh; /* 20% of the viewport height */
+    flex: 0 0 10vh;
     width: 100%;
     color: #fff;
     text-align: center;

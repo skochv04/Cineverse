@@ -27,9 +27,9 @@ function App() {
                     <Route path="/*" element={<Error />} />
                 </Routes>
             </main>
-            <footer>
-                <Footer />
-            </footer>
+            {/*<footer>*/}
+            {/*    <Footer />*/}
+            {/*</footer>*/}
         </Router>
     );
 }
