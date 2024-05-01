@@ -14,9 +14,6 @@ import Error from "./pages/Error.jsx";
 function App() {
     return (
         <Router>
-            <header>
-                <Header />
-            </header>
             <main>
                 <Routes>
                     <Route path="/" element={<Home />} />

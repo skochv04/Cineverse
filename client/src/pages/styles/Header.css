@@ -5,12 +5,17 @@
 #Header {
     color: #fff;
     font-family: 'Montserrat', sans-serif;
-    width: 75%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
 }
 
 /* Stylizacja kontenera dla navbar i logo */
 #navbar_container {
     display: flex;
+    width: 70%;
     justify-content: space-between; /* Wyśrodkowanie elementów w poziomie */
     align-items: center; /* Wyśrodkowanie elementów w pionie */
 }
