@@ -1,6 +1,16 @@
 import './styles/Home.css'
 import Header from "./Header.jsx";
 
+import React from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
+
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
+import MoviesContainer from "./MoviesContainer.jsx";
+
 function Home() {
     return (
         <div id="Home">
@@ -20,10 +30,7 @@ function Home() {
                     </div>
                 </div>
             </div>
-            <div id="fresh_movies_container">
-                <h2>Tu będą kiedys</h2>
-                <h2>Zdjęcia filmów</h2>
-            </div>
+            <MoviesContainer />
         </div>
     );
 }

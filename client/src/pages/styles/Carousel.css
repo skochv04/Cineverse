@@ -1,0 +1,76 @@
+/* Carousel.css */
+.carousel-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.carousel-slide-container {
+    position: relative;
+    height: 440px;
+    width: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.carousel-slide-container:hover {
+    transform: scale(1.1);
+}
+
+.carousel-image {
+    width: 100%;
+    height: 80%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.carousel-caption {
+    color: #000;
+    margin-top: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    padding: 12px;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s, box-shadow 0.3s, transform 0.2s;
+}
+
+.custom-swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.swiper-button-next {
+    right: 3%;
+}
+
+.swiper-button-prev {
+    left: 3%;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+    background-color: rgba(0, 0, 0, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    transform: scale(1.2);
+}
