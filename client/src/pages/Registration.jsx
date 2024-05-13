@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import {Link} from "react-router-dom";
-import './styles/Login.css';
+import './styles/Registration.css';
 import Header from "./Header.jsx";
 
-function Login() {
-
+function Registration() {
+    const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
@@ -12,6 +12,11 @@ function Login() {
     const validateForm = () => {
         let formIsValid = true;
         let errors = {};
+
+        if (!fullName) {
+            formIsValid = false;
+            errors['fullName'] = 'Full name is required';
+        }
 
         if (!email) {
             formIsValid = false;
@@ -31,19 +36,26 @@ function Login() {
         event.preventDefault();
         if (validateForm()) {
             console.log('Form is valid');
-            // Handle login logic here, e.g., API call to authenticate the user
         }
     };
 
     return (
-        <div className="Login">
+        <div className="Registration">
             <div id="header_container">
                 <Header/>
             </div>
             <div id="content">
-                <div className="login-form-container">
-                    <h2 className="title">Login</h2>
+                <div className="registration-form-container">
+                    <h2 className="title">Register</h2>
                     <form className="form" onSubmit={handleSubmit}>
+                        <input
+                            type="text"
+                            className={`input ${errors.fullName ? 'error-input' : ''}`}
+                            placeholder={errors.fullName || "Full Name"}
+                            value={fullName}
+                            onChange={e => setFullName(e.target.value)}
+                        />
+
                         <input
                             type="email"
                             className={`input ${errors.email ? 'error-input' : ''}`}
@@ -60,9 +72,9 @@ function Login() {
                             onChange={e => setPassword(e.target.value)}
                         />
 
-                        <button type="submit" className="button">Log In</button>
+                        <button type="submit" className="button">Register</button>
                         <p className="message">
-                            I'm new <Link to="/register" className="link">Create an account</Link>
+                            Already registered? <Link to="/login" className="link">Log In</Link>
                         </p>
                     </form>
                 </div>
@@ -71,5 +83,6 @@ function Login() {
     );
 }
 
-export default Login;
+export default Registration;
+
 

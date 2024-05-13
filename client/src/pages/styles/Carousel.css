@@ -21,6 +21,7 @@
 
 .carousel-slide-container:hover {
     transform: scale(1.1);
+    z-index: 1;
 }
 
 .carousel-image {
@@ -30,17 +31,11 @@
     border-radius: 8px;
 }
 
-.carousel-caption {
-    color: #000;
-    margin-top: 10px;
-    font-weight: bold;
-    text-align: center;
-}
 
 .swiper-button-next,
 .swiper-button-prev {
     color: #ffffff;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.8);
     border-radius: 50%;
     padding: 12px;
     width: 45px;
@@ -49,7 +44,7 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    transition: background-color 0.3s, box-shadow 0.3s, transform 0.2s;
+    transition: background-color 0.5s, box-shadow 0.5s, transform 0.5s;
 }
 
 .custom-swiper-slide {
@@ -73,4 +68,16 @@
     background-color: rgba(0, 0, 0, 1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     transform: scale(1.2);
+}
+
+.carousel-caption {
+    margin-top: 10px;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 15px;
+    font-weight: bold;
+    width: calc(100% - 20px);
+    box-sizing: border-box;
 }

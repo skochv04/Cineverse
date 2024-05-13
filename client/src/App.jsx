@@ -9,6 +9,7 @@ import AboutUs from "./pages/AboutUs.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
 import Cart from "./pages/Cart.jsx";
 import Error from "./pages/Error.jsx";
+import Registration from "./pages/Registration.jsx";
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Registration />} />
                     <Route path="/user_profile" element={<UserProfile />} />
                     <Route path="/cart" element={<Cart />} />
                     <Route path="/about_us" element={<AboutUs />} />

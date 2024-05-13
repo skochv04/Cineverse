@@ -12,8 +12,6 @@ html, body {
     color: #fff;
 }
 
-
-
 header {
     flex: 0 0 10vh;
     width: 100%;
@@ -25,14 +23,13 @@ header {
 }
 
 main {
-    flex: 1 0 auto;
-    text-align: center;
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
-    justify-content: center;
-    width: 100vw;
+    min-height: 100vh;
     height: 100%;
+    width: 100%;
 }
 
 footer {

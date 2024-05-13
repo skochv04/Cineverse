@@ -8,7 +8,7 @@
     padding-left: 2%;
     font-size: 17px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    background: linear-gradient(90deg, #FF512F, #DD2476);
+    background: linear-gradient(1deg, #333333, #ffffff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
