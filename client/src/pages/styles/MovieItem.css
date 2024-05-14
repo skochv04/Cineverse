@@ -1,0 +1,22 @@
+.movie-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    width: calc(33.333% - 20px);
+    box-sizing: border-box;
+}
+
+.movie-item img {
+    max-width: 100%;
+    border-radius: 4px;
+}
+
+.movie-item h3 {
+    margin: 10px 0;
+    font-size: 1.2em;
+}
+
+.movie-item p {
+    margin: 0;
+}

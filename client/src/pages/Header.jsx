@@ -22,7 +22,7 @@ function Header() {
                             <a href="/login"><span>Login</span></a>
                         </div>
                         <div className="nav_item">
-                            <a href="/films"><span>Films</span></a>
+                            <a href="/movies"><span>Movies</span></a>
                         </div>
                         <div id="nav_to_login">
                             <a href="/user_profile"><img src="/src/assets/user.png" alt="User"/></a>
