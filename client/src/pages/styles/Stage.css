@@ -1,0 +1,86 @@
+.Stage {
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.5) 100%), /* Warstwa przyciemniająca na całej wysokości */
+    linear-gradient(to bottom, transparent 14%, black 45%), /* Gradient tworzący przejście */
+    url('client/src/assets/town.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    position: relative; /* Ustawienie pozycji względnej dla poprawnego działania pseudo-elementu */
+}
+
+h2 {
+    margin: 20px 0;
+    color: white;
+    font-weight: 400;
+}
+
+.content {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.seating-chart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 30px;
+    background-color: #1c1c1c;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.seat-row {
+    display: flex;
+    margin-bottom: 5px;
+}
+
+.seat {
+    width: 2vw;
+    height: 2vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #4B0000;
+    border: 2px solid #2B0000;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    margin: 0 2px;
+}
+
+.seat.selected {
+    background-color: #007bff;
+    color: #fff;
+    scale: 1.1;
+}
+
+.seat:hover {
+    border-color: #007bff;
+    scale: 1.1;
+}
+
+.proceed-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: block;
+    margin: 0 auto;
+}
+
+.proceed-button:hover {
+    background-color: #0056b3;
+}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './styles/Movies.css';
 import Header from "./Header.jsx";
+import {Link} from "react-router-dom";
 
 const categories = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family'];
 const sortOptions = ['Alphabetical', 'Release Date', 'Rating'];
@@ -52,7 +53,7 @@ function Movies() {
                     </div>
                 </div>
                 <div className="movies-list">
-                    {/* Tutaj będą wyświetlane filmy */}
+                    <Link to="/movie">Avatar</Link>
                 </div>
             </div>
         </div>
