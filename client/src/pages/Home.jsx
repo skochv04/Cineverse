@@ -1,7 +1,7 @@
 import './styles/Home.css'
 import Header from "./Header.jsx";
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
 
@@ -12,6 +12,7 @@ import 'swiper/css/scrollbar';
 import MoviesContainer from "./MoviesContainer.jsx";
 
 function Home() {
+
     return (
         <div id="Home">
             <div id="header_container">

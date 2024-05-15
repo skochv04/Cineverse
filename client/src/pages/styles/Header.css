@@ -1,7 +1,7 @@
-/* Import fontów */
+
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
-/* Stylizacja głównego kontenera nagłówka */
+
 #Header {
     color: #fff;
     font-family: 'Montserrat', sans-serif;
@@ -12,15 +12,15 @@
     justify-content: center;
 }
 
-/* Stylizacja kontenera dla navbar i logo */
+
 #navbar_container {
     display: flex;
     width: 70%;
-    justify-content: space-between; /* Wyśrodkowanie elementów w poziomie */
-    align-items: center; /* Wyśrodkowanie elementów w pionie */
+    justify-content: space-between;
+    align-items: center;
 }
 
-/* Stylizacja kontenera logo */
+
 #logo_container {
     flex: 1;
 }
@@ -38,7 +38,7 @@
 .logo:hover {
     cursor: pointer;
 }
-/* Stylizacja navbaru */
+
 #navbar {
     flex: 2;
     display: flex;
@@ -51,8 +51,8 @@
 }
 
 .nav_item {
-    padding: 10px 15px; /* Odpowiednie odstępy między elementami */
-    cursor: pointer; /* Dodanie efektu kursora na hover */
+    padding: 10px 15px;
+    cursor: pointer;
     font-size: 16px;
     font-weight: bolder;
 }
@@ -61,15 +61,15 @@
     width: 110px;
 }
 
-/* Stylizacja ikon (zdjęć) w navbarze */
+
 #nav_to_login img, #nav_to_cart img {
-    width: 20px; /* Ustawienie odpowiedniej szerokości */
-    height: 20px; /* Ustawienie odpowiedniej wysokości */
-    margin-left: 20px; /* Odstępy od pozostałych elementów */
+    width: 20px;
+    height: 20px;
+    margin-left: 20px;
 }
 
-/* Dodanie efektu przejścia dla obrazków */
+
 #nav_to_login img:hover, #nav_to_cart img:hover {
-    opacity: 99; /* Zmniejszenie przezroczystości */
+    opacity: 99;
     cursor: pointer;
 }

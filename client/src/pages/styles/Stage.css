@@ -10,7 +10,6 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-
     position: relative; /* Ustawienie pozycji względnej dla poprawnego działania pseudo-elementu */
 }
 
