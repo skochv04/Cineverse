@@ -7,7 +7,7 @@ function Header() {
             <div id="navbar_container">
                 <div id="logo_container">
                     <div className="logo">
-                        <span className="logo">CineVerse</span>
+                        <a className="logo" href="/"><span>CineVerse</span></a>
                     </div>
                 </div>
                 <div id="navbar">
@@ -25,10 +25,10 @@ function Header() {
                             <a href="/movies"><span>Movies</span></a>
                         </div>
                         <div id="nav_to_login">
-                            <a href="/user_profile"><img src="/src/assets/user.png" alt="User"/></a>
+                            <a href="/user_profile"><img src="/src/assets/user.png" alt="User" /></a>
                         </div>
                         <div id="nav_to_cart">
-                            <a href="/cart"><img src="/src/assets/cart.png" alt="Cart"/></a>
+                            <a href="/cart"><img src="/src/assets/cart.png" alt="Cart" /></a>
                         </div>
                     </div>
                 </div>
