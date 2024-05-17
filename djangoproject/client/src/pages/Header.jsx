@@ -1,5 +1,5 @@
 import React from 'react';
-import './styles/Header.css'; // Upewnij się, że ścieżka do pliku CSS jest prawidłowa
+import './styles/Header.css';
 
 function Header() {
     return (
