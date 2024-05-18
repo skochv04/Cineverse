@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter as Router, Routes, Link, Route} from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Link, Route } from 'react-router-dom'
 import './App.css';
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
@@ -13,14 +13,42 @@ import Movie from "./pages/Movie.jsx";
 import Stage from "./pages/Stage.jsx";
 import Showtime from "./pages/Showtime.jsx";
 
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+axios.defaults.withCredentials = true;
+
+const client = axios.create({
+    baseURL: "http://127.0.0.1:8000"
+})
+
 
 function App() {
+
+    const [currentUser, setCurrentUser] = useState();
+    const [registrationToggle, setRegistrationToggle] = useState(false);
+    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
+    useEffect(() => {
+        client.get("/api/user")
+            .then(function (res) {
+                setCurrentUser(true);
+            })
+            .catch(function (error) {
+                setCurrentUser(false);
+            })
+    }, [])
+
     return (
         <Router>
             <main>
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/login" element={<Login />} />
+                    <Route path="/login" element={<Login setCurrentUser={setCurrentUser} />} />
                     <Route path="/register" element={<Registration />} />
                     <Route path="/movies" element={<Movies />} />
                     <Route path="/about_us" element={<AboutUs />} />

@@ -1,7 +1,16 @@
-import React, {useState} from 'react';
-import {Link} from "react-router-dom";
+import React, { useState } from 'react';
+import { Link } from "react-router-dom";
 import './styles/Registration.css';
 import Header from "./Header.jsx";
+import axios from 'axios';
+
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+axios.defaults.withCredentials = true;
+
+const client = axios.create({
+    baseURL: "http://127.0.0.1:8000"
+});
 
 function Registration() {
     const [fullName, setFullName] = useState('');
@@ -32,22 +41,47 @@ function Registration() {
         return formIsValid;
     };
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        if (validateForm()) {
-            console.log('Form is valid');
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!validateForm()) {
+            return;
         }
-    };
+
+        client.post(
+            "/api/register/",
+            {
+                email: email,
+                username: fullName,
+                password: password
+            }
+        ).then(function (res) {
+            client.post(
+                "/api/login/",
+                {
+                    email: email,
+                    password: password
+                }
+            ).then(function (res) {
+                // handle successful login, e.g., update state or redirect
+            }).catch(function (error) {
+                // handle login error
+                console.error("Login error", error);
+            });
+        }).catch(function (error) {
+            // handle registration error
+            console.error("Registration error", error);
+        });
+    }
 
     return (
         <div className="Registration">
             <div id="header_container">
-                <Header/>
+                <Header />
             </div>
             <div id="content">
                 <div className="registration-form-container">
                     <h2 className="title">Register</h2>
-                    <form className="form" onSubmit={handleSubmit}>
+                    <form className="form" onSubmit={e => handleSubmit(e)}>
                         <input
                             type="text"
                             className={`input ${errors.fullName ? 'error-input' : ''}`}
@@ -84,5 +118,3 @@ function Registration() {
 }
 
 export default Registration;
-
-

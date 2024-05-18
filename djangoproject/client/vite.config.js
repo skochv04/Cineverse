@@ -8,4 +8,7 @@ export default defineConfig({
     outDir: 'build',
     assetsDir: 'static',
   },
+  server: {
+    port: 3000
+  }
 })
