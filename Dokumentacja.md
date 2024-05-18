@@ -406,7 +406,7 @@ END;
 $$;
 ```
 
-HasActiveTickets:
+- HasActiveTickets:
 
 ```postgresql
 CREATE OR REPLACE FUNCTION HasActiveTickets(p_CustomerID INT)
