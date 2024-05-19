@@ -9,6 +9,12 @@ function AboutUs() {
             <div id="header_container">
                 <Header />
             </div>
+
+            {/* <ul>
+                {all.map(movie => (
+                    <li key={movie.movieid}>{movie.title}</li>
+                ))}
+            </ul> */}
             {/* <h2>UserProfile</h2> */}
 
         </div>
