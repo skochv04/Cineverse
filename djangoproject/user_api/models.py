@@ -70,3 +70,12 @@ class AvailableSeat(models.Model):
     class Meta:
         managed = False
         db_table = 'AvailableSeats'
+
+class TestView(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    title = models.ForeignKey(Movie, on_delete=models.DO_NOTHING, db_column='title')
+    name = models.ForeignKey(MovieCategory, on_delete=models.DO_NOTHING, db_column='name')
+
+    class Meta:
+        managed = False 
+        db_table = 'test_view'

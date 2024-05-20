@@ -33,11 +33,17 @@ function AboutUs() {
                             {movies.map((movie) => (
                                 <li key={movie.movieid}>
                                     <h2>{movie.title}</h2>
+                                    {/* <p>{movie.name}</p> */}
                                     <p>{movie.description}</p>
                                     <p>Directed by: {movie.director}</p>
                                     <p>Duration: {movie.duration} minutes</p>
                                     <p>Rank: {movie.rank}</p>
-                                    <img src={movie.image} alt={movie.title} />
+                                    {movie.image && (
+                                        <img
+                                            src={`data:image/jpeg;base64,${movie.image}`}
+                                            alt={movie.title}
+                                        />
+                                    )}
                                 </li>
                             ))}
                         </ul>
