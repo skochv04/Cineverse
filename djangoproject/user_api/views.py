@@ -3,22 +3,37 @@ from django.http import JsonResponse
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer
-from rest_framework import permissions, status
+
+from .models import Movie, AvailableSeat
+from .serializers import UserRegisterSerializer, AvailableSeatSerializer, UserLoginSerializer, UserSerializer, MovieSerializer
+from rest_framework import permissions, status, generics
 from .validations import custom_validation, validate_email, validate_password
 
 
-class UserRegister(APIView):
-	permission_classes = (permissions.AllowAny,)
+class MovieList(generics.ListCreateAPIView):
+    queryset = Movie.objects.all()
+    serializer_class = MovieSerializer
 
-	def post(self, request):
-		clean_data = custom_validation(request.data)
-		serializer = UserRegisterSerializer(data=clean_data)
-		if serializer.is_valid(raise_exception=True):
-			user = serializer.save()
-			login(request, user)
-			return JsonResponse({'success': True, 'redirect_url': '/'}, status=status.HTTP_201_CREATED)
-		return JsonResponse({'success': False, 'error': 'Failed to register'}, status=status.HTTP_400_BAD_REQUEST)
+
+class MovieDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Movie.objects.all()
+    serializer_class = MovieSerializer
+
+class AvailableSeatsList(generics.ListAPIView):
+    queryset = AvailableSeat.objects.all()
+    serializer_class = AvailableSeatSerializer
+
+class UserRegister(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        clean_data = custom_validation(request.data)
+        serializer = UserRegisterSerializer(data=clean_data)
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.save()
+            login(request, user)
+            return JsonResponse({'success': True, 'redirect_url': '/'}, status=status.HTTP_201_CREATED)
+        return JsonResponse({'success': False, 'error': 'Failed to register'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserLogin(APIView):

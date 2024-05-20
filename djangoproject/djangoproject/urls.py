@@ -2,13 +2,15 @@ from django.contrib import admin
 from django.urls import path, include
 from . import views
 
+from django.contrib import admin
+from django.urls import path, include
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('user_api.urls')),
     path('api/', include('user_api.urls')),
-    path('', views.index, name='index'),
     path('login/', views.index, name='login'),
     path('register/', views.index, name='register'),
-    path('movies/', views.index, name='movies'),
     path('about_us/', views.index, name='about_us'),
     path('user_profile/', views.index, name='user_profile'),
     path('cart/', views.index, name='cart'),

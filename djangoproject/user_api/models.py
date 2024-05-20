@@ -62,3 +62,11 @@ class Movie(models.Model):
 
     def __str__(self):
         return self.title
+
+class AvailableSeat(models.Model):
+    seat_number = models.IntegerField()
+    movie_screening_id = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'AvailableSeats'
