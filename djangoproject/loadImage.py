@@ -12,7 +12,7 @@ cur = conn.cursor()
 with open('client/src/assets/movies_img/king.jpg', 'rb') as file:
     binary_data = file.read()
 
-cur.execute("UPDATE user_api_movie SET image = %s", (binary_data,))
+cur.execute("UPDATE movies SET image = %s", (binary_data,))
 
 conn.commit()
 cur.close()

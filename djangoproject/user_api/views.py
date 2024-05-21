@@ -4,14 +4,16 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .models import Movie, AvailableSeat, TestView
-from .serializers import UserRegisterSerializer, AvailableSeatSerializer, UserLoginSerializer, UserSerializer, MovieSerializer, TestViewSerializer
+from .models import Movie, AvailableSeat
+# from .models import  AvailableSeat, TestView
+from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer, MovieSerializer, AvailableSeatSerializer
+# from .serializers import , TestViewSerializer
 from rest_framework import permissions, status, generics
 from .validations import custom_validation, validate_email, validate_password
 
-class TestList(generics.ListCreateAPIView):
-    queryset = TestView.objects.all()
-    serializer_class = TestViewSerializer
+# class TestList(generics.ListCreateAPIView):
+#     queryset = TestView.objects.all()
+#     serializer_class = TestViewSerializer
 
 class MovieList(generics.ListCreateAPIView):
     queryset = Movie.objects.all()

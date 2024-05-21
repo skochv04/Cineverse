@@ -38,16 +38,21 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
 
 # -----------
 
-
 class MovieCategory(models.Model):
-    name = models.CharField(max_length=50)
+    moviecategoryid = models.AutoField(primary_key=True)
+    categoryname = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.name
+        return self.categoryname
+    
+    class Meta:
+        managed = False 
+        db_table = 'moviecategories'
+
 
 class Movie(models.Model):
     movieid = models.AutoField(primary_key=True)
-    moviecategoryid = models.ForeignKey(MovieCategory, on_delete=models.CASCADE)
+    moviecategoryid = models.ForeignKey(MovieCategory, on_delete=models.CASCADE, db_column='moviecategoryid')
     title = models.CharField(max_length=40)
     startdate = models.DateField()
     enddate = models.DateField()
@@ -63,19 +68,68 @@ class Movie(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        managed = False 
+        db_table = 'movies'
+
+class MovieScreening(models.Model):
+    moviescreeningid = models.AutoField(primary_key=True)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, db_column='movieid')
+    date = models.DateField()
+    start_time = models.TimeField(db_column='starttime')
+    price_standard = models.DecimalField(max_digits=12, decimal_places=2, db_column='pricestandard')
+    price_premium = models.DecimalField(max_digits=12, decimal_places=2, db_column='pricepremium')
+    movie_hall = models.IntegerField(db_column='moviehall')
+    three_dimensional = models.BooleanField(db_column='threedimensional')
+    language = models.CharField(max_length=40)
+
+    def __str__(self):
+        return f"{self.movie.title} - {self.date} {self.start_time}"
+
+    class Meta:
+       managed = False 
+       db_table = 'moviescreening'
+
+
+class MovieScreeningSeat(models.Model):
+    moviescreeningseatsid = models.AutoField(primary_key=True)
+    movie_screening = models.ForeignKey(MovieScreening, on_delete=models.CASCADE, db_column='moviescreeningid')
+    seat_number = models.IntegerField(db_column='seatnumber')
+    available = models.BooleanField()
+
+    class Meta:
+        unique_together = (('movie_screening', 'seat_number'),)
+        managed = False 
+        db_table = 'moviescreeningseats'
+
+    def __str__(self):
+        return f"Screening: {self.movie_screening}, Seat: {self.seat_number}"
+
+
+class Ticket(models.Model):
+    ticketid = models.AutoField(primary_key=True)
+    customer = models.ForeignKey(AppUser, on_delete=models.CASCADE, db_column='customerid')
+    movie_screening = models.ForeignKey(MovieScreening, on_delete=models.CASCADE, db_column='moviescreeningid')
+    seat_number = models.IntegerField(db_column='seatnumber')
+    ordered_on_date = models.DateField(db_column='orderedondate')
+    status = models.CharField(max_length=10)
+
+    class Meta:
+        unique_together = (('movie_screening', 'seat_number'),)
+        managed = False 
+        db_table = 'tickets'
+
+    def __str__(self):
+        return f"Ticket {self.ticketid} for {self.movie_screening} - Seat {self.seat_number}"
+
+
 class AvailableSeat(models.Model):
-    seat_number = models.IntegerField()
-    movie_screening_id = models.IntegerField()
+    seat_number = models.IntegerField(db_column='seatnumber')
+    movie_screening_id = models.ForeignKey(MovieScreening, on_delete=models.DO_NOTHING, db_column='moviescreeningid')
+
+    def __str__(self):
+        return f"Seat {self.seat_number} for {self.movie_screening_id} is available"
 
     class Meta:
         managed = False
-        db_table = 'AvailableSeats'
-
-class TestView(models.Model):
-    id = models.BigIntegerField(primary_key=True)
-    title = models.ForeignKey(Movie, on_delete=models.DO_NOTHING, db_column='title')
-    name = models.ForeignKey(MovieCategory, on_delete=models.DO_NOTHING, db_column='name')
-
-    class Meta:
-        managed = False 
-        db_table = 'test_view'
+        db_table = 'availableseats'
