@@ -1,19 +1,50 @@
 from django.contrib.auth import get_user_model, login, logout
+from django.db import connection
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
 from .models import Movie, AvailableSeat
 # from .models import  AvailableSeat, TestView
 from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer, MovieSerializer, AvailableSeatSerializer
 # from .serializers import , TestViewSerializer
 from rest_framework import permissions, status, generics
 from .validations import custom_validation, validate_email, validate_password
+import json
 
-# class TestList(generics.ListCreateAPIView):
-#     queryset = TestView.objects.all()
-#     serializer_class = TestViewSerializer
+@ensure_csrf_cookie
+def set_csrf_token(request):
+    return JsonResponse({'detail': 'CSRF cookie set'})
+@csrf_exempt
+def handle_request(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            action = data.get('action')
+            if action == 'add_seat':
+                return add_movie_screening_seat(data)
+            else:
+                return JsonResponse({'error': 'Unknown action'}, status=400)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid HTTP method'}, status=405)
+
+def add_movie_screening_seat(data):
+    try:
+        seat_number = data['seat_number']
+        movie_screening_id = data['movie_screening_id']
+        available = data['available']
+        with connection.cursor() as cursor:
+            cursor.execute("CALL AddMovieScreeningSeats(%s, %s, %s);", [seat_number, movie_screening_id, available])
+        return JsonResponse({'message': 'Seat added successfully'}, status=201)
+    except KeyError as e:
+        return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 class MovieList(generics.ListCreateAPIView):
     queryset = Movie.objects.all()
