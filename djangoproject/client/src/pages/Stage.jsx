@@ -1,30 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "./Header.jsx";
-import "./styles/Stage.css"; // Importing the CSS file for styling
+import "./styles/Stage.css";
+import { getCsrfToken } from "../utils/csrf.js";
 
 function Stage() {
-    const [selectedSeats, setSelectedSeats] = useState([]);
+    const [selectedSeat, setSelectedSeat] = useState(null);
+    const [availableSeats, setAvailableSeats] = useState([]);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchAvailableSeats = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/available_seats/');
+                const data = await response.json();
+                setAvailableSeats(data);
+            } catch (error) {
+                console.error('Error fetching available seats:', error);
+            }
+        };
+        fetchAvailableSeats();
+    }, []);
 
     const handleSelectSeat = (seat) => {
-        setSelectedSeats(prevSelectedSeats =>
-            prevSelectedSeats.includes(seat)
-                ? prevSelectedSeats.filter(s => s !== seat)
-                : [...prevSelectedSeats, seat]
-        );
+        setSelectedSeat(seat);
+    };
+
+    const convertSeatToId = (seat) => {
+        const row = seat.charCodeAt(0) - 65; // 'A' to 0, 'B' to 1, ..., 'I' to 8
+        const seatNumber = parseInt(seat.substring(1), 10) - 1; // '1' to 0, '2' to 1, ...
+        return row * 11 + seatNumber + 1; // Example: 'A1' to 1, 'A2' to 2, ..., 'B1' to 12, ...
+    };
+
+    const isSeatAvailable = (seat) => {
+        const seatId = convertSeatToId(seat);
+        return availableSeats.some(seatObj => seatObj.seat_number === seatId);
     };
 
     const generateSeats = () => {
         const rows = [];
-        let seatsInRow = 15; // Starting number of seats per row
+        let seatsInRow = 13;
 
-        for (let rowIndex = 0; rowIndex < 11; rowIndex++) {
+        for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
             const row = [];
             for (let seatIndex = 1; seatIndex <= seatsInRow - 2; seatIndex++) {
                 row.push(`${String.fromCharCode(65 + rowIndex)}${seatIndex}`);
             }
             rows.push(row);
             if (rowIndex >= 3) {
-                seatsInRow -= 1; // Decrement seats by 2 after the 4th row
+                seatsInRow -= 1;
             }
             if (rowIndex > 10) {
                 break;
@@ -35,21 +58,53 @@ function Stage() {
 
     const seats = generateSeats();
 
+    const reserveSeat = async (newSeatNumber, newMovieScreeningId) => {
+        try {
+            const csrfToken = getCsrfToken();
+            const response = await fetch('http://127.0.0.1:8000/api/handle_request/', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    action: 'reserve_seat',
+                    seat_number: newSeatNumber,
+                    movie_screening_id: newMovieScreeningId,
+                    available: false,
+                }),
+            });
+            if (!response.ok) {
+                const errorDetails = await response.json();
+                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`);
+            }
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
     return (
         <div className="Stage">
             <div id="header_container">
                 <Header />
             </div>
             <div id="content">
-                <h2>Select Your Seats:</h2>
+                <h2>Select Your Seat:</h2>
+                <h4>Your seat: {selectedSeat}</h4>
+                {error && <p className="error">{error}</p>}
                 <div className="seating-chart">
                     {seats.map((row, rowIndex) => (
-                        <div key={rowIndex} className="seat-row" style={{ justifyContent: rowIndex > 3 ? 'center' : 'start' }}>
-                            {row.map(seat => (
+                        <div
+                            key={rowIndex}
+                            className="seat-row"
+                            style={{ justifyContent: rowIndex > 3 ? 'center' : 'start' }}
+                        >
+                            {row.map((seat) => (
                                 <div
                                     key={seat}
-                                    className={`seat ${selectedSeats.includes(seat) ? 'selected' : ''}`}
-                                    onClick={() => handleSelectSeat(seat)}
+                                    className={`seat ${isSeatAvailable(seat) ? 'availableSeat' : 'non-availableSeat'} ${selectedSeat === seat ? 'selected' : ''}`}
+                                    onClick={() => isSeatAvailable(seat) && handleSelectSeat(seat)}
                                 >
                                     {seat}
                                 </div>
@@ -57,7 +112,13 @@ function Stage() {
                         </div>
                     ))}
                 </div>
-                <button className="proceed-button">Proceed to Payment</button>
+                <button
+                    onClick={() => reserveSeat(convertSeatToId(selectedSeat), 1)}
+                    className="proceed-button"
+                    disabled={!selectedSeat || !isSeatAvailable(selectedSeat)}
+                >
+                    Reserve seat
+                </button>
             </div>
         </div>
     );
@@ -65,89 +126,4 @@ function Stage() {
 
 export default Stage;
 
-
-// Sprawdzic czy działa jak baza bedzie zwraca wolne miejca:
-
-// import React, { useState, useEffect } from "react";
-// import Header from "./Header.jsx";
-// import "./styles/Stage.css"; // Importing the CSS file for styling
-//
-// function Stage() {
-//     const [selectedSeats, setSelectedSeats] = useState([]);
-//     const [availableSeats, setAvailableSeats] = useState([]);
-//
-//     useEffect(() => {
-//         // Funkcja do pobrania danych o wolnych miejscach z serwera
-//         const fetchAvailableSeats = async () => {
-//             try {
-//                 const response = await fetch('URL_DO_ENDPOINTU');
-//                 const data = await response.json();
-//                 setAvailableSeats(data); // Załóżmy, że data to tablica z ID wolnych miejsc
-//             } catch (error) {
-//                 console.error('Błąd podczas pobierania dostępnych miejsc:', error);
-//             }
-//         };
-//
-//         fetchAvailableSeats();
-//     }, []);
-//
-//     const handleSelectSeat = (seat) => {
-//         setSelectedSeats(prevSelectedSeats =>
-//             prevSelectedSeats.includes(seat)
-//                 ? prevSelectedSeats.filter(s => s !== seat)
-//                 : [...prevSelectedSeats, seat]
-//         );
-//     };
-//
-//     const generateSeats = () => {
-//         const rows = [];
-//         let seatsInRow = 15; // Starting number of seats per row
-//
-//         for (let rowIndex = 0; rowIndex < 11; rowIndex++) {
-//             const row = [];
-//             for (let seatIndex = 1; seatIndex <= seatsInRow - 2; seatIndex++) {
-//                 row.push(`${String.fromCharCode(65 + rowIndex)}${seatIndex}`);
-//             }
-//             rows.push(row);
-//             if (rowIndex >= 3) {
-//                 seatsInRow -= 1; // Decrement seats by 2 after the 4th row
-//             }
-//             if (rowIndex > 10) {
-//                 break;
-//             }
-//         }
-//         return rows;
-//     };
-//
-//     const seats = generateSeats();
-//
-//     return (
-//         <div className="Stage">
-//             <div id="header_container">
-//                 <Header />
-//             </div>
-//             <div id="content">
-//                 <h2>Select Your Seats:</h2>
-//                 <div className="seating-chart">
-//                     {seats.map((row, rowIndex) => (
-//                         <div key={rowIndex} className="seat-row" style={{ justifyContent: rowIndex > 3 ? 'center' : 'start' }}>
-//                             {row.map(seat => (
-//                                 <div
-//                                     key={seat}
-//                                     className={`seat ${selectedSeats.includes(seat) ? 'selected' : ''} ${availableSeats.includes(seat) ? 'available' : 'unavailable'}`}
-//                                     onClick={() => availableSeats.includes(seat) && handleSelectSeat(seat)}
-//                                 >
-//                                     {seat}
-//                                 </div>
-//                             ))}
-//                         </div>
-//                     ))}
-//                 </div>
-//                 <button className="proceed-button">Proceed to Payment</button>
-//             </div>
-//         </div>
-//     );
-// }
-//
-// export default Stage;
 

@@ -53,7 +53,7 @@ function Movies() {
                     </div>
                 </div>
                 <div className="movies-list">
-                    <Link to="/movie">Avatar</Link>
+                    <Link to="/showtime">The Matrix</Link>
                 </div>
             </div>
         </div>

@@ -4,9 +4,9 @@
     flex-direction: column;
     height: 100vh;
     width: 100%;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.5) 100%), /* Warstwa przyciemniająca na całej wysokości */
-    linear-gradient(to bottom, transparent 14%, black 45%), /* Gradient tworzący przejście */
-    url('client/src/assets/town.jpg');
+    /*background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.5) 100%), !* Warstwa przyciemniająca na całej wysokości *!*/
+    /*linear-gradient(to bottom, transparent 14%, black 45%), !* Gradient tworzący przejście *!*/
+    /*url('client/src/assets/town.jpg');*/
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -43,7 +43,7 @@ h2 {
     margin-bottom: 5px;
 }
 
-.seat {
+.availableSeat {
     width: 2vw;
     height: 2vw;
     display: flex;
@@ -58,13 +58,28 @@ h2 {
     margin: 0 2px;
 }
 
-.seat.selected {
+.non-availableSeat {
+    width: 2vw;
+    height: 2vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    border: 2px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    margin: 0 2px;
+}
+
+.availableSeat.selected {
     background-color: #007bff;
     color: #fff;
     scale: 1.1;
 }
 
-.seat:hover {
+.availableSeat:hover {
     border-color: #007bff;
     scale: 1.1;
 }
