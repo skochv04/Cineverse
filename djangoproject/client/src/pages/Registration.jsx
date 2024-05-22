@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
+import './styles/Registration.css'
 
 const client = axios.create({
     baseURL: "http://127.0.0.1:8000"
@@ -62,12 +63,12 @@ function Registration({ setCurrentUser }) {
     }
 
     return (
-        <div className="Register">
+        <div className="Registration">
             <div id="header_container">
                 <Header />
             </div>
             <div id="content">
-                <div className="register-form-container">
+                <div className="registration-form-container">
                     <h2 className="title">Register</h2>
                     <form className="form" onSubmit={handleSubmit}>
                         {errors.server && <div className="error-message">{errors.server}</div>}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
+import './styles/Login.css'
 
 const client = axios.create({
     baseURL: "http://127.0.0.1:8000"
@@ -59,7 +60,7 @@ function Login({ setCurrentUser }) {
             <div id="header_container">
                 <Header />
             </div>
-            <div id="content">
+            <div className="content">
                 <div className="login-form-container">
                     <h2 className="title">Log in</h2>
                     <form className="form" onSubmit={handleSubmit}>
