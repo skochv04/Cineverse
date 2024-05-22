@@ -2,15 +2,8 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from rest_framework.exceptions import ValidationError
 from .models import Movie, AvailableSeat
-# from .models import  TestView
 
 UserModel = get_user_model()
-
-# class TestViewSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = TestView
-#         fields = (
-#             'id', 'title', 'name')
 
 class MovieSerializer(serializers.ModelSerializer):
     class Meta:
