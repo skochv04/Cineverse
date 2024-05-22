@@ -12,6 +12,23 @@ from rest_framework import permissions, status, generics
 from .validations import custom_validation, validate_email, validate_password
 import json
 
+def get_movie_sessions_view(request):
+    movie_id = request.GET.get('movie_id')
+    target_date = request.GET.get('target_date')
+    target_time = request.GET.get('target_time')
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT * FROM get_movie_sessions(%s, %s, %s)",
+            [movie_id, target_date, target_time]
+        )
+        rows = cursor.fetchall()
+
+    columns = [col[0] for col in cursor.description]
+    data = [dict(zip(columns, row)) for row in rows]
+
+    return JsonResponse(data, safe=False)
+
 
 @ensure_csrf_cookie
 def set_csrf_token(request):
@@ -58,7 +75,7 @@ def reserve_movie_screening_seat(data):
         movie_screening_id = data['movie_screening_id']
         available = data['available']
         with connection.cursor() as cursor:
-            cursor.execute("CALL UpdateMovieScreeningSeat(%s, %s, %s);", [seat_number, movie_screening_id, available])
+            cursor.execute("CALL reserve_movie_screening_seat(%s, %s);", [seat_number, movie_screening_id])
         return JsonResponse({'message': 'Seat reserved successfully'}, status=201)
     except KeyError as e:
         return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)

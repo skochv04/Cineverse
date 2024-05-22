@@ -26,9 +26,14 @@ function Stage() {
     };
 
     const convertSeatToId = (seat) => {
-        const row = seat.charCodeAt(0) - 65; // 'A' to 0, 'B' to 1, ..., 'I' to 8
-        const seatNumber = parseInt(seat.substring(1), 10) - 1; // '1' to 0, '2' to 1, ...
-        return row * 11 + seatNumber + 1; // Example: 'A1' to 1, 'A2' to 2, ..., 'B1' to 12, ...
+        const row = seat.charCodeAt(0) - 65;
+        const seatNumber = parseInt(seat.substring(1), 10);
+        let seatsBeforeRow = 0;
+
+        for (let i = 0; i < row; i++) {
+            seatsBeforeRow += (i < 4 ? 11 : 10 - i + 4);
+        }
+        return seatsBeforeRow + seatNumber;
     };
 
     const isSeatAvailable = (seat) => {
@@ -38,19 +43,16 @@ function Stage() {
 
     const generateSeats = () => {
         const rows = [];
-        let seatsInRow = 13;
+        let seatsInRow = 11;
 
         for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
             const row = [];
-            for (let seatIndex = 1; seatIndex <= seatsInRow - 2; seatIndex++) {
+            for (let seatIndex = 1; seatIndex <= seatsInRow; seatIndex++) {
                 row.push(`${String.fromCharCode(65 + rowIndex)}${seatIndex}`);
             }
             rows.push(row);
             if (rowIndex >= 3) {
                 seatsInRow -= 1;
-            }
-            if (rowIndex > 10) {
-                break;
             }
         }
         return rows;
@@ -125,5 +127,3 @@ function Stage() {
 }
 
 export default Stage;
-
-

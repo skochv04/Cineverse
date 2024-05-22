@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import MovieList, AvailableSeatsList, handle_request, set_csrf_token
+from .views import MovieList, AvailableSeatsList, handle_request, set_csrf_token, get_movie_sessions_view
 
 # from .views import TestList
 
@@ -14,4 +14,5 @@ urlpatterns = [
 	path('available_seats/', AvailableSeatsList.as_view(), name='available-seats-list'),
 	path('handle_request/', handle_request, name='handle_request'),
 	path('set_csrf_token/', set_csrf_token, name='set_csrf_token'),
+	path('get_movie_sessions/', get_movie_sessions_view, name='get_movie_sessions'),
 ]
