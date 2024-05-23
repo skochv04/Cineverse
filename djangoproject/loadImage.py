@@ -9,10 +9,10 @@ conn = psycopg2.connect(
 )
 cur = conn.cursor()
 
-with open('client/src/assets/movies_img/king.jpg', 'rb') as file:
+with open('client/src/assets/movies_img/AmeliasChildren.jpg', 'rb') as file:
     binary_data = file.read()
 
-cur.execute("UPDATE movies SET image = %s", (binary_data,))
+cur.execute("UPDATE movies SET image= %s  where movieid = 20", (binary_data,))
 
 conn.commit()
 cur.close()

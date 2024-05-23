@@ -63,7 +63,7 @@ class Movie(models.Model):
     minage = models.IntegerField()
     production = models.CharField(max_length=40)
     originallanguage = models.CharField(max_length=40)
-    rank = models.IntegerField()
+    rank = models.FloatField()
 
     def __str__(self):
         return self.title

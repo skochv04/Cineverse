@@ -149,6 +149,46 @@ END;
 $$;
 ```
 
+- Dodawanie nowego movie
+
+```postgresql
+create procedure add_movie(IN p_moviecategoryid integer, IN p_title character varying, IN p_startdate date, IN p_enddate date, IN p_duration integer, IN p_description character varying, IN p_image bytea, IN p_director character varying, IN p_minage integer, IN p_production character varying, IN p_originallanguage character varying, IN p_rank double precision)
+    language plpgsql
+as
+$$
+BEGIN
+    -- Check if enddate is greater than startdate
+    IF p_enddate <= p_startdate THEN
+        RAISE EXCEPTION 'End date must be greater than start date';
+    END IF;
+
+    -- Check if duration is at least 30 minutes
+    IF p_duration < 30 THEN
+        RAISE EXCEPTION 'Duration must be at least 30 minutes';
+    END IF;
+
+    -- Check if rank is between 0 and 10
+    IF p_rank < 0 OR p_rank > 10 THEN
+        RAISE EXCEPTION 'Rank must be between 0 and 10';
+    END IF;
+
+    -- Check if minage is between 0 and 21
+    IF p_minage < 0 OR p_minage > 21 THEN
+        RAISE EXCEPTION 'Minimum age must be between 0 and 21';
+    END IF;
+
+    -- Insert the new movie into the movies table
+    INSERT INTO movies (
+        moviecategoryid, title, startdate, enddate, duration, description,
+        image, director, minage, production, originallanguage, rank
+    ) VALUES (
+        p_moviecategoryid, p_title, p_startdate, p_enddate, p_duration, p_description,
+        p_image, p_director, p_minage, p_production, p_originallanguage, p_rank
+    );
+END;
+$$;
+```
+
 ## 6. **Funkcje**
 
 - Wyświetlenie wszystkich seansów dla danego movie, które są grane po wskazywanym terminie
@@ -210,22 +250,11 @@ $$ LANGUAGE plpgsql;
 - Wyświetlenie wszystkich filmów aktualnie granych w kinie
 
 ```postrgresql
-CREATE OR REPLACE FUNCTION get_current_movies(p_date DATE)
-RETURNS TABLE (
-    movieid INTEGER,
-    moviecategoryid INTEGER,
-    title VARCHAR(40),
-    startdate DATE,
-    enddate DATE,
-    duration INTEGER,
-    description VARCHAR(255),
-    image BYTEA,
-    director VARCHAR(40),
-    minage INTEGER,
-    production VARCHAR(40),
-    originallanguage VARCHAR(40),
-    rank INTEGER
-) AS $$
+create function get_current_movies(p_date date)
+    returns TABLE(movieid integer, moviecategoryid integer, title character varying, startdate date, enddate date, duration integer, description character varying, image bytea, director character varying, minage integer, production character varying, originallanguage character varying, rank double precision)
+    language plpgsql
+as
+$$
 BEGIN
     RETURN QUERY
     SELECT
@@ -245,30 +274,21 @@ BEGIN
     FROM
         movies m
     WHERE
-        p_date <= m.enddate;
+        m.startdate <= p_date and p_date <= m.enddate;
 END;
-$$ LANGUAGE plpgsql;
+$$;
+
+alter function get_current_movies(date) owner to postgres;
 ```
 
 - Wyświetlenie wszystkich filmów, które będą grane w przyszłości
 
 ```postgresql
-CREATE OR REPLACE FUNCTION get_upcoming_movies(p_date DATE)
-RETURNS TABLE (
-    movieid INTEGER,
-    moviecategoryid INTEGER,
-    title VARCHAR(40),
-    startdate DATE,
-    enddate DATE,
-    duration INTEGER,
-    description VARCHAR(255),
-    image BYTEA,
-    director VARCHAR(40),
-    minage INTEGER,
-    production VARCHAR(40),
-    originallanguage VARCHAR(40),
-    rank INTEGER
-) AS $$
+create function get_upcoming_movies(p_date date)
+    returns TABLE(movieid integer, moviecategoryid integer, title character varying, startdate date, enddate date, duration integer, description character varying, image bytea, director character varying, minage integer, production character varying, originallanguage character varying, rank double precision)
+    language plpgsql
+as
+$$
 BEGIN
     RETURN QUERY
     SELECT
@@ -290,7 +310,9 @@ BEGIN
     WHERE
         p_date < m.startdate;
 END;
-$$ LANGUAGE plpgsql;
+$$;
+
+alter function get_upcoming_movies(date) owner to postgres;
 ```
 
 ## 7. **Triggery**
