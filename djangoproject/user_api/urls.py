@@ -15,4 +15,6 @@ urlpatterns = [
 	path('handle_request/', handle_request, name='handle_request'),
 	path('set_csrf_token/', set_csrf_token, name='set_csrf_token'),
 	path('get_movie_sessions/', get_movie_sessions_view, name='get_movie_sessions'),
+	path('current-movies/', views.get_current_movies, name='current_movies'),
+    path('upcoming-movies/', views.get_upcoming_movies, name='upcoming_movies'),
 ]

@@ -1,6 +1,6 @@
 import React from 'react';
-import {Swiper, SwiperSlide} from 'swiper/react';
-import {Navigation, Scrollbar, A11y} from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Scrollbar, A11y } from 'swiper/modules';
 import './styles/Carousel.css';
 
 import 'swiper/css';

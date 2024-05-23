@@ -11,6 +11,31 @@ from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerial
 from rest_framework import permissions, status, generics
 from .validations import custom_validation, validate_email, validate_password
 import json
+specific_date = '2024-05-22'
+
+import base64
+
+def get_current_movies(request):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM get_current_movies(%s)", [specific_date])
+        columns = [col[0] for col in cursor.description]
+        movies = []
+        for row in cursor.fetchall():
+            movie = dict(zip(columns, row))
+            movie['image'] = base64.b64encode(movie['image']).decode('utf-8')  # Convert image to base64 string
+            movies.append(movie)
+    return JsonResponse(movies, safe=False)
+
+def get_upcoming_movies(request):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM get_upcoming_movies(%s)", [specific_date])
+        columns = [col[0] for col in cursor.description]
+        movies = []
+        for row in cursor.fetchall():
+            movie = dict(zip(columns, row))
+            movie['image'] = base64.b64encode(movie['image']).decode('utf-8')  # Convert image to base64 string
+            movies.append(movie)
+    return JsonResponse(movies, safe=False)
 
 def get_movie_sessions_view(request):
     movie_id = request.GET.get('movie_id')
@@ -86,7 +111,7 @@ def reserve_movie_screening_seat(data):
 class MovieList(generics.ListCreateAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
-
+    
 
 class MovieDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Movie.objects.all()

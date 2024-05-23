@@ -207,6 +207,92 @@ END;
 $$ LANGUAGE plpgsql;
 ```
 
+- Wyświetlenie wszystkich filmów aktualnie granych w kinie
+
+```postrgresql
+CREATE OR REPLACE FUNCTION get_current_movies(p_date DATE)
+RETURNS TABLE (
+    movieid INTEGER,
+    moviecategoryid INTEGER,
+    title VARCHAR(40),
+    startdate DATE,
+    enddate DATE,
+    duration INTEGER,
+    description VARCHAR(255),
+    image BYTEA,
+    director VARCHAR(40),
+    minage INTEGER,
+    production VARCHAR(40),
+    originallanguage VARCHAR(40),
+    rank INTEGER
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        m.movieid,
+        m.moviecategoryid,
+        m.title,
+        m.startdate,
+        m.enddate,
+        m.duration,
+        m.description,
+        m.image,
+        m.director,
+        m.minage,
+        m.production,
+        m.originallanguage,
+        m.rank
+    FROM
+        movies m
+    WHERE
+        p_date <= m.enddate;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+- Wyświetlenie wszystkich filmów, które będą grane w przyszłości
+
+```postgresql
+CREATE OR REPLACE FUNCTION get_upcoming_movies(p_date DATE)
+RETURNS TABLE (
+    movieid INTEGER,
+    moviecategoryid INTEGER,
+    title VARCHAR(40),
+    startdate DATE,
+    enddate DATE,
+    duration INTEGER,
+    description VARCHAR(255),
+    image BYTEA,
+    director VARCHAR(40),
+    minage INTEGER,
+    production VARCHAR(40),
+    originallanguage VARCHAR(40),
+    rank INTEGER
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        m.movieid,
+        m.moviecategoryid,
+        m.title,
+        m.startdate,
+        m.enddate,
+        m.duration,
+        m.description,
+        m.image,
+        m.director,
+        m.minage,
+        m.production,
+        m.originallanguage,
+        m.rank
+    FROM
+        movies m
+    WHERE
+        p_date < m.startdate;
+END;
+$$ LANGUAGE plpgsql;
+```
+
 ## 7. **Triggery**
 
 - Dodawanie nowego rekordu do tabeli Tickets po rezerwacji miejsca
