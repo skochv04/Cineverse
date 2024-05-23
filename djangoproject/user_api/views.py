@@ -15,6 +15,23 @@ specific_date = '2024-05-22'
 
 import base64
 
+def get_movies(request):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM movies")
+            columns = [col[0] for col in cursor.description]
+            movies = []
+            for row in cursor.fetchall():
+                movie = dict(zip(columns, row))
+                # Check if 'image' exists and is not None before encoding
+                if movie.get('image'):
+                    movie['image'] = base64.b64encode(movie['image']).decode('utf-8')
+                movies.append(movie)
+        return JsonResponse(movies, safe=False)
+    except Exception as e:
+        # Consider logging the exception here
+        return JsonResponse({'error': str(e)}, status=500)
+
 def get_current_movies(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM get_current_movies(%s)", [specific_date])

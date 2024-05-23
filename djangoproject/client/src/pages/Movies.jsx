@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import './styles/Movies.css';
 import Header from "./Header.jsx";
 import {Link} from "react-router-dom";
@@ -7,9 +7,30 @@ const categories = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Docu
 const sortOptions = ['Alphabetical', 'Release Date', 'Rating'];
 
 function Movies() {
+    // const [categories, setSelectedCategories] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const [sortOption, setSortOption] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
+    const [movies, setMovies] = useState([]);
+
+
+    useEffect(() => {
+        fetch('http://127.0.0.1:8000/api/movies')
+            .then(response => response.json())
+            .then(data => setMovies(data))
+            .catch(error => console.error('Error fetching movies: ', error));
+    }, []);
+
+    // useEffect(() => {
+    //     fetch('/api/categories')
+    //         .then(response => response.json())
+    //         .then(data => setSelectedCategories(data))
+    //         .catch(error => console.error('Error fetching movie categories: ', error));
+    // }, []);
+
+
+    const filteredMovies = movies.filter(movie => movie.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        (!selectedCategory || movie.category === selectedCategory))
 
     return (
         <div className="Movies">
@@ -53,7 +74,16 @@ function Movies() {
                     </div>
                 </div>
                 <div className="movies-list">
-                    <Link to="/showtime">The Matrix</Link>
+                    {filteredMovies.map(movie => (
+                        <div key={movie.id} className="movie-item">
+
+                            <Link to={`/movie/${movie.title}`}>
+                                <img src={`data:image/jpeg;base64,${movie.image}`} alt={movie.title} />
+                                <div>{movie.title}</div>
+                            </Link>
+                        </div>
+                    ))
+                    }
                 </div>
             </div>
         </div>

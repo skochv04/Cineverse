@@ -1,12 +1,9 @@
 from django.urls import path
 from . import views
-from .views import MovieList, AvailableSeatsList, handle_request, set_csrf_token, get_movie_sessions_view
+from .views import MovieList, AvailableSeatsList, handle_request, set_csrf_token, get_movie_sessions_view, get_movies
 
-# from .views import TestList
 
 urlpatterns = [
-    path('movies/', MovieList.as_view(), name='movie-list'),
-    # path('movies/<int:pk>/', MovieDetail.as_view(), name='movie-detail'),
 	path('register/', views.UserRegister.as_view(), name='register'),
 	path('login', views.UserLogin.as_view(), name='login'),
 	path('logout', views.UserLogout.as_view(), name='logout'),
@@ -15,6 +12,7 @@ urlpatterns = [
 	path('handle_request/', handle_request, name='handle_request'),
 	path('set_csrf_token/', set_csrf_token, name='set_csrf_token'),
 	path('get_movie_sessions/', get_movie_sessions_view, name='get_movie_sessions'),
+	path('movies/', views.get_movies, name='movies'),
 	path('current-movies/', views.get_current_movies, name='current_movies'),
     path('upcoming-movies/', views.get_upcoming_movies, name='upcoming_movies'),
 ]
