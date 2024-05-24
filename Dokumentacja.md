@@ -23,21 +23,23 @@ CREATE TABLE MovieCategories (
 
 -- Table: MovieHalls
 CREATE TABLE Movie_Halls (
-    MovieHallID serial PRIMARY KEY
+    MovieHallID serial PRIMARY KEY,
+    hall_number INTEGER NOT NULL
 );
 
--- Table: MovieScreening
-CREATE TABLE Movie_Screening (
-    MovieScreeningID serial PRIMARY KEY,
-    MovieID int NOT NULL,
-    Date date NOT NULL,
-    StartTime time NOT NULL,
-    PriceStandard decimal(12,2) NOT NULL,
-    PricePremium decimal(12,2) NOT NULL,
-    ThreeDimensional boolean NOT NULL,
-    Language varchar(40) NOT NULL,
-    MovieHallID int NOT NULL,
-    FOREIGN KEY (MovieHallID) REFERENCES Movie_Halls(MovieHallID)
+-- Table: movie_screening
+CREATE TABLE movie_screening (
+    MovieScreeningID serial  NOT NULL,
+    MovieID int  NOT NULL,
+    Date date  NOT NULL,
+    StartTime time  NOT NULL,
+    EndTime time  NOT NULL,
+    PriceStandard decimal(12,2)  NOT NULL,
+    PricePremium decimal(12,2)  NOT NULL,
+    ThreeDimensional boolean  NOT NULL,
+    Language varchar(40)  NOT NULL,
+    HallNumber int  NOT NULL,
+    CONSTRAINT movie_screening_pk PRIMARY KEY (MovieScreeningID)
 );
 
 -- Table: HallSeats
@@ -79,18 +81,18 @@ CREATE TABLE Tickets (
 
 
 -- foreign keys
--- Reference: MovieScreening_MovieHalls (table: MovieScreening)
-ALTER TABLE Movie_Screening ADD CONSTRAINT MovieScreening_MovieHalls
-    FOREIGN KEY (MovieHallID)
-    REFERENCES Movie_Halls (MovieHallID)
+-- Reference: HallNumber (table: movie_screening)
+ALTER TABLE movie_screening ADD CONSTRAINT HallNumber
+    FOREIGN KEY (HallNumber)
+    REFERENCES movie_halls (MovieHallID)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
--- Reference: Session_Movies (table: MovieScreening)
-ALTER TABLE Movie_Screening ADD CONSTRAINT Session_Movies
+-- Reference: Session_Movies (table: movie_screening)
+ALTER TABLE movie_screening ADD CONSTRAINT Session_Movies
     FOREIGN KEY (MovieID)
-    REFERENCES Movies (MovieID)
+    REFERENCES movies (MovieID)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
@@ -151,7 +153,7 @@ CREATE OR REPLACE VIEW occupied_seats AS
 SELECT
     row_number() OVER (ORDER BY tickets.moviescreeningid, seatnumber) AS id,
     SeatNumber,
-    MovieHallID,
+    movie_screening.hall_number,
     Tickets.MovieScreeningID
 FROM
     tickets
@@ -255,35 +257,79 @@ CREATE OR REPLACE PROCEDURE add_movie_screening(
     IN price_premium_val numeric,
     IN is_3d boolean,
     IN language_val varchar,
-    IN hall_id integer
+    IN hall_val integer
 )
 AS $$
 DECLARE
     movie_start_time time;
     movie_end_time time;
+    hall_available boolean;
+    end_time_val time;
+    duration int;
 BEGIN
-    -- Перевірка існування movie_id і hall_id
     IF NOT EXISTS (SELECT 1 FROM movies WHERE movieid = movie_id) THEN
         RAISE EXCEPTION 'Movie with id % does not exist', movie_id;
     END IF;
 
-    IF NOT EXISTS (SELECT 1 FROM movie_halls WHERE moviehallid = hall_id) THEN
-        RAISE EXCEPTION 'Movie hall with id % does not exist', hall_id;
+    IF NOT EXISTS (SELECT 1 FROM movie_halls WHERE movie_halls.hall_number = hall_val) THEN
+        RAISE EXCEPTION 'Movie hall with id % does not exist', hall_val;
     END IF;
 
-    -- Отримання часу початку та кінця трансляції фільму
-    SELECT starttime, endtime INTO movie_start_time, movie_end_time
-    FROM movies
-    WHERE movieid = movie_id;
-
-    -- Перевірка, чи date_val знаходиться між початком трансляції фільму та кінцем
     IF NOT (start_time_val >= movie_start_time AND start_time_val <= movie_end_time) THEN
         RAISE EXCEPTION 'Screening start time is not within movie duration';
     END IF;
 
-    -- Вставка запису у таблицю movie_screening
-    INSERT INTO movie_screening (movieid, date, starttime, pricestandard, pricepremium, threedimensional, language, moviehallid)
-    VALUES (movie_id, date_val, start_time_val, price_standard_val, price_premium_val, is_3d, language_val, hall_id);
+    SELECT m.duration into duration
+    FROM movies as m where m.movieid = movie_id;
+
+    SELECT calculate_end_time(start_time_val, duration) INTO end_time_val;
+
+    hall_available := is_moviehall_available(hall_val, date_val, start_time_val, end_time_val);
+    IF NOT hall_available THEN
+        RAISE EXCEPTION 'Movie hall with id % is not available for the specified time and date', hall_val;
+    END IF;
+
+    INSERT INTO movie_screening (movieid, date, starttime, endtime, pricestandard, pricepremium, threedimensional, language, hallnumber)
+    VALUES (movie_id, date_val, start_time_val, end_time_val, price_standard_val, price_premium_val, is_3d, language_val, hall_val);
+END
+$$ LANGUAGE plpgsql;
+```
+
+- Cykliczne dodawanie seansów dla filmu na tą samą godzinę i tą samą salę na 7 kolejnych dni od zadangeo
+
+```postgresql
+CREATE OR REPLACE PROCEDURE add_movie_screenings_weekly(
+    IN movie_id integer,
+    IN start_date date,
+    IN start_time time,
+    IN price_standard numeric,
+    IN price_premium numeric,
+    IN is_3d boolean,
+    IN language_val varchar,
+    IN hall_number integer,
+    IN repeat_count integer
+)
+AS $$
+DECLARE
+    current_date_val date := start_date;
+    iteration integer := 1;
+BEGIN
+    WHILE iteration <= repeat_count LOOP
+        CALL add_movie_screening(
+            movie_id,
+            current_date_val,
+            start_time,
+            price_standard,
+            price_premium,
+            is_3d,
+            language_val,
+            hall_number
+        );
+
+        -- Move to the next day
+        current_date_val := current_date_val + 1;
+        iteration := iteration + 1;
+    END LOOP;
 END;
 $$ LANGUAGE plpgsql;
 ```
@@ -414,35 +460,10 @@ $$;
 alter function get_upcoming_movies(date) owner to postgres;
 ```
 
-## 7. **Triggery**
-
-- Dodawanie nowego rekordu do tabeli Tickets po rezerwacji miejsca
-
-```postgresql
-CREATE OR REPLACE FUNCTION update_moviescreeningseats_trigger()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF NEW.available = FALSE AND OLD.available = TRUE THEN
-        INSERT INTO tickets (customerid, moviescreeningid, seatnumber, orderedondate, status)
-        VALUES (6, NEW.moviescreeningid, NEW.seatnumber, CURRENT_DATE, 'New');
-    END IF;
-
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-```
-
-```postgresql
-CREATE OR REPLACE TRIGGER update_moviescreeningseats_trigger
-AFTER UPDATE OF available ON moviescreeningseats
-FOR EACH ROW
-EXECUTE FUNCTION update_moviescreeningseats_trigger();
-```
-
 - Sprawdzenie, czy sala jest dostępna w określonym terminie
 
 ```postgresql
-CREATE OR REPLACE FUNCTION is_moviehall_available(IN hall_id integer, IN date_val date, IN start_time_val time without time zone, IN end_time_val time without time zone)
+CREATE OR REPLACE FUNCTION is_moviehall_available(IN hall_val integer, IN date_val date, IN start_time_val time without time zone, IN end_time_val time without time zone)
 RETURNS boolean AS
 $$
 DECLARE
@@ -450,7 +471,7 @@ DECLARE
 BEGIN
     SELECT NOT EXISTS (
         SELECT 1 FROM movie_screening
-        WHERE moviehallid = hall_id
+        WHERE hallnumber = hall_val
         AND date = date_val
         AND (starttime <= end_time_val AND endtime >= start_time_val)
     ) INTO is_available;
@@ -460,6 +481,48 @@ END;
 $$
 LANGUAGE plpgsql;
 ```
+
+- Obliczanie end_time dla seansu
+
+```postgresql
+CREATE OR REPLACE FUNCTION calculate_end_time(start_time_param TIME, duration_param INTEGER)
+RETURNS TIME AS
+$$
+DECLARE
+    end_time_result TIME;
+BEGIN
+    SELECT (start_time_param + INTERVAL '1 minute' * duration_param) INTO end_time_result;
+    RETURN end_time_result;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+- Wyświetlenie terminów wszystkich seansów prowadzonych w danej sali
+
+```postgresql
+CREATE OR REPLACE FUNCTION get_screenings_by_hall(hall_number_param INTEGER)
+RETURNS TABLE (
+    movieid INTEGER,
+    starttime TIME,
+    endtime TIME
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT DISTINCT
+        ms.movieid,
+        ms.starttime,
+        ms.endtime
+    FROM
+        movie_screening ms
+    WHERE
+        ms.hallnumber = hall_number_param
+    ORDER BY
+        ms.starttime;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+## 7. **Triggery**
 
 ## 8. **Indeksy**
 
