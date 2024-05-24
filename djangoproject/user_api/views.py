@@ -6,13 +6,15 @@ from django.views.decorators.http import require_GET
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Movie, AvailableSeat
+from .models import Movie, OccupiedSeat
 from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer, MovieSerializer, \
-    AvailableSeatSerializer
+    OccupiedSeatSerializer
 from rest_framework import permissions, status, generics
 from .validations import custom_validation, validate_email, validate_password
 import json
 specific_date = '2024-05-22'
+specific_time = '13:00'
+specific_customer = 6
 
 import base64
 
@@ -77,15 +79,13 @@ def get_upcoming_movies(request):
             movies.append(movie)
     return JsonResponse(movies, safe=False)
 
-def get_movie_sessions_view(request):
+def get_movie_sessions(request):
     movie_id = request.GET.get('movie_id')
-    target_date = request.GET.get('target_date')
-    target_time = request.GET.get('target_time')
 
     with connection.cursor() as cursor:
         cursor.execute(
             "SELECT * FROM get_movie_sessions(%s, %s, %s)",
-            [movie_id, target_date, target_time]
+            [movie_id, specific_date, specific_time]
         )
         rows = cursor.fetchall()
 
@@ -110,6 +110,8 @@ def handle_request(request):
                 return add_movie_screening_seat(data)
             elif action == 'reserve_seat':
                 return reserve_movie_screening_seat(data)
+            elif action == 'buy_seat':
+                return buy_movie_screening_seat(data)
             else:
                 return JsonResponse({'error': 'Unknown action'}, status=400)
         except json.JSONDecodeError:
@@ -140,13 +142,25 @@ def reserve_movie_screening_seat(data):
         movie_screening_id = data['movie_screening_id']
         available = data['available']
         with connection.cursor() as cursor:
-            cursor.execute("CALL reserve_movie_screening_seat(%s, %s);", [seat_number, movie_screening_id])
+            cursor.execute("CALL reserve_movie_screening_seat(%s, %s, %s, %s, %s);", [specific_customer, seat_number, movie_screening_id, specific_date, specific_time])
         return JsonResponse({'message': 'Seat reserved successfully'}, status=201)
     except KeyError as e:
         return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+def buy_movie_screening_seat(data):
+    try:
+        seat_number = data['seat_number']
+        movie_screening_id = data['movie_screening_id']
+        available = data['available']
+        with connection.cursor() as cursor:
+            cursor.execute("CALL buy_movie_screening_seat(%s, %s, %s, %s, %s);", [specific_customer, seat_number, movie_screening_id, specific_date, specific_time])
+        return JsonResponse({'message': 'Seat bought successfully'}, status=201)
+    except KeyError as e:
+        return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 class MovieList(generics.ListCreateAPIView):
     queryset = Movie.objects.all()
@@ -158,9 +172,9 @@ class MovieDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = MovieSerializer
 
 
-class AvailableSeatsList(generics.ListAPIView):
-    queryset = AvailableSeat.objects.all()
-    serializer_class = AvailableSeatSerializer
+class OccupiedSeatsList(generics.ListAPIView):
+    queryset = OccupiedSeat.objects.all()
+    serializer_class = OccupiedSeatSerializer
 
 
 class UserRegister(APIView):

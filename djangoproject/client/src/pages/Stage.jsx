@@ -5,20 +5,20 @@ import { getCsrfToken } from "../utils/csrf.js";
 
 function Stage() {
     const [selectedSeat, setSelectedSeat] = useState(null);
-    const [availableSeats, setAvailableSeats] = useState([]);
+    const [occupiedSeats, setOccupiedSeats] = useState([]);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchAvailableSeats = async () => {
+        const fetchOccupiedSeats = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/available_seats/');
+                const response = await fetch('http://127.0.0.1:8000/api/occupied_seats/');
                 const data = await response.json();
-                setAvailableSeats(data);
+                setOccupiedSeats(data);
             } catch (error) {
-                console.error('Error fetching available seats:', error);
+                console.error('Error fetching occupied seats:', error);
             }
         };
-        fetchAvailableSeats();
+        fetchOccupiedSeats();
     }, []);
 
     const handleSelectSeat = (seat) => {
@@ -36,9 +36,9 @@ function Stage() {
         return seatsBeforeRow + seatNumber;
     };
 
-    const isSeatAvailable = (seat) => {
+    const isSeatOccupied = (seat) => {
         const seatId = convertSeatToId(seat);
-        return availableSeats.some(seatObj => seatObj.seat_number === seatId);
+        return occupiedSeats.some(seatObj => seatObj.seat_number === seatId);
     };
 
     const generateSeats = () => {
@@ -86,6 +86,32 @@ function Stage() {
         }
     };
 
+    const buySeat = async (newSeatNumber, newMovieScreeningId) => {
+        try {
+            const csrfToken = getCsrfToken();
+            const response = await fetch('http://127.0.0.1:8000/api/handle_request/', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    action: 'buy_seat',
+                    seat_number: newSeatNumber,
+                    movie_screening_id: newMovieScreeningId,
+                    available: false,
+                }),
+            });
+            if (!response.ok) {
+                const errorDetails = await response.json();
+                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`);
+            }
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
     return (
         <div className="Stage">
             <div id="header_container">
@@ -105,8 +131,8 @@ function Stage() {
                             {row.map((seat) => (
                                 <div
                                     key={seat}
-                                    className={`seat ${isSeatAvailable(seat) ? 'availableSeat' : 'non-availableSeat'} ${selectedSeat === seat ? 'selected' : ''}`}
-                                    onClick={() => isSeatAvailable(seat) && handleSelectSeat(seat)}
+                                    className={`seat ${isSeatOccupied(seat) ? 'non-availableSeat' : 'availableSeat'} ${selectedSeat === seat ? 'selected' : ''}`}
+                                    onClick={() => !isSeatOccupied(seat) && handleSelectSeat(seat)}
                                 >
                                     {seat}
                                 </div>
@@ -117,9 +143,17 @@ function Stage() {
                 <button
                     onClick={() => reserveSeat(convertSeatToId(selectedSeat), 1)}
                     className="proceed-button"
-                    disabled={!selectedSeat || !isSeatAvailable(selectedSeat)}
+                    disabled={!selectedSeat || isSeatOccupied(selectedSeat)}
                 >
                     Reserve seat
+                </button>
+
+                <button
+                    onClick={() => buySeat(convertSeatToId(selectedSeat), 1)}
+                    className="proceed-button"
+                    disabled={!selectedSeat || isSeatOccupied(selectedSeat)}
+                >
+                    Buy seat
                 </button>
             </div>
         </div>

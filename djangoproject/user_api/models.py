@@ -79,7 +79,7 @@ class MovieScreening(models.Model):
     start_time = models.TimeField(db_column='starttime')
     price_standard = models.DecimalField(max_digits=12, decimal_places=2, db_column='pricestandard')
     price_premium = models.DecimalField(max_digits=12, decimal_places=2, db_column='pricepremium')
-    movie_hall = models.IntegerField(db_column='moviehall')
+    movie_hall = models.IntegerField(db_column='hallnumber')
     three_dimensional = models.BooleanField(db_column='threedimensional')
     language = models.CharField(max_length=40)
 
@@ -89,21 +89,6 @@ class MovieScreening(models.Model):
     class Meta:
        managed = False 
        db_table = 'moviescreening'
-
-
-class MovieScreeningSeat(models.Model):
-    moviescreeningseatsid = models.AutoField(primary_key=True)
-    movie_screening = models.ForeignKey(MovieScreening, on_delete=models.CASCADE, db_column='moviescreeningid')
-    seat_number = models.IntegerField(db_column='seatnumber')
-    available = models.BooleanField()
-
-    class Meta:
-        unique_together = (('movie_screening', 'seat_number'),)
-        managed = False 
-        db_table = 'moviescreeningseats'
-
-    def __str__(self):
-        return f"Screening: {self.movie_screening}, Seat: {self.seat_number}"
 
 
 class Ticket(models.Model):
@@ -123,13 +108,13 @@ class Ticket(models.Model):
         return f"Ticket {self.ticketid} for {self.movie_screening} - Seat {self.seat_number}"
 
 
-class AvailableSeat(models.Model):
+class OccupiedSeat(models.Model):
     seat_number = models.IntegerField(db_column='seatnumber')
     movie_screening_id = models.ForeignKey(MovieScreening, on_delete=models.DO_NOTHING, db_column='moviescreeningid')
 
     def __str__(self):
-        return f"Seat {self.seat_number} for {self.movie_screening_id} is available"
+        return f"Seat {self.seat_number} for {self.movie_screening_id} is occupied"
 
     class Meta:
         managed = False
-        db_table = 'availableseats'
+        db_table = 'occupied_seats'
