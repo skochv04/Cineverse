@@ -2,6 +2,7 @@ from django.contrib.auth import login, logout
 from django.db import connection
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.views.decorators.http import require_GET
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -14,6 +15,28 @@ import json
 specific_date = '2024-05-22'
 
 import base64
+
+
+@require_GET
+def get_movie_details(request, title):
+    if not title:
+        return JsonResponse({'error': 'Title parameter is required'}, status=400)
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM get_movie_by_title(%s)", [title])
+            row = cursor.fetchone()
+            if row:
+                columns = [col[0] for col in cursor.description]
+                movie = dict(zip(columns, row))
+                if 'image' in movie and movie['image'] is not None:
+                    movie['image'] = base64.b64encode(movie['image']).decode('utf-8')
+
+                return JsonResponse(movie, safe=False)
+            else:
+                return JsonResponse({'error': 'Movie not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 def get_movies(request):
     try:
