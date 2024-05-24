@@ -21,26 +21,31 @@ CREATE TABLE MovieCategories (
     CONSTRAINT MovieCategories_pk PRIMARY KEY (MovieCategoryID)
 );
 
--- Table: MovieScreening
-CREATE TABLE MovieScreening (
-    MovieScreeningID int  NOT NULL,
-    MovieID int  NOT NULL,
-    Date date  NOT NULL,
-    StartTime time  NOT NULL,
-    PriceStandard decimal(12,2)  NOT NULL,
-    PricePremium decimal(12,2)  NOT NULL,
-    MovieHall int  NOT NULL,
-    ThreeDimensional boolean  NOT NULL,
-    Language varchar(40)  NOT NULL,
-    CONSTRAINT MovieScreening_pk PRIMARY KEY (MovieScreeningID)
+-- Table: MovieHalls
+CREATE TABLE Movie_Halls (
+    MovieHallID serial PRIMARY KEY
 );
 
--- Table: MovieScreeningSeats
-CREATE TABLE MovieScreeningSeats (
-    SeatNumber int  NOT NULL,
-    MovieScreeningID int  NOT NULL,
-    Available boolean  NOT NULL,
-    CONSTRAINT MovieScreeningSeats_pk PRIMARY KEY (MovieScreeningID,SeatNumber)
+-- Table: MovieScreening
+CREATE TABLE Movie_Screening (
+    MovieScreeningID serial PRIMARY KEY,
+    MovieID int NOT NULL,
+    Date date NOT NULL,
+    StartTime time NOT NULL,
+    PriceStandard decimal(12,2) NOT NULL,
+    PricePremium decimal(12,2) NOT NULL,
+    ThreeDimensional boolean NOT NULL,
+    Language varchar(40) NOT NULL,
+    MovieHallID int NOT NULL,
+    FOREIGN KEY (MovieHallID) REFERENCES Movie_Halls(MovieHallID)
+);
+
+-- Table: HallSeats
+CREATE TABLE Hall_Seats (
+    SeatID serial PRIMARY KEY,
+    SeatNumber int NOT NULL,
+    MovieHallID int NOT NULL,
+    FOREIGN KEY (MovieHallID) REFERENCES Movie_Halls(MovieHallID)
 );
 
 -- Table: Movies
@@ -57,51 +62,60 @@ CREATE TABLE Movies (
     MinAge int  NOT NULL,
     Production varchar(40)  NOT NULL,
     OriginalLanguage varchar(40)  NOT NULL,
-    Rank int  NOT NULL,
+    Rank double precision NOT NULL,
     CONSTRAINT Movies_pk PRIMARY KEY (MovieID)
 );
 
 -- Table: Tickets
 CREATE TABLE Tickets (
-    TicketID int  NOT NULL,
-    CustomerID int  NOT NULL,
-    MovieScreeningID int  NOT NULL,
-    SeatNumber int  NOT NULL,
-    OrderedOnDate date  NOT NULL,
-    Status char(10)  NOT NULL,
-    CONSTRAINT Tickets_pk PRIMARY KEY (TicketID)
+    TicketID serial PRIMARY KEY,
+    CustomerID int NOT NULL,
+    OrderedOnDate date NOT NULL,
+    Status char(10) NOT NULL,
+    MovieScreeningID int NOT NULL,
+    SeatNumber int NOT NULL,
+    FOREIGN KEY (MovieScreeningID) REFERENCES Movie_Screening(MovieScreeningID)
 );
 
+
 -- foreign keys
--- Reference: MovieScreeningPlaces_MovieScreening (table: MovieScreeningSeats)
-ALTER TABLE MovieScreeningSeats ADD CONSTRAINT MovieScreeningPlaces_MovieScreening
-    FOREIGN KEY (MovieScreeningID)
-    REFERENCES MovieScreening (MovieScreeningID)  
-    NOT DEFERRABLE 
+-- Reference: MovieScreening_MovieHalls (table: MovieScreening)
+ALTER TABLE Movie_Screening ADD CONSTRAINT MovieScreening_MovieHalls
+    FOREIGN KEY (MovieHallID)
+    REFERENCES Movie_Halls (MovieHallID)
+    NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
 -- Reference: Session_Movies (table: MovieScreening)
-ALTER TABLE MovieScreening ADD CONSTRAINT Session_Movies
+ALTER TABLE Movie_Screening ADD CONSTRAINT Session_Movies
     FOREIGN KEY (MovieID)
-    REFERENCES Movies (MovieID)  
-    NOT DEFERRABLE 
+    REFERENCES Movies (MovieID)
+    NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
--- Reference: Tickets_MovieScreeningSeats (table: Tickets)
-ALTER TABLE Tickets ADD CONSTRAINT Tickets_MovieScreeningSeats
-    FOREIGN KEY (MovieScreeningID, SeatNumber)
-    REFERENCES MovieScreeningSeats (MovieScreeningID, SeatNumber)  
-    NOT DEFERRABLE 
+-- Reference: Tickets_HallSeats (table: Tickets)
+ALTER TABLE Tickets ADD CONSTRAINT Tickets_HallSeats
+    FOREIGN KEY (SeatNumber)
+    REFERENCES Hall_Seats (SeatID)
+    NOT DEFERRABLE
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: Tickets_MovieScreening (table: Tickets)
+ALTER TABLE Tickets ADD CONSTRAINT Tickets_MovieScreening
+    FOREIGN KEY (MovieScreeningID)
+    REFERENCES Movie_Screening (MovieScreeningID)
+    NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
 -- Reference: client_purchase (table: Tickets)
 ALTER TABLE Tickets ADD CONSTRAINT client_purchase
     FOREIGN KEY (CustomerID)
-    REFERENCES Appuser (user_id)  
-    NOT DEFERRABLE 
+    REFERENCES user_api_appuser (user_id)
+    NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
@@ -130,21 +144,62 @@ alter table availableseats
     owner to postgres;
 ```
 
+- Wyświetlenie danych o wszystkich zajętych miejscach na określony seans
+
+```postgresql
+CREATE OR REPLACE VIEW occupied_seats AS
+SELECT
+    row_number() OVER (ORDER BY tickets.moviescreeningid, seatnumber) AS id,
+    SeatNumber,
+    MovieHallID,
+    Tickets.MovieScreeningID
+FROM
+    tickets
+INNER JOIN
+    movie_screening
+ON
+    tickets.MovieScreeningID = movie_screening.MovieScreeningID;
+
+```
+
 ## 5. **Procedury**
 
 - Rezerwacja miejsca na określony seans
 
 ```postgresql
 CREATE OR REPLACE PROCEDURE reserve_movie_screening_seat(
+    IN p_customer_id INTEGER,
     IN p_seat_number INTEGER,
     IN p_movie_screening_id INTEGER
 )
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    UPDATE moviescreeningseats
-    SET available = FALSE
-    WHERE seatnumber = p_seat_number AND moviescreeningid = p_movie_screening_id;
+    IF exists(select * from occupied_seats as oc where oc.MovieScreeningID = p_movie_screening_id and oc.seatnumber = p_seat_number) THEN
+        RAISE EXCEPTION 'The place has been already occupied';
+    END IF;
+    INSERT INTO tickets (customerid, moviescreeningid, seatnumber, orderedondate, status)
+        VALUES (p_customer_id, p_movie_screening_id, p_seat_number, CURRENT_DATE, 'New');
+END;
+$$;
+```
+
+- Zakup miejsca na określony seans
+
+```postgresql
+CREATE OR REPLACE PROCEDURE buy_movie_screening_seat(
+    IN p_customer_id INTEGER,
+    IN p_seat_number INTEGER,
+    IN p_movie_screening_id INTEGER
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    IF exists(select * from occupied_seats as oc where oc.MovieScreeningID = p_movie_screening_id and oc.seatnumber = p_seat_number) THEN
+        RAISE EXCEPTION 'The place has been already occupied';
+    END IF;
+    INSERT INTO tickets (customerid, moviescreeningid, seatnumber, orderedondate, status)
+        VALUES (p_customer_id, p_movie_screening_id, p_seat_number, CURRENT_DATE, 'Confirmed');
 END;
 $$;
 ```
@@ -187,6 +242,50 @@ BEGIN
     );
 END;
 $$;
+```
+
+- Dodawanie nowego seansu
+
+```postgresql
+CREATE OR REPLACE PROCEDURE add_movie_screening(
+    IN movie_id integer,
+    IN date_val date,
+    IN start_time_val time,
+    IN price_standard_val numeric,
+    IN price_premium_val numeric,
+    IN is_3d boolean,
+    IN language_val varchar,
+    IN hall_id integer
+)
+AS $$
+DECLARE
+    movie_start_time time;
+    movie_end_time time;
+BEGIN
+    -- Перевірка існування movie_id і hall_id
+    IF NOT EXISTS (SELECT 1 FROM movies WHERE movieid = movie_id) THEN
+        RAISE EXCEPTION 'Movie with id % does not exist', movie_id;
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM movie_halls WHERE moviehallid = hall_id) THEN
+        RAISE EXCEPTION 'Movie hall with id % does not exist', hall_id;
+    END IF;
+
+    -- Отримання часу початку та кінця трансляції фільму
+    SELECT starttime, endtime INTO movie_start_time, movie_end_time
+    FROM movies
+    WHERE movieid = movie_id;
+
+    -- Перевірка, чи date_val знаходиться між початком трансляції фільму та кінцем
+    IF NOT (start_time_val >= movie_start_time AND start_time_val <= movie_end_time) THEN
+        RAISE EXCEPTION 'Screening start time is not within movie duration';
+    END IF;
+
+    -- Вставка запису у таблицю movie_screening
+    INSERT INTO movie_screening (movieid, date, starttime, pricestandard, pricepremium, threedimensional, language, moviehallid)
+    VALUES (movie_id, date_val, start_time_val, price_standard_val, price_premium_val, is_3d, language_val, hall_id);
+END;
+$$ LANGUAGE plpgsql;
 ```
 
 ## 6. **Funkcje**
@@ -338,6 +437,28 @@ CREATE OR REPLACE TRIGGER update_moviescreeningseats_trigger
 AFTER UPDATE OF available ON moviescreeningseats
 FOR EACH ROW
 EXECUTE FUNCTION update_moviescreeningseats_trigger();
+```
+
+- Sprawdzenie, czy sala jest dostępna w określonym terminie
+
+```postgresql
+CREATE OR REPLACE FUNCTION is_moviehall_available(IN hall_id integer, IN date_val date, IN start_time_val time without time zone, IN end_time_val time without time zone)
+RETURNS boolean AS
+$$
+DECLARE
+    is_available boolean;
+BEGIN
+    SELECT NOT EXISTS (
+        SELECT 1 FROM movie_screening
+        WHERE moviehallid = hall_id
+        AND date = date_val
+        AND (starttime <= end_time_val AND endtime >= start_time_val)
+    ) INTO is_available;
+
+    RETURN is_available;
+END;
+$$
+LANGUAGE plpgsql;
 ```
 
 ## 8. **Indeksy**
