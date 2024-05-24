@@ -1,14 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import Header from "./Header.jsx";
 import "./styles/Stage.css";
-import { getCsrfToken } from "../utils/csrf.js";
+import {getCsrfToken} from "../utils/csrf.js";
+import {useParams} from "react-router-dom";
 
 function Stage() {
+    const {showtimeID} = useParams();
     const [selectedSeat, setSelectedSeat] = useState(null);
     const [occupiedSeats, setOccupiedSeats] = useState([]);
+    const [showtime, setShowtime] = useState();
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        const fetchShowtime = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/showtime/');
+                const data = await response.json();
+                setShowtime(data);
+            } catch (error) {
+                console.error('Error fetching Showtime:', error);
+            }
+        };
         const fetchOccupiedSeats = async () => {
             try {
                 const response = await fetch('http://127.0.0.1:8000/api/occupied_seats/');
@@ -18,8 +30,9 @@ function Stage() {
                 console.error('Error fetching occupied seats:', error);
             }
         };
+        fetchShowtime();
         fetchOccupiedSeats();
-    }, []);
+    }, [showtimeID]);
 
     const handleSelectSeat = (seat) => {
         setSelectedSeat(seat);
@@ -115,9 +128,15 @@ function Stage() {
     return (
         <div className="Stage">
             <div id="header_container">
-                <Header />
+                <Header/>
             </div>
             <div id="content">
+                <div id="Stage-details">
+                    <h5>Date:</h5>
+                    {/*<span>{new Date(showtime.date).toLocaleDateString()}</span>*/}
+                    <h5>Start:</h5>
+                    {/*<span>{showtime.starttime}</span>*/}
+                </div>
                 <h2>Select Your Seat:</h2>
                 <h4>Your seat: {selectedSeat}</h4>
                 {error && <p className="error">{error}</p>}
@@ -126,7 +145,7 @@ function Stage() {
                         <div
                             key={rowIndex}
                             className="seat-row"
-                            style={{ justifyContent: rowIndex > 3 ? 'center' : 'start' }}
+                            style={{justifyContent: rowIndex > 3 ? 'center' : 'start'}}
                         >
                             {row.map((seat) => (
                                 <div
@@ -140,21 +159,26 @@ function Stage() {
                         </div>
                     ))}
                 </div>
-                <button
-                    onClick={() => reserveSeat(convertSeatToId(selectedSeat), 1)}
-                    className="proceed-button"
-                    disabled={!selectedSeat || isSeatOccupied(selectedSeat)}
-                >
-                    Reserve seat
-                </button>
-
-                <button
-                    onClick={() => buySeat(convertSeatToId(selectedSeat), 1)}
-                    className="proceed-button"
-                    disabled={!selectedSeat || isSeatOccupied(selectedSeat)}
-                >
-                    Buy seat
-                </button>
+                <div id="button-container">
+                    <div>
+                        <button
+                            onClick={() => reserveSeat(convertSeatToId(selectedSeat), 1)}
+                            className="proceed-button"
+                            disabled={!selectedSeat || isSeatOccupied(selectedSeat)}
+                        >
+                            Reserve seat
+                        </button>
+                    </div>
+                    <div>
+                        <button
+                            onClick={() => buySeat(convertSeatToId(selectedSeat), 1)}
+                            className="proceed-button"
+                            disabled={!selectedSeat || isSeatOccupied(selectedSeat)}
+                        >
+                            Buy seat
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     );

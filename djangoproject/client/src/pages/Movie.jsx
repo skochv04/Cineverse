@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Header from "./Header.jsx";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useParams } from 'react-router-dom';
-import "./styles/Movie.css"
+import "./styles/Movie.css";
 import axios from "axios";
 
 function Movie() {
@@ -10,24 +10,35 @@ function Movie() {
     const [movie, setMovie] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [availableShowTime, setAvailableShowTime] = useState([]);
+    const showtimeRef = useRef(null);
 
     useEffect(() => {
-        const fetchMovie = async () => {
+        const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/movie/${title}/`);
-                setMovie(response.data);
+                const movieResponse = await axios.get(`http://127.0.0.1:8000/api/movie/${title}`);
+                setMovie(movieResponse.data);
+
+                const showTimeResponse = await axios.get(`http://127.0.0.1:8000/api/showtime/${title}`);
+                setAvailableShowTime(showTimeResponse.data);
+                setLoading(false);
             } catch (error) {
                 setError(error);
-            } finally {
                 setLoading(false);
             }
         };
 
-        fetchMovie();
+        fetchData();
     }, [title]);
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error fetching movie details: {error.message}</p>;
+
+    const scrollToShowtime = () => {
+        if (showtimeRef.current) {
+            showtimeRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
 
     return (
         <div className="Movie">
@@ -58,13 +69,43 @@ function Movie() {
                             <p><strong>Rank:</strong> {movie.rank}</p>
                         </div>
                         <div id="buy-button">
-                            <Link to={"/showtime"}>Buy Ticket</Link>
+                            <button onClick={scrollToShowtime}>Buy Ticket</button>
                         </div>
                     </div>
                 </div>
             </div>
+            <div id='showtime_container' ref={showtimeRef}>
+                <h2>Available Showtime</h2>
+                <ul className="showtime-list">
+                    {availableShowTime.map((showtime) => (
+                        <li key={showtime.moviescreeningid} className="showtime-item">
+                            <Link to="/stage" className="showtime-link">
+                                <div className="showtime-details">
+                                    <div className="showtime-movie-title">
+                                        <h5>Movie title:</h5>
+                                        <span>{movie.title}</span>
+                                        <h5>3D:</h5>
+                                        <span>{showtime.threedimensional ? "Yes" : "No"}</span>
+                                        <h5>Language:</h5>
+                                        <span>{showtime.language}</span>
+                                        <h5>Movie Hall:</h5>
+                                        <span>{showtime.moviehall}</span>
+                                    </div>
+                                    <div className="showtime-datetime">
+                                        <h5>Date:</h5>
+                                        <span>{new Date(showtime.date).toLocaleDateString()}</span>
+                                        <h5>Start:</h5>
+                                        <span>{showtime.starttime}</span>
+                                    </div>
+                                </div>
+                            </Link>
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
-};
+}
 
 export default Movie;
+

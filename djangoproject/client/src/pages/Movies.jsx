@@ -3,11 +3,10 @@ import './styles/Movies.css';
 import Header from "./Header.jsx";
 import {Link} from "react-router-dom";
 
-const categories = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family'];
 const sortOptions = ['Alphabetical', 'Release Date', 'Rating'];
 
 function Movies() {
-    // const [categories, setSelectedCategories] = useState('');
+    const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
     const [sortOption, setSortOption] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
@@ -21,16 +20,16 @@ function Movies() {
             .catch(error => console.error('Error fetching movies: ', error));
     }, []);
 
-    // useEffect(() => {
-    //     fetch('/api/categories')
-    //         .then(response => response.json())
-    //         .then(data => setSelectedCategories(data))
-    //         .catch(error => console.error('Error fetching movie categories: ', error));
-    // }, []);
+    useEffect(() => {
+        fetch('http://127.0.0.1:8000/api/categories')
+            .then(response => response.json())
+            .then(data => setCategories(data))
+            .catch(error => console.error('Error fetching movie categories: ', error));
+    }, []);
 
 
     const filteredMovies = movies.filter(movie => movie.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        (!selectedCategory || movie.category === selectedCategory))
+        (!selectedCategory || movie.category === parseInt(selectedCategory)))
 
     return (
         <div className="Movies">
@@ -56,7 +55,9 @@ function Movies() {
                         >
                             <option value="">Select genres</option>
                             {categories.map((category) => (
-                                <option key={category} value={category}>{category}</option>
+                                <option key={category.moviecategoryid} value={category.moviecategoryid}>
+                                    {category.categoryname}
+                                </option>
                             ))}
                         </select>
                     </div>

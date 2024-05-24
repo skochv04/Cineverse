@@ -84,6 +84,7 @@ h2 {
 }
 
 .proceed-button {
+    width: 150px;
     padding: 10px 20px;
     background-color: #007bff;
     color: #fff;
@@ -96,4 +97,12 @@ h2 {
 
 .proceed-button:hover {
     background-color: #0056b3;
+}
+
+#button-container {
+    width: 20vw;
+    height: 5vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }

@@ -11,7 +11,6 @@ import Registration from "./pages/Registration.jsx";
 import Movies from "./pages/Movies.jsx";
 import Movie from "./pages/Movie.jsx";
 import Stage from "./pages/Stage.jsx";
-import Showtime from "./pages/Showtime.jsx";
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -56,7 +55,6 @@ function App() {
                     <Route path="/cart" element={<Cart />} />
                     <Route path="/about_us" element={<AboutUs />} />
                     <Route path="/movie/:title" element={<Movie />} />
-                    <Route path="/showtime" element={<Showtime />} />
                     <Route path="/stage" element={<Stage />} />
                     <Route path="/*" element={<Error />} />
                 </Routes>
