@@ -122,7 +122,7 @@ def get_movie_sessions(request, title):
     try:
         with connection.cursor() as cursor:
             cursor.execute(
-                "SELECT * FROM get_movie_sessions(%s, %s, %s)",
+                "SELECT * FROM get_movie_sessions(%s, %s, %s) order by date",
                 [title, specific_date, specific_time]
             )
             rows = cursor.fetchall()
@@ -216,8 +216,11 @@ class MovieDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class OccupiedSeatsList(generics.ListAPIView):
-    queryset = OccupiedSeat.objects.all()
     serializer_class = OccupiedSeatSerializer
+
+    def get_queryset(self):
+        movie_screening_id = self.kwargs['movie_screening_id']
+        return OccupiedSeat.objects.filter(movie_screening_id=movie_screening_id)
 
 
 class UserRegister(APIView):

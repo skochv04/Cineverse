@@ -1,20 +1,21 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import Header from "./Header.jsx";
 import "./styles/Stage.css";
-import {getCsrfToken} from "../utils/csrf.js";
-import {useParams} from "react-router-dom";
+import { getCsrfToken } from "../utils/csrf.js";
+import { useParams } from "react-router-dom";
 
 function Stage() {
-    const {showtimeID} = useParams();
+    const { showtimeID } = useParams();
     const [selectedSeat, setSelectedSeat] = useState(null);
     const [occupiedSeats, setOccupiedSeats] = useState([]);
-    const [showtime, setShowtime] = useState();
+    const [showtime, setShowtime] = useState(null);
     const [error, setError] = useState(null);
-
+    const intShowtimeID = parseInt(showtimeID, 10);
+    const specific_showtime = 1;
     useEffect(() => {
         const fetchShowtime = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/showtime/');
+                const response = await fetch(`http://127.0.0.1:8000/api/showtime/${intShowtimeID}`);
                 const data = await response.json();
                 setShowtime(data);
             } catch (error) {
@@ -23,16 +24,17 @@ function Stage() {
         };
         const fetchOccupiedSeats = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/occupied_seats/');
+                const response = await fetch(`http://127.0.0.1:8000/api/occupied_seats/${intShowtimeID}`);
                 const data = await response.json();
                 setOccupiedSeats(data);
+
             } catch (error) {
                 console.error('Error fetching occupied seats:', error);
             }
         };
         fetchShowtime();
         fetchOccupiedSeats();
-    }, [showtimeID]);
+    }, [intShowtimeID]);
 
     const handleSelectSeat = (seat) => {
         setSelectedSeat(seat);
@@ -128,11 +130,12 @@ function Stage() {
     return (
         <div className="Stage">
             <div id="header_container">
-                <Header/>
+                <Header />
             </div>
             <div id="content">
                 <div id="Stage-details">
                     <h5>Date:</h5>
+                    <h5>{showtimeID}</h5>
                     {/*<span>{new Date(showtime.date).toLocaleDateString()}</span>*/}
                     <h5>Start:</h5>
                     {/*<span>{showtime.starttime}</span>*/}
@@ -145,7 +148,7 @@ function Stage() {
                         <div
                             key={rowIndex}
                             className="seat-row"
-                            style={{justifyContent: rowIndex > 3 ? 'center' : 'start'}}
+                            style={{ justifyContent: rowIndex > 3 ? 'center' : 'start' }}
                         >
                             {row.map((seat) => (
                                 <div

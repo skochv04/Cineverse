@@ -10,7 +10,8 @@ import Error from "./pages/Error.jsx";
 import Registration from "./pages/Registration.jsx";
 import Movies from "./pages/Movies.jsx";
 import Movie from "./pages/Movie.jsx";
-import Stage from "./pages/Stage.jsx";
+import Showtime from "./pages/Showtime.jsx";
+import Admin from "./pages/Admin.jsx";
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -52,10 +53,11 @@ function App() {
                     <Route path="/movies" element={<Movies />} />
                     <Route path="/about_us" element={<AboutUs />} />
                     <Route path="/user_profile" element={<UserProfile />} />
+                    <Route path="/admin" element={<Admin />} />
                     <Route path="/cart" element={<Cart />} />
                     <Route path="/about_us" element={<AboutUs />} />
                     <Route path="/movie/:title" element={<Movie />} />
-                    <Route path="/stage" element={<Stage />} />
+                    <Route path="/showtime/:moviescreeningid" element={<Showtime />} />
                     <Route path="/*" element={<Error />} />
                 </Routes>
             </main>

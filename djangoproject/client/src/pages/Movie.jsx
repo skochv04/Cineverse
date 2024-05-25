@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Header from "./Header.jsx";
 import { Link } from "react-router-dom";
 import { useParams } from 'react-router-dom';
@@ -79,7 +79,7 @@ function Movie() {
                 <ul className="showtime-list">
                     {availableShowTime.map((showtime) => (
                         <li key={showtime.moviescreeningid} className="showtime-item">
-                            <Link to="/stage" className="showtime-link">
+                            <Link to={`/showtime/${showtime.moviescreeningid}`} className="showtime-link">
                                 <div className="showtime-details">
                                     <div className="showtime-movie-title">
                                         <h5>Movie title:</h5>
