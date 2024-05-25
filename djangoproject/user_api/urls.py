@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import OccupiedSeatsList, handle_request, set_csrf_token, get_movie_sessions, get_categories, get_showtime
+from .views import OccupiedSeatsList, handle_request, set_csrf_token, get_movie_sessions, get_categories, get_showtime, get_tickets_for_user
 
 
 urlpatterns = [
@@ -18,5 +18,6 @@ urlpatterns = [
 	path('current-movies/', views.get_current_movies, name='current_movies'),
     path('upcoming-movies/', views.get_upcoming_movies, name='upcoming_movies'),
 	path('occupied_seats/<int:movie_screening_id>/', OccupiedSeatsList.as_view(), name='occupied-seats-list'),
+	path('user/<int:user_id>/tickets/', views.get_tickets_for_user, name='get_tickets_for_user'),
 	# path('stage/<int:showtimeID>/', views.stage_view, name='stage_view'),
 ]

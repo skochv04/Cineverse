@@ -10,21 +10,18 @@ function Showtime() {
     const [occupiedSeats, setOccupiedSeats] = useState([]);
     const [showtime, setShowtime] = useState(null);
     const [error, setError] = useState(null);
-    const intShowtimeID = parseInt(moviescreeningID, 10);
-    const specific_showtime = 1;
     useEffect(() => {
         const fetchShowtime = async () => {
             try {
-                const response = await fetch(`http://127.0.0.1:8000/api/showtime/${intShowtimeID}`);
-                const data = await response.json();
-                setShowtime(data);
+                const showTimeResponse = await axios.get(`http://127.0.0.1:8000/api/showtime/${moviescreeningID}`);
+                setShowtime(showTimeResponse.data);
             } catch (error) {
                 console.error('Error fetching Showtime:', error);
             }
         };
         const fetchOccupiedSeats = async () => {
             try {
-                const response = await fetch(`http://127.0.0.1:8000/api/occupied_seats/${intShowtimeID}`);
+                const response = await fetch(`http://127.0.0.1:8000/api/occupied_seats/${moviescreeningID}`);
                 const data = await response.json();
                 setOccupiedSeats(data);
 
@@ -34,7 +31,7 @@ function Showtime() {
         };
         fetchShowtime();
         fetchOccupiedSeats();
-    }, [intShowtimeID]);
+    }, [moviescreeningID]);
 
     const handleSelectSeat = (seat) => {
         setSelectedSeat(seat);
@@ -134,12 +131,12 @@ function Showtime() {
             </div>
             <div id="content">
                 <div id="showtime-details">
+                    <h5>Hall:</h5>
+                    <span>{showtime.hallnumber}</span>
                     <h5>Date:</h5>
-                    <h5>ShowTimeID</h5>
-                    <span>{intShowtimeID}</span>
-                    {/*<span>{new Date(showtime.date).toLocaleDateString()}</span>*/}
+                    <span>{new Date(showtime.date).toLocaleDateString()}</span>
                     <h5>Start:</h5>
-                    {/*<span>{showtime.starttime}</span>*/}
+                    <span>{showtime.starttime}</span>
                 </div>
                 <h2>Select Your Seat:</h2>
                 <h4>Your seat: {selectedSeat}</h4>
@@ -166,7 +163,7 @@ function Showtime() {
                 <div id="button-container">
                     <div>
                         <button
-                            onClick={() => reserveSeat(convertSeatToId(selectedSeat), 1)}
+                            onClick={() => reserveSeat(convertSeatToId(selectedSeat), moviescreeningID)}
                             className="proceed-button"
                             disabled={!selectedSeat || isSeatOccupied(selectedSeat)}
                         >
@@ -175,7 +172,7 @@ function Showtime() {
                     </div>
                     <div>
                         <button
-                            onClick={() => buySeat(convertSeatToId(selectedSeat), 1)}
+                            onClick={() => buySeat(convertSeatToId(selectedSeat), moviescreeningID)}
                             className="proceed-button"
                             disabled={!selectedSeat || isSeatOccupied(selectedSeat)}
                         >

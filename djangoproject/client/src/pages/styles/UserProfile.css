@@ -122,3 +122,32 @@
 .change-password-btn:hover {
     background-color: #3700b3;
 }
+
+.ticket-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ticket-card {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: row;
+}
+
+.ticket-info {
+    flex: 1;
+}
+
+.ticket-info p {
+    color: #bbbbbb;
+    margin: 5px 0;
+}
+
+.ticket-info p strong {
+    color: #ffffff;
+}

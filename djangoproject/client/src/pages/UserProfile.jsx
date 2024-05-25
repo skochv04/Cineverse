@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import Header from "./Header.jsx";
 import "./styles/UserProfile.css";
 
@@ -7,6 +8,7 @@ function UserProfile() {
   const [newPassword, setNewPassword] = useState("");
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [tickets, setTickets] = useState([]);
 
   const toggleShowCurrentPassword = () => {
     setShowCurrentPassword(!showCurrentPassword);
@@ -15,6 +17,20 @@ function UserProfile() {
   const toggleShowNewPassword = () => {
     setShowNewPassword(!showNewPassword);
   };
+
+  const specific_userID = 6;
+
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const ticketsResponse = await axios.get(`http://127.0.0.1:8000/user/${specific_userID}/tickets`);
+        setTickets(ticketsResponse.data);
+      } catch (error) {
+        console.error('Error fetching Showtime:', error);
+      }
+    };
+    fetchTickets();
+  }, [specific_userID]);
 
   return (
     <div className="UserProfile">
@@ -29,7 +45,26 @@ function UserProfile() {
 
       <div className="section tickets">
         <h2>Your Tickets</h2>
-        <p>You currently have no tickets.</p>
+        {tickets && tickets.length > 0 ? (
+          <ul className="ticket-list">
+            {tickets.map(ticket => (
+              <li key={ticket.ticket_id} className="ticket-card">
+                <div className="ticket-info">
+                  <p><strong>Status:</strong> {ticket.status}</p>
+                  <p><strong>Date:</strong> {ticket.date}</p>
+                  <p><strong>Start Time:</strong> {ticket.start_time}</p>
+                  <p><strong>Duration:</strong> {ticket.duration} minutes</p>
+                  <p><strong>Hall Number:</strong> {ticket.hall_number}</p>
+                  <p><strong>Seat Number:</strong> {ticket.sit_number}</p>
+                  <p><strong>Price:</strong> {ticket.price}</p>
+                  <p><strong>Ordered On:</strong> {ticket.ordered_on_date} at {ticket.ordered_on_time}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>You currently have no tickets.</p>
+        )}
       </div>
 
       <div className="section settings">

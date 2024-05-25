@@ -21,6 +21,15 @@ specific_customer = 6
 
 import base64
 
+def get_tickets_for_user(request, user_id):
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT * FROM get_tickets_for_user(%s)
+        """, [user_id])
+        columns = [col[0] for col in cursor.description]
+        results = [dict(zip(columns, row)) for row in cursor.fetchall()]
+    return JsonResponse(results, safe=False)
+
 @require_GET
 def get_showtime(request, moviescreeningid):
     if not moviescreeningid:
