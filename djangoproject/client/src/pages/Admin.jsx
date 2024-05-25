@@ -1,42 +1,53 @@
-import React, { useState, useEffect } from "react";
-import { getCsrfToken } from '../utils/csrf';
+import React, { useState } from "react";
+import Modal from "react-modal";
 import Header from "./Header.jsx";
 import "./styles/Admin.css";
 
-function Admin() {
-    const [availableSeats, setAvailableSeats] = useState([]);
-    const [error, setError] = useState(null);
-    const [newSeatNumber, setNewSeatNumber] = useState('');
-    const [newMovieScreeningId, setNewMovieScreeningId] = useState('');
-    const [newSeatAvailable, setNewSeatAvailable] = useState(true);
-    const [newCustomerID, setNewCustomerID] = useState('');
-    const [newOrderOnDate, setNewOrderOnDate] = useState('');
-    const [newOrderOnTime, setNewOrderOnTime] = useState('');
-    const [newStatus, setNewStatus] = useState('');
+Modal.setAppElement("#root");
 
-    const addAvailableSeat = async () => {
+function Admin() {
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [modalContent, setModalContent] = useState({ title: "", action: null });
+    const [error, setError] = useState(null);
+    const [newCategory, setNewCategory] = useState('');
+    const [newMovie, setNewMovie] = useState('');
+    const [newMovieScreening, setNewMovieScreening] = useState('');
+
+    const openModal = (title, action) => {
+        setModalContent({ title, action });
+        setModalIsOpen(true);
+    };
+
+    const closeModal = () => {
+        setModalIsOpen(false);
+    };
+
+    const handleConfirm = () => {
+        if (modalContent.action) {
+            modalContent.action();
+        }
+        closeModal();
+    };
+
+    const handleAddCategory = async () => {
         try {
-            const csrfToken = getCsrfToken();
-            const response = await fetch('http://127.0.0.1:8000/api/handle_request/', {
+            const response = await fetch('http://127.0.0.1:8000/add_movie_category/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken,
                 },
-                credentials: 'include',
-                body: JSON.stringify({
-                    action: 'add_seat',
-                    seat_number: newSeatNumber,
-                    movie_screening_id: newMovieScreeningId,
-                    available: newSeatAvailable,
-                }),
+                body: JSON.stringify({ category_name: newCategory }),
             });
+
             if (!response.ok) {
                 const errorDetails = await response.json();
                 throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`);
             }
-            const newSeat = await response.json();
-            setAvailableSeats([...availableSeats, newSeat]);
+
+            const result = await response.json();
+            console.log(result.message);
+
+            setNewCategory('');
         } catch (error) {
             setError(error.message);
         }
@@ -47,49 +58,66 @@ function Admin() {
             <div id="header_container">
                 <Header />
             </div>
-            <div id="content">
-                <div id="ticket-container">
-                    <h2>Tickets</h2>
-                    <h3>Add</h3>
-                    <input
-                        type="number"
-                        placeholder="CustomerID"
-                        value={newCustomerID}
-                        onChange={(e) => setNewCustomerID(e.target.value)}
-                    />
-                    <input
-                        type="text"
-                        placeholder="OrderOnDate"
-                        value={newOrderOnDate}
-                        onChange={(e) => setNewOrderOnDate(e.target.value)}
-                    />
-                    <input
-                        type="text"
-                        placeholder="OrderOnTime"
-                        value={newOrderOnTime}
-                        onChange={(e) => setNewOrderOnTime(e.target.value)}
-                    />
-                    <input
-                        type="text"
-                        placeholder="Status"
-                        value={newStatus}
-                        onChange={(e) => setNewStatus(e.target.value)}
-                    />
-                    <input
-                        type="number"
-                        placeholder="Movie Screening ID"
-                        value={newMovieScreeningId}
-                        onChange={(e) => setNewMovieScreeningId(e.target.value)}
-                    />
-                    <input
-                        type="number"
-                        placeholder="SeatNumber"
-                        value={newSeatNumber}
-                        onChange={(e) => setNewSeatNumber(e.target.value)}
-                    />
-                    <button onClick={addAvailableSeat}>Add Available Seat</button>
-                </div>
+            <div className="container">
+                <button onClick={() => openModal("Add New Category", handleAddCategory)}>Add New Category</button>
+                <button onClick={() => openModal("Delete Category", () => {/* Delete category action */ })}>Delete Category</button>
+                <button onClick={() => openModal("Add New Movie", handleAddMovie)}>Add New Movie</button>
+                <button onClick={() => openModal("Update Movie", () => {/* Update movie action */ })}>Update Movie</button>
+                <button onClick={() => openModal("Delete Movie", () => {/* Delete movie action */ })}>Delete Movie</button>
+                <button onClick={() => openModal("Add New Movie Screening", handleAddMovieScreening)}>Add New Movie Screening</button>
+                <button onClick={() => openModal("Add Week-Templated Movie Screening", () => {/* Add week-templated movie screening action */ })}>Add Week-Templated Movie Screening</button>
+                <button onClick={() => openModal("Update Movie Screening", () => {/* Update movie screening action */ })}>Update Movie Screening</button>
+                <button onClick={() => openModal("Delete Movie Screening", () => {/* Delete movie screening action */ })}>Delete Movie Screening</button>
+                <button onClick={() => openModal("Show Moviescreenings by Hall", () => {/* Show moviescreenings by hall action */ })}>Show Moviescreenings by Hall</button>
             </div>
+
+            <Modal
+                isOpen={modalIsOpen}
+                onRequestClose={closeModal}
+                contentLabel="Action Modal"
+                className="Modal"
+                overlayClassName="Overlay"
+            >
+                <h2>{modalContent.title}</h2>
+                {modalContent.title === "Add New Category" && (
+                    <div>
+                        <label>
+                            Category Name:
+                            <input
+                                type="text"
+                                value={newCategory}
+                                onChange={(e) => setNewCategory(e.target.value)}
+                            />
+                        </label>
+                    </div>
+                )}
+                {modalContent.title === "Add New Movie" && (
+                    <div>
+                        <label>
+                            Movie Title:
+                            <input
+                                type="text"
+                                value={newMovie}
+                                onChange={(e) => setNewMovie(e.target.value)}
+                            />
+                        </label>
+                    </div>
+                )}
+                {modalContent.title === "Add New Movie Screening" && (
+                    <div>
+                        <label>
+                            Movie Screening:
+                            <input
+                                type="text"
+                                value={newMovieScreening}
+                                onChange={(e) => setNewMovieScreening(e.target.value)}
+                            />
+                        </label>
+                    </div>
+                )}
+                <button onClick={handleConfirm}>Confirm</button>
+                <button onClick={closeModal}>Cancel</button>
+            </Modal>
         </div>
     );
 }

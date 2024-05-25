@@ -1,6 +1,7 @@
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Scrollbar, A11y } from 'swiper/modules';
+import { Link } from 'react-router-dom'; // Імпорт React Router Link
 import './styles/Carousel.css';
 
 import 'swiper/css';
@@ -54,10 +55,12 @@ const Carousel = ({ slides }) => {
         >
             {slides.map((slide, index) => (
                 <SwiperSlide key={index} className="custom-swiper-slide">
-                    <div className="carousel-slide-container">
-                        <img src={slide.imageUrl} alt={slide.content} className="carousel-image" />
-                        <p className="carousel-caption">{slide.content}</p>
-                    </div>
+                    <Link to={`/movie/${slide.content}`}> {/* Додано Link */}
+                        <div className="carousel-slide-container">
+                            <img src={slide.imageUrl} alt={slide.content} className="carousel-image" />
+                            <p className="carousel-caption">{slide.content}</p>
+                        </div>
+                    </Link>
                 </SwiperSlide>
             ))}
         </Swiper>

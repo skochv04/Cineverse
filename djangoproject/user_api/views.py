@@ -15,11 +15,27 @@ from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerial
     OccupiedSeatSerializer
 from .validations import custom_validation, validate_email, validate_password
 
+from django.views.decorators.csrf import csrf_exempt
+
 specific_date = '2024-05-22'
 specific_time = '13:00'
 specific_customer = 6
 
 import base64
+
+@csrf_exempt
+def add_movie_category(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            category_name = data['category_name']
+            with connection.cursor() as cursor:
+                cursor.execute("CALL add_movie_category(%s);", [category_name])
+            return JsonResponse({'message': 'Category added successfully'}, status=201)
+        except KeyError as e:
+            return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
 
 def get_tickets_for_user(request, user_id):
     with connection.cursor() as cursor:

@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
-from .views import OccupiedSeatsList, handle_request, set_csrf_token, get_movie_sessions, get_categories, get_showtime, get_tickets_for_user
+from .views import OccupiedSeatsList, handle_request, set_csrf_token, get_movie_sessions, get_categories, get_showtime, get_tickets_for_user 
+from .views import add_movie_category
 
 
 urlpatterns = [
@@ -19,5 +20,5 @@ urlpatterns = [
     path('upcoming-movies/', views.get_upcoming_movies, name='upcoming_movies'),
 	path('occupied_seats/<int:movie_screening_id>/', OccupiedSeatsList.as_view(), name='occupied-seats-list'),
 	path('user/<int:user_id>/tickets/', views.get_tickets_for_user, name='get_tickets_for_user'),
-	# path('stage/<int:showtimeID>/', views.stage_view, name='stage_view'),
+	path('add_movie_category/', add_movie_category, name='add_movie_category'),
 ]

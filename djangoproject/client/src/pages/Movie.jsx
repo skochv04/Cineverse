@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Header from "./Header.jsx";
-import { Link } from "react-router-dom";
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from "react-router-dom";
 import "./styles/Movie.css";
 import axios from "axios";
 
@@ -76,36 +75,39 @@ function Movie() {
             </div>
             <div id='showtime_container' ref={showtimeRef}>
                 <h2>Available Showtime</h2>
-                <ul className="showtime-list">
-                    {availableShowTime.map((showtime) => (
-                        <li key={showtime.moviescreeningid} className="showtime-item">
-                            <Link to={`/showtime/${showtime.moviescreeningid}`} className="showtime-link">
-                                <div className="showtime-details">
-                                    <div className="showtime-movie-title">
-                                        <h5>Movie title:</h5>
-                                        <span>{movie.title}</span>
-                                        <h5>3D:</h5>
-                                        <span>{showtime.threedimensional ? "Yes" : "No"}</span>
-                                        <h5>Language:</h5>
-                                        <span>{showtime.language}</span>
-                                        <h5>Movie Hall:</h5>
-                                        <span>{showtime.moviehall}</span>
+                {availableShowTime.length === 0 ? (
+                    <p>No available showtimes for this movie.</p>
+                ) : (
+                    <ul className="showtime-list">
+                        {availableShowTime.map((showtime) => (
+                            <li key={showtime.moviescreeningid} className="showtime-item">
+                                <Link to={`/showtime/${showtime.moviescreeningid}`} className="showtime-link">
+                                    <div className="showtime-details">
+                                        <div className="showtime-movie-title">
+                                            <h5>Movie title:</h5>
+                                            <span>{movie.title}</span>
+                                            <h5>3D:</h5>
+                                            <span>{showtime.threedimensional ? "Yes" : "No"}</span>
+                                            <h5>Language:</h5>
+                                            <span>{showtime.language}</span>
+                                            <h5>Movie Hall:</h5>
+                                            <span>{showtime.moviehall}</span>
+                                        </div>
+                                        <div className="showtime-datetime">
+                                            <h5>Date:</h5>
+                                            <span>{new Date(showtime.date).toLocaleDateString()}</span>
+                                            <h5>Start:</h5>
+                                            <span>{showtime.starttime}</span>
+                                        </div>
                                     </div>
-                                    <div className="showtime-datetime">
-                                        <h5>Date:</h5>
-                                        <span>{new Date(showtime.date).toLocaleDateString()}</span>
-                                        <h5>Start:</h5>
-                                        <span>{showtime.starttime}</span>
-                                    </div>
-                                </div>
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
         </div>
     );
 }
 
 export default Movie;
-
