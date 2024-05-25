@@ -57,7 +57,7 @@ function App() {
                     <Route path="/cart" element={<Cart />} />
                     <Route path="/about_us" element={<AboutUs />} />
                     <Route path="/movie/:title" element={<Movie />} />
-                    <Route path="/showtime/:moviescreeningid" element={<Showtime />} />
+                    <Route path="/showtime/:moviescreeningID" element={<Showtime />} />
                     <Route path="/*" element={<Error />} />
                 </Routes>
             </main>

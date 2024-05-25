@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import Header from "./Header.jsx";
-import "./styles/Stage.css";
+import "./styles/Showtime.css";
 import { getCsrfToken } from "../utils/csrf.js";
 import { useParams } from "react-router-dom";
 
-function Stage() {
-    const { showtimeID } = useParams();
+function Showtime() {
+    const { moviescreeningID } = useParams();
     const [selectedSeat, setSelectedSeat] = useState(null);
     const [occupiedSeats, setOccupiedSeats] = useState([]);
     const [showtime, setShowtime] = useState(null);
     const [error, setError] = useState(null);
-    const intShowtimeID = parseInt(showtimeID, 10);
+    const intShowtimeID = parseInt(moviescreeningID, 10);
     const specific_showtime = 1;
     useEffect(() => {
         const fetchShowtime = async () => {
@@ -128,14 +128,15 @@ function Stage() {
     };
 
     return (
-        <div className="Stage">
+        <div className="Showtime">
             <div id="header_container">
                 <Header />
             </div>
             <div id="content">
-                <div id="Stage-details">
+                <div id="showtime-details">
                     <h5>Date:</h5>
-                    <h5>{showtimeID}</h5>
+                    <h5>ShowTimeID</h5>
+                    <span>{intShowtimeID}</span>
                     {/*<span>{new Date(showtime.date).toLocaleDateString()}</span>*/}
                     <h5>Start:</h5>
                     {/*<span>{showtime.starttime}</span>*/}
@@ -187,4 +188,4 @@ function Stage() {
     );
 }
 
-export default Stage;
+export default Showtime;
