@@ -24,7 +24,52 @@ specific_customer = 6
 import base64
 
 @csrf_exempt
-def add_movie_category(request):
+def handle_movie(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            movie_id = data.get('movie_id')  # If this is for updating, otherwise None for insertion
+
+            # Execute appropriate stored procedure
+            if movie_id is None:
+                # Insert new movie
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "CALL add_movie_by_name(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                        [data['moviecategory'], data['title'], data['startdate'], data['enddate'],
+                         data['duration'], data['description'], data['image'], data['director'],
+                         data['minage'], data['production'], data['originallanguage'], data['rank']]
+                    )
+                return JsonResponse({'message': 'Movie added successfully'}, status=201)
+            else:
+                # Update existing movie
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "CALL update_movie_by_name(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                        [data['moviecategory'], data['title'], data['startdate'], data['enddate'],
+                         data['duration'], data['description'], data['image'], data['director'],
+                         data['minage'], data['production'], data['originallanguage'], data['rank']]
+                    )
+                return JsonResponse({'message': 'Movie updated successfully'}, status=200)
+
+        except KeyError as e:
+            return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
+def delete_movie_by_name(request):
+    try:
+        data = json.loads(request.body)
+        title = data['movie_name']
+        with connection.cursor() as cursor:
+            cursor.execute("CALL delete_movie_by_name(%s);", [title])
+        return JsonResponse({'message': 'Movie deleted successfully'}, status=200)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
+def handle_movie_category(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -34,6 +79,16 @@ def add_movie_category(request):
             return JsonResponse({'message': 'Category added successfully'}, status=201)
         except KeyError as e:
             return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+            
+    if request.method == 'DELETE':
+        try:
+            data = json.loads(request.body)
+            category_name = data['category_name']
+            with connection.cursor() as cursor:
+                cursor.execute("CALL delete_movie_category(%s);", [category_name])
+            return JsonResponse({'message': 'Category deleted successfully'}, status=200)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
@@ -249,22 +304,22 @@ class OccupiedSeatsList(generics.ListAPIView):
 
 
 class UserRegister(APIView):
-    permission_classes = (permissions.AllowAny,)
+	permission_classes = (permissions.AllowAny,)
 
-    def post(self, request):
-        clean_data = custom_validation(request.data)
-        serializer = UserRegisterSerializer(data=clean_data)
-        if serializer.is_valid(raise_exception=True):
-            user = serializer.save()
-            login(request, user)
-            return JsonResponse({'success': True, 'redirect_url': '/'}, status=status.HTTP_201_CREATED)
-        return JsonResponse({'success': False, 'error': 'Failed to register'}, status=status.HTTP_400_BAD_REQUEST)
+	def post(self, request):
+		clean_data = custom_validation(request.data)
+		serializer = UserRegisterSerializer(data=clean_data)
+		if serializer.is_valid(raise_exception=True):
+			user = serializer.save()
+			login(request, user)
+			return JsonResponse({'success': True, 'redirect_url': '/'}, status=status.HTTP_201_CREATED)
+		return JsonResponse({'success': False, 'error': 'Failed to register'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserLogin(APIView):
     permission_classes = (permissions.AllowAny,)
-    authentication_classes = (SessionAuthentication,)
-
+    # authentication_classes = (SessionAuthentication,)
+    # @csrf_exempt
     def post(self, request):
         data = request.data
         if not validate_email(data):

@@ -1,40 +1,113 @@
 .Admin {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     height: 100vh;
     width: 100%;
     background-color: rgb(18, 18, 18);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    color: #fff;
 }
 
 #header_container {
-    display: flex;
     width: 100%;
     height: 10vh;
+    display: flex;
     align-items: center;
     justify-content: center;
     background-color: transparent;
     transition: background-color 0.3s ease;
 }
 
-#Admin #content {
+.mode-switcher {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    width: 70%;
-    height: 90vh;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.mode-switcher button {
+    padding: 10px 20px;
+    background-color: #181818;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.mode-switcher button.active {
+    background-color: #ffffff;
+    color: #000;
+}
+
+.mode-switcher button:hover {
+    background-color: #2f2f2f;
+    transform: scale(1.05);
+}
+
+.mode-switcher button.active:hover {
+    background-color: #ececec;
+    transform: scale(1.05);
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-around;
+    padding: 20px;
+    width: 100%;
     max-width: 1200px;
-    padding: 10px;
-    border-radius: 14px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.container button {
+    flex: 1 1 calc(45% - 20px);
+    margin: 10px 0;
+    padding: 15px;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    background-color: #1f1f1f;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.container button:hover {
+    transform: scale(1.05);
+}
+
+.red {
+    background-color: #ee4a4a;
+}
+
+.red:hover {
+    background-color: #ae2b2b;
+}
+
+.green {
+    background-color: #2aad45;
+}
+
+.green:hover {
+    background-color: #208334;
+}
+
+.white {
+    background-color: #d27d2d;
+}
+
+.white:hover {
+    background-color: #cc9215;
+}
+
+.blue:hover {
+    background-color: #1a0e98;
 }
 
 
-/* Overlay styles to darken the background */
 .Overlay {
     position: fixed;
     top: 0;
@@ -46,10 +119,8 @@
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    /* Ensure it appears above other content */
 }
 
-/* Modal styles to center it and provide styling */
 .Modal {
     background: #fff;
     padding: 20px;
@@ -59,16 +130,22 @@
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1001;
-    /* Ensure it appears above the overlay */
+    color: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .Modal h2 {
     margin-top: 0;
+    text-align: center;
+    width: 100%;
 }
 
 .Modal label {
     display: block;
     margin-bottom: 10px;
+    width: 100%;
 }
 
 .Modal input {
@@ -77,20 +154,28 @@
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    outline: none;
+}
+
+.Modal .error {
+    color: red;
+    margin-bottom: 10px;
+    text-align: center;
 }
 
 .Modal button {
     margin: 5px;
     padding: 10px 20px;
-    background-color: #007BFF;
+    background-color: #f95909;
     color: #fff;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .Modal button:hover {
-    background-color: #0056b3;
+    background-color: #ce651f;
 }
 
 .Modal button:last-of-type {
@@ -101,28 +186,6 @@
     background-color: #5a6268;
 }
 
-.container {
+.all-modals {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    /* Відступи між кнопками */
-    justify-content: space-between;
-    padding: 20px;
-}
-
-.container button {
-    flex: 1 1 calc(50% - 20px);
-    /* Кожна кнопка займає 50% ширини мінус відступ */
-    margin: 10px 0;
-    padding: 15px;
-    background-color: #5c5c5c;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    text-align: center;
-}
-
-.container button:hover {
-    background-color: #3d3d3d;
 }

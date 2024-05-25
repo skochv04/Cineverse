@@ -223,43 +223,61 @@ ALTER PROCEDURE add_movie_category(varchar(40)) OWNER TO postgres;
 - Usunięcie danej kategorii pod warunkiem, że żaden movie do niej nie należy
 
 ```postgresql
-CREATE PROCEDURE delete_movie_category(
-    IN p_moviecategoryid integer
-)
+CREATE OR REPLACE PROCEDURE delete_movie_category(IN p_categoryname varchar)
 LANGUAGE plpgsql
 AS
 $$
+DECLARE
+    v_moviecategoryid integer;
 BEGIN
-    -- Check if the category exists
-    IF NOT EXISTS (SELECT 1 FROM movie_categories WHERE moviecategoryid = p_moviecategoryid) THEN
-        RAISE EXCEPTION 'Category with id % does not exist', p_moviecategoryid;
+    SELECT moviecategoryid INTO v_moviecategoryid
+    FROM movie_categories
+    WHERE categoryname = p_categoryname;
+
+    IF v_moviecategoryid IS NULL THEN
+        RAISE EXCEPTION 'Category with name % does not exist', p_categoryname;
     END IF;
 
-    -- Check if any movie exists with this category
-    IF EXISTS (SELECT 1 FROM movies WHERE moviecategoryid = p_moviecategoryid) THEN
+    IF EXISTS (SELECT 1 FROM movies WHERE moviecategoryid = v_moviecategoryid) THEN
         RAISE EXCEPTION 'Cannot delete category because there are movies associated with it';
     END IF;
 
-    -- Delete the category
     DELETE FROM movie_categories
-    WHERE moviecategoryid = p_moviecategoryid;
+    WHERE moviecategoryid = v_moviecategoryid;
 END;
 $$;
 
-ALTER PROCEDURE delete_movie_category(integer) OWNER TO postgres;
+ALTER PROCEDURE delete_movie_category(varchar) OWNER TO postgres;
 ```
 
 - Dodawanie nowego movie
 
 ```postgresql
-create procedure add_movie(IN p_moviecategoryid integer, IN p_title character varying, IN p_startdate date, IN p_enddate date, IN p_duration integer, IN p_description character varying, IN p_image bytea, IN p_director character varying, IN p_minage integer, IN p_production character varying, IN p_originallanguage character varying, IN p_rank double precision)
-    language plpgsql
-as
-$$
+CREATE PROCEDURE add_movie_by_name(
+    IN p_moviecategoryname character varying,
+    IN p_title character varying,
+    IN p_startdate date,
+    IN p_enddate date,
+    IN p_duration integer,
+    IN p_description character varying,
+    IN p_image bytea,
+    IN p_director character varying,
+    IN p_minage integer,
+    IN p_production character varying,
+    IN p_originallanguage character varying,
+    IN p_rank double precision
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_category_id INTEGER;
 BEGIN
-    -- Check if movie category exists
-    IF NOT EXISTS (SELECT 1 FROM movie_categories WHERE categoryid = p_moviecategoryid) THEN
-        RAISE EXCEPTION 'Movie category with id % does not exist', p_moviecategoryid;
+    -- Get movie category id from category name
+    SELECT moviecategoryid INTO v_category_id FROM movie_categories WHERE categoryname = p_moviecategoryname;
+
+    -- Check if category id is NULL, which means no matching category found
+    IF v_category_id IS NULL THEN
+        RAISE EXCEPTION 'Movie category % does not exist', p_moviecategoryname;
     END IF;
 
     -- Check if enddate is greater than startdate
@@ -287,43 +305,53 @@ BEGIN
         moviecategoryid, title, startdate, enddate, duration, description,
         image, director, minage, production, originallanguage, rank
     ) VALUES (
-        p_moviecategoryid, p_title, p_startdate, p_enddate, p_duration, p_description,
+        v_category_id, p_title, p_startdate, p_enddate, p_duration, p_description,
         p_image, p_director, p_minage, p_production, p_originallanguage, p_rank
     );
 END;
 $$;
+
+ALTER PROCEDURE add_movie_by_name(character varying, varchar, date, date, integer, varchar, bytea, varchar, integer, varchar, varchar, double precision) OWNER TO postgres;
 ```
 
 - Zmiana danzch danego movie
 
 ```postgresql
-CREATE PROCEDURE update_movie(
-    IN p_movie_id integer,
-    IN p_moviecategoryid integer, 
-    IN p_title character varying, 
-    IN p_startdate date, 
-    IN p_enddate date, 
-    IN p_duration integer, 
-    IN p_description character varying, 
-    IN p_image bytea, 
-    IN p_director character varying, 
-    IN p_minage integer, 
-    IN p_production character varying, 
-    IN p_originallanguage character varying, 
+CREATE OR REPLACE PROCEDURE update_movie_by_name(
+    IN p_movie_title character varying,
+    IN p_moviecategoryname character varying,
+    IN p_title character varying,
+    IN p_startdate date,
+    IN p_enddate date,
+    IN p_duration integer,
+    IN p_description character varying,
+    IN p_image bytea,
+    IN p_director character varying,
+    IN p_minage integer,
+    IN p_production character varying,
+    IN p_originallanguage character varying,
     IN p_rank double precision
 )
 LANGUAGE plpgsql
-AS
-$$
+AS $$
+DECLARE
+    v_movie_id INTEGER;
+    v_category_id INTEGER;
 BEGIN
-    -- Check if movie with the given ID exists
-    IF NOT EXISTS (SELECT 1 FROM movies WHERE movieid = p_movie_id) THEN
-        RAISE EXCEPTION 'Movie with id % does not exist', p_movie_id;
+    -- Get movie ID from title
+    SELECT movieid INTO v_movie_id FROM movies WHERE title = p_movie_title;
+
+    -- Check if movie with the given title exists
+    IF v_movie_id IS NULL THEN
+        RAISE EXCEPTION 'Movie with title % does not exist', p_movie_title;
     END IF;
 
-    -- Check if movie category exists
-    IF NOT EXISTS (SELECT 1 FROM movie_categories WHERE categoryid = p_moviecategoryid) THEN
-        RAISE EXCEPTION 'Movie category with id % does not exist', p_moviecategoryid;
+    -- Get movie category id from category name
+    SELECT moviecategoryid INTO v_category_id FROM movie_categories WHERE categoryname = p_moviecategoryname;
+
+    -- Check if category name exists
+    IF v_category_id IS NULL THEN
+        RAISE EXCEPTION 'Movie category % does not exist', p_moviecategoryname;
     END IF;
 
     -- Check if end date is greater than start date
@@ -347,52 +375,47 @@ BEGIN
     END IF;
 
     -- Update the movie information
-    UPDATE movies 
-    SET 
-        moviecategoryid = p_moviecategoryid, 
-        title = p_title, 
-        startdate = p_startdate, 
-        enddate = p_enddate, 
-        duration = p_duration, 
-        description = p_description, 
-        image = p_image, 
-        director = p_director, 
-        minage = p_minage, 
-        production = p_production, 
-        originallanguage = p_originallanguage, 
-        rank = p_rank 
-    WHERE 
-        movieid = p_movie_id;
+    UPDATE movies
+    SET
+        moviecategoryid = v_category_id,
+        title = p_title,
+        startdate = p_startdate,
+        enddate = p_enddate,
+        duration = p_duration,
+        description = p_description,
+        image = p_image,
+        director = p_director,
+        minage = p_minage,
+        production = p_production,
+        originallanguage = p_originallanguage,
+        rank = p_rank
+    WHERE
+        movieid = v_movie_id;
 END;
 $$;
 
-ALTER PROCEDURE update_movie(
-    integer, integer, varchar, date, date, integer, varchar, bytea, varchar, integer, varchar, varchar, double precision
-) OWNER TO postgres;
+ALTER PROCEDURE update_movie_by_name(character varying, character varying, varchar, date, date, integer, varchar, bytea, varchar, integer, varchar, varchar, double precision) OWNER TO postgres;
+
 ```
 
 - Usunięcie danego movie
 
 ```postgresql
-CREATE PROCEDURE delete_movie(
-    IN p_movie_id integer
-)
+CREATE OR REPLACE PROCEDURE delete_movie_by_name(IN p_movie_title TEXT)
 LANGUAGE plpgsql
 AS
 $$
 BEGIN
-    -- Check if movie with the given ID exists
-    IF NOT EXISTS (SELECT 1 FROM movies WHERE movieid = p_movie_id) THEN
-        RAISE EXCEPTION 'Movie with id % does not exist', p_movie_id;
+    -- Check if movie with the given name exists
+    IF NOT EXISTS (SELECT 1 FROM movies WHERE title = p_movie_title) THEN
+        RAISE EXCEPTION 'Movie with name % does not exist', p_movie_title;
     END IF;
 
     -- Delete the movie
     DELETE FROM movies
-    WHERE movieid = p_movie_id;
+    WHERE title = p_movie_title;
 END;
 $$;
-
-ALTER PROCEDURE delete_movie(integer) OWNER TO postgres;
 ```
 
 - Dodawanie nowego seansu
