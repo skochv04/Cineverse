@@ -3,6 +3,7 @@ import Header from "./Header.jsx";
 import "./styles/Showtime.css";
 import { getCsrfToken } from "../utils/csrf.js";
 import { useParams } from "react-router-dom";
+import axios from 'axios';
 
 function Showtime() {
     const { moviescreeningID } = useParams();
@@ -10,15 +11,18 @@ function Showtime() {
     const [occupiedSeats, setOccupiedSeats] = useState([]);
     const [showtime, setShowtime] = useState(null);
     const [error, setError] = useState(null);
+
     useEffect(() => {
         const fetchShowtime = async () => {
             try {
-                const showTimeResponse = await axios.get(`http://127.0.0.1:8000/api/showtime/${moviescreeningID}`);
-                setShowtime(showTimeResponse.data);
+                const response = await fetch(`http://127.0.0.1:8000/showtime/${moviescreeningID}`);
+                const data = await response.json();
+                setShowtime(data);
             } catch (error) {
                 console.error('Error fetching Showtime:', error);
             }
         };
+
         const fetchOccupiedSeats = async () => {
             try {
                 const response = await fetch(`http://127.0.0.1:8000/api/occupied_seats/${moviescreeningID}`);
@@ -29,6 +33,7 @@ function Showtime() {
                 console.error('Error fetching occupied seats:', error);
             }
         };
+
         fetchShowtime();
         fetchOccupiedSeats();
     }, [moviescreeningID]);
@@ -123,6 +128,10 @@ function Showtime() {
             setError(error.message);
         }
     };
+
+    if (!showtime) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="Showtime">

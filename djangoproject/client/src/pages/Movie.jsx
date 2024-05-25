@@ -18,7 +18,7 @@ function Movie() {
                 const movieResponse = await axios.get(`http://127.0.0.1:8000/api/movie/${title}`);
                 setMovie(movieResponse.data);
 
-                const showTimeResponse = await axios.get(`http://127.0.0.1:8000/api/showtime/${title}`);
+                const showTimeResponse = await axios.get(`http://127.0.0.1:8000/api/movie_sessions/${title}`);
                 setAvailableShowTime(showTimeResponse.data);
                 setLoading(false);
             } catch (error) {

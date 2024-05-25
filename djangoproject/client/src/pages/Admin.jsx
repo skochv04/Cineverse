@@ -22,9 +22,9 @@ function Admin() {
         setModalIsOpen(false);
     };
 
-    const handleConfirm = () => {
+    const handleConfirm = async () => {
         if (modalContent.action) {
-            modalContent.action();
+            await modalContent.action(); // Зміна тут, додайте await
         }
         closeModal();
     };

@@ -5,3 +5,4 @@ Server:
 
 Client:
     npm install axios
+	npm install react-modal
