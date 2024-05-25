@@ -1,23 +1,56 @@
+import json
+
 from django.contrib.auth import login, logout
 from django.db import connection
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.decorators.http import require_GET
+from rest_framework import permissions, status, generics
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .models import Movie, OccupiedSeat
 from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer, MovieSerializer, \
     OccupiedSeatSerializer
-from rest_framework import permissions, status, generics
 from .validations import custom_validation, validate_email, validate_password
-import json
+
 specific_date = '2024-05-22'
 specific_time = '13:00'
 specific_customer = 6
 
 import base64
 
+@require_GET
+def get_showtime(request, moviescreeningid):
+    if not moviescreeningid:
+        return JsonResponse({'error': 'moviescreeningid parameter is required'}, status=400)
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM movie_screening WHERE moviescreeningid = %s", [moviescreeningid])
+            row = cursor.fetchone()
+            if row:
+                columns = [col[0] for col in cursor.description]
+                movie_screening = dict(zip(columns, row))
+                return JsonResponse(movie_screening, safe=False)
+            else:
+                return JsonResponse({'error': 'Movie screening not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+def get_categories(request):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM movie_categories")
+            columns = [col[0] for col in cursor.description]
+            categories = []
+            for row in cursor.fetchall():
+                category = dict(zip(columns, row))
+                categories.append(category)
+        return JsonResponse(categories, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 @require_GET
 def get_movie_details(request, title):
@@ -40,6 +73,7 @@ def get_movie_details(request, title):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+
 def get_movies(request):
     try:
         with connection.cursor() as cursor:
@@ -57,6 +91,7 @@ def get_movies(request):
         # Consider logging the exception here
         return JsonResponse({'error': str(e)}, status=500)
 
+
 def get_current_movies(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM get_current_movies(%s)", [specific_date])
@@ -67,6 +102,7 @@ def get_current_movies(request):
             movie['image'] = base64.b64encode(movie['image']).decode('utf-8')  # Convert image to base64 string
             movies.append(movie)
     return JsonResponse(movies, safe=False)
+
 
 def get_upcoming_movies(request):
     with connection.cursor() as cursor:
@@ -79,20 +115,23 @@ def get_upcoming_movies(request):
             movies.append(movie)
     return JsonResponse(movies, safe=False)
 
-def get_movie_sessions(request):
-    movie_id = request.GET.get('movie_id')
 
-    with connection.cursor() as cursor:
-        cursor.execute(
-            "SELECT * FROM get_movie_sessions(%s, %s, %s)",
-            [movie_id, specific_date, specific_time]
-        )
-        rows = cursor.fetchall()
+def get_movie_sessions(request, title):
+    if not title:
+        return JsonResponse({'error': 'Title parameter is required'}, status=400)
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT * FROM get_movie_sessions(%s, %s, %s)",
+                [title, specific_date, specific_time]
+            )
+            rows = cursor.fetchall()
 
-    columns = [col[0] for col in cursor.description]
-    data = [dict(zip(columns, row)) for row in rows]
-
-    return JsonResponse(data, safe=False)
+        columns = [col[0] for col in cursor.description]
+        data = [dict(zip(columns, row)) for row in rows]
+        return JsonResponse(data, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 
 @ensure_csrf_cookie
@@ -142,12 +181,14 @@ def reserve_movie_screening_seat(data):
         movie_screening_id = data['movie_screening_id']
         available = data['available']
         with connection.cursor() as cursor:
-            cursor.execute("CALL reserve_movie_screening_seat(%s, %s, %s, %s, %s);", [specific_customer, seat_number, movie_screening_id, specific_date, specific_time])
+            cursor.execute("CALL reserve_movie_screening_seat(%s, %s, %s, %s, %s);",
+                           [specific_customer, seat_number, movie_screening_id, specific_date, specific_time])
         return JsonResponse({'message': 'Seat reserved successfully'}, status=201)
     except KeyError as e:
         return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
 
 def buy_movie_screening_seat(data):
     try:
@@ -155,17 +196,19 @@ def buy_movie_screening_seat(data):
         movie_screening_id = data['movie_screening_id']
         available = data['available']
         with connection.cursor() as cursor:
-            cursor.execute("CALL buy_movie_screening_seat(%s, %s, %s, %s, %s);", [specific_customer, seat_number, movie_screening_id, specific_date, specific_time])
+            cursor.execute("CALL buy_movie_screening_seat(%s, %s, %s, %s, %s);",
+                           [specific_customer, seat_number, movie_screening_id, specific_date, specific_time])
         return JsonResponse({'message': 'Seat bought successfully'}, status=201)
     except KeyError as e:
         return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+
 class MovieList(generics.ListCreateAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
-    
+
 
 class MovieDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Movie.objects.all()
