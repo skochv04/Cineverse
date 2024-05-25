@@ -46,7 +46,7 @@ CREATE TABLE movie_screening (
 CREATE TABLE hall_seats (
     SeatID serial  NOT NULL,
     SeatNumber int  NOT NULL,
-    MovieHallID int  NOT NULL,
+    MovieHallNumber int  NOT NULL,
     CONSTRAINT hall_seats_pk PRIMARY KEY (SeatID)
 );
 
@@ -83,8 +83,8 @@ CREATE TABLE tickets (
 -- foreign keys
 -- Reference: HallSeats_MovieHalls (table: hall_seats)
 ALTER TABLE hall_seats ADD CONSTRAINT HallSeats_MovieHalls
-    FOREIGN KEY (MovieHallID)
-    REFERENCES movie_halls (MovieHallID)
+    FOREIGN KEY (MovieHallNumber)
+    REFERENCES movie_halls (MovieHallNumber)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
@@ -201,6 +201,54 @@ END;
 $$;
 ```
 
+- Dodawanie nowej kategorii
+
+```postgresql
+CREATE PROCEDURE add_movie_category(
+    IN p_categoryname varchar(40)
+)
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    -- Insert new category into movie_categories table
+    INSERT INTO movie_categories (categoryname)
+    VALUES (p_categoryname);
+END;
+$$;
+
+ALTER PROCEDURE add_movie_category(varchar(40)) OWNER TO postgres;
+```
+
+- Usunięcie danej kategorii pod warunkiem, że żaden movie do niej nie należy
+
+```postgresql
+CREATE PROCEDURE delete_movie_category(
+    IN p_moviecategoryid integer
+)
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    -- Check if the category exists
+    IF NOT EXISTS (SELECT 1 FROM movie_categories WHERE moviecategoryid = p_moviecategoryid) THEN
+        RAISE EXCEPTION 'Category with id % does not exist', p_moviecategoryid;
+    END IF;
+
+    -- Check if any movie exists with this category
+    IF EXISTS (SELECT 1 FROM movies WHERE moviecategoryid = p_moviecategoryid) THEN
+        RAISE EXCEPTION 'Cannot delete category because there are movies associated with it';
+    END IF;
+
+    -- Delete the category
+    DELETE FROM movie_categories
+    WHERE moviecategoryid = p_moviecategoryid;
+END;
+$$;
+
+ALTER PROCEDURE delete_movie_category(integer) OWNER TO postgres;
+```
+
 - Dodawanie nowego movie
 
 ```postgresql
@@ -209,6 +257,11 @@ create procedure add_movie(IN p_moviecategoryid integer, IN p_title character va
 as
 $$
 BEGIN
+    -- Check if movie category exists
+    IF NOT EXISTS (SELECT 1 FROM movie_categories WHERE categoryid = p_moviecategoryid) THEN
+        RAISE EXCEPTION 'Movie category with id % does not exist', p_moviecategoryid;
+    END IF;
+
     -- Check if enddate is greater than startdate
     IF p_enddate <= p_startdate THEN
         RAISE EXCEPTION 'End date must be greater than start date';
@@ -239,6 +292,107 @@ BEGIN
     );
 END;
 $$;
+```
+
+- Zmiana danzch danego movie
+
+```postgresql
+CREATE PROCEDURE update_movie(
+    IN p_movie_id integer,
+    IN p_moviecategoryid integer, 
+    IN p_title character varying, 
+    IN p_startdate date, 
+    IN p_enddate date, 
+    IN p_duration integer, 
+    IN p_description character varying, 
+    IN p_image bytea, 
+    IN p_director character varying, 
+    IN p_minage integer, 
+    IN p_production character varying, 
+    IN p_originallanguage character varying, 
+    IN p_rank double precision
+)
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    -- Check if movie with the given ID exists
+    IF NOT EXISTS (SELECT 1 FROM movies WHERE movieid = p_movie_id) THEN
+        RAISE EXCEPTION 'Movie with id % does not exist', p_movie_id;
+    END IF;
+
+    -- Check if movie category exists
+    IF NOT EXISTS (SELECT 1 FROM movie_categories WHERE categoryid = p_moviecategoryid) THEN
+        RAISE EXCEPTION 'Movie category with id % does not exist', p_moviecategoryid;
+    END IF;
+
+    -- Check if end date is greater than start date
+    IF p_enddate <= p_startdate THEN
+        RAISE EXCEPTION 'End date must be greater than start date';
+    END IF;
+
+    -- Check if duration is at least 30 minutes
+    IF p_duration < 30 THEN
+        RAISE EXCEPTION 'Duration must be at least 30 minutes';
+    END IF;
+
+    -- Check if rank is between 0 and 10
+    IF p_rank < 0 OR p_rank > 10 THEN
+        RAISE EXCEPTION 'Rank must be between 0 and 10';
+    END IF;
+
+    -- Check if minage is between 0 and 21
+    IF p_minage < 0 OR p_minage > 21 THEN
+        RAISE EXCEPTION 'Minimum age must be between 0 and 21';
+    END IF;
+
+    -- Update the movie information
+    UPDATE movies 
+    SET 
+        moviecategoryid = p_moviecategoryid, 
+        title = p_title, 
+        startdate = p_startdate, 
+        enddate = p_enddate, 
+        duration = p_duration, 
+        description = p_description, 
+        image = p_image, 
+        director = p_director, 
+        minage = p_minage, 
+        production = p_production, 
+        originallanguage = p_originallanguage, 
+        rank = p_rank 
+    WHERE 
+        movieid = p_movie_id;
+END;
+$$;
+
+ALTER PROCEDURE update_movie(
+    integer, integer, varchar, date, date, integer, varchar, bytea, varchar, integer, varchar, varchar, double precision
+) OWNER TO postgres;
+```
+
+- Usunięcie danego movie
+
+```postgresql
+CREATE PROCEDURE delete_movie(
+    IN p_movie_id integer
+)
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    -- Check if movie with the given ID exists
+    IF NOT EXISTS (SELECT 1 FROM movies WHERE movieid = p_movie_id) THEN
+        RAISE EXCEPTION 'Movie with id % does not exist', p_movie_id;
+    END IF;
+
+    -- Delete the movie
+    DELETE FROM movies
+    WHERE movieid = p_movie_id;
+END;
+$$;
+
+ALTER PROCEDURE delete_movie(integer) OWNER TO postgres;
 ```
 
 - Dodawanie nowego seansu
@@ -290,6 +444,101 @@ END
 $$ LANGUAGE plpgsql;
 ```
 
+- Zmiana danych danego seansu
+
+```postgresql
+CREATE PROCEDURE update_movie_screening(
+    IN screening_id integer, 
+    IN movie_id integer, 
+    IN date_val date, 
+    IN start_time_val time without time zone, 
+    IN price_standard_val numeric, 
+    IN price_premium_val numeric, 
+    IN is_3d boolean, 
+    IN language_val character varying, 
+    IN hall_val integer)
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    movie_start_time time;
+    movie_end_time time;
+    hall_available boolean;
+    end_time_val time;
+    duration int;
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM movie_screening WHERE moviescreeningid = screening_id) THEN
+        RAISE EXCEPTION 'Movie screening with id % does not exist', screening_id;
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM movies WHERE movieid = movie_id) THEN
+        RAISE EXCEPTION 'Movie with id % does not exist', movie_id;
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM movie_halls WHERE hall_number = hall_val) THEN
+        RAISE EXCEPTION 'Movie hall with id % does not exist', hall_val;
+    END IF;
+
+    SELECT starttime, calculate_end_time(starttime, duration) INTO movie_start_time, movie_end_time
+    FROM movie_screening
+    WHERE moviescreeningid = screening_id;
+
+    IF NOT (start_time_val >= movie_start_time AND start_time_val <= movie_end_time) THEN
+        RAISE EXCEPTION 'Screening start time is not within movie duration';
+    END IF;
+
+    SELECT duration INTO duration
+    FROM movies
+    WHERE movieid = movie_id;
+
+    SELECT calculate_end_time(start_time_val, duration) INTO end_time_val;
+
+    hall_available := is_moviehall_available(hall_val, date_val, start_time_val, end_time_val);
+    IF NOT hall_available THEN
+        RAISE EXCEPTION 'Movie hall with id % is not available for the specified time and date', hall_val;
+    END IF;
+
+    UPDATE movie_screening 
+    SET 
+        movieid = movie_id, 
+        date = date_val, 
+        starttime = start_time_val, 
+        endtime = end_time_val, 
+        pricestandard = price_standard_val, 
+        pricepremium = price_premium_val, 
+        threedimensional = is_3d, 
+        language = language_val, 
+        hallnumber = hall_val
+    WHERE
+        moviescreeningid = screening_id;
+END
+$$;
+
+ALTER PROCEDURE update_movie_screening(integer, integer, date, time, numeric, numeric, boolean, varchar, integer) OWNER TO postgres;
+```
+
+- Usunięcie danego seansu
+
+```postgresql
+CREATE PROCEDURE delete_movie_screening(
+    IN screening_id integer
+)
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    DELETE FROM movie_screening
+    WHERE moviescreeningid = screening_id;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Movie screening with id % does not exist', screening_id;
+    END IF;
+END
+$$;
+
+ALTER PROCEDURE delete_movie_screening(integer) OWNER TO postgres;
+```
+
 - Cykliczne dodawanie seansów dla filmu na tą samą godzinę i tą samą salę na 7 kolejnych dni od zadangeo
 
 ```postgresql
@@ -329,15 +578,56 @@ END;
 $$ LANGUAGE plpgsql;
 ```
 
+- Zmiana statusu ticketa
+
+```postgersql
+CREATE OR REPLACE PROCEDURE update_ticket_status(
+    IN p_ticket_id INTEGER,
+    IN p_new_status CHAR(10)
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Checking the current status of the ticket
+    DECLARE
+        v_current_status CHAR(10);
+    BEGIN
+        SELECT status INTO v_current_status
+        FROM tickets
+        WHERE ticketid = p_ticket_id;
+
+        -- If the current status of the ticket is "Confirmed", do not change it
+        IF v_current_status = 'Confirmed' THEN
+            RAISE NOTICE 'The ticket status is confirmed and cannot be changed.';
+            RETURN;
+        END IF;
+
+        -- If the current status of the ticket is "New", allow changing it to "Canceled" or "Confirmed"
+        IF v_current_status = 'New' THEN
+            IF p_new_status = 'Canceled' OR p_new_status = 'Confirmed' THEN
+                UPDATE tickets
+                SET status = p_new_status
+                WHERE ticketid = p_ticket_id;
+                RAISE NOTICE 'Ticket status successfully updated to %.', p_new_status;
+            ELSE
+                RAISE NOTICE 'The ticket status can only be changed to "Canceled" or "Confirmed".';
+            END IF;
+        END IF;
+    END;
+END;
+$$;
+```
+
 ## 6. **Funkcje**
 
 - Wyświetlenie wszystkich seansów dla danego movie, które są grane po wskazywanym terminie
 
 ```postgresql
-CREATE FUNCTION get_movie_sessions(movie_id INTEGER, target_date DATE, target_time TIME WITHOUT TIME ZONE)
-    RETURNS TABLE(moviescreeningid INTEGER, movieid INTEGER, date DATE, starttime TIME WITHOUT TIME ZONE, pricestandard NUMERIC, pricepremium NUMERIC, moviehall INTEGER, threedimensional BOOLEAN, language CHARACTER VARYING)
-    LANGUAGE plpgsql
-AS $$
+create function get_movie_sessions(p_title character varying, target_date date, target_time time without time zone)
+    returns TABLE(moviescreeningid integer, movieid integer, date date, starttime time without time zone, pricestandard numeric, pricepremium numeric, moviehall integer, threedimensional boolean, language character varying)
+    language plpgsql
+as
+$$
 BEGIN
     RETURN QUERY
     SELECT
@@ -352,33 +642,36 @@ BEGIN
         movie_screening.language
     FROM
         movie_screening
+    INNER JOIN
+        movies as m on movie_screening.MovieID = m.movieid
     WHERE
-        movie_screening.movieid = get_movie_sessions.movie_id
+        m.title = get_movie_sessions.p_title
         AND (movie_screening.date > get_movie_sessions.target_date
             OR (movie_screening.date >= get_movie_sessions.target_date AND movie_screening.starttime > get_movie_sessions.target_time));
 END;
 $$;
-
-ALTER FUNCTION get_movie_sessions(INTEGER, DATE, TIME) OWNER TO postgres;
 ```
 
-- Wyświetlenie wszystkich wolnych miejsc dla danego seansu
+- Wyświetlenie wszystkich zajętych miejsc dla danego seansu
 
 ```postgresql
-CREATE OR REPLACE FUNCTION get_available_seats(screening_id integer)
-RETURNS TABLE (
-    seat_number integer
-) AS $$
+CREATE OR REPLACE FUNCTION get_occupied_seats(screening_id integer)
+    RETURNS TABLE(seat_number integer)
+    LANGUAGE plpgsql
+AS
+$$
 BEGIN
     RETURN QUERY
     SELECT
         seatnumber AS seat_number
     FROM
-        availableseats
+        occupied_seats
     WHERE
-        moviescreeningid = get_available_seats.screening_id;
+        moviescreeningid = get_occupied_seats.screening_id;
 END;
-$$ LANGUAGE plpgsql;
+$$;
+
+ALTER FUNCTION get_occupied_seats(integer) OWNER TO postgres;
 ```
 
 - Wyświetlenie wszystkich filmów aktualnie granych w kinie
@@ -509,6 +802,70 @@ BEGIN
         ms.starttime;
 END;
 $$ LANGUAGE plpgsql;
+```
+
+- Wyświetlenie wszystkich biletów dla danego użytkownika
+
+```postgresql
+create or replace function get_tickets_for_user(user_id integer)
+returns table (
+    ticket_id integer,
+    status char(10),
+    date date,
+    start_time time,
+    duration integer,
+    hall_number integer,
+    sit_number integer,
+    price numeric,
+    ordered_on_date date,
+    ordered_on_time time
+)
+language plpgsql
+as
+$$
+begin
+    return query
+    select
+        t.ticketid,
+        t.status,
+        ms.Date,
+        ms.StartTime,
+        m.duration,
+        ms.hallnumber,
+        t.seatnumber,
+        CASE
+            WHEN is_premium_place(t.seatnumber) THEN ms.PricePremium
+            ELSE ms.PriceStandard
+        END AS price,
+        t.orderedondate,
+        t.orderedontime
+    from
+        tickets t
+    inner join
+        movie_screening as ms on t.MovieScreeningID = ms.MovieScreeningID
+    inner join
+        movies as m on m.movieid = ms.movieid
+    where
+        t.customerid = user_id;
+end;
+$$;
+```
+
+- Sprawdzenie, czy dane miejsce jest mejscem z kategorii Premium (wszystkie sale mają tyle samo miejsc, ostatni rząd symbolizuje premium mejsca)
+
+```postgresql
+CREATE OR REPLACE FUNCTION is_premium_place(place_value integer)
+RETURNS boolean AS
+$$
+BEGIN
+    IF place_value >= 79 AND place_value <= 84 THEN
+        RETURN TRUE;
+    ELSE
+        RETURN FALSE;
+    END IF;
+END;
+$$
+LANGUAGE plpgsql;
 ```
 
 ## 7. **Triggery**
