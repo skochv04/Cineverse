@@ -25,13 +25,9 @@ import base64
 
 @csrf_exempt
 def handle_movie(request):
-    if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            movie_id = data.get('movie_id')  # If this is for updating, otherwise None for insertion
-
-            # Execute appropriate stored procedure
-            if movie_id is None:
+            if request.method == 'POST':
                 # Insert new movie
                 with connection.cursor() as cursor:
                     cursor.execute(
@@ -41,7 +37,7 @@ def handle_movie(request):
                          data['minage'], data['production'], data['originallanguage'], data['rank']]
                     )
                 return JsonResponse({'message': 'Movie added successfully'}, status=201)
-            else:
+            elif request.method == 'PUT':
                 # Update existing movie
                 with connection.cursor() as cursor:
                     cursor.execute(

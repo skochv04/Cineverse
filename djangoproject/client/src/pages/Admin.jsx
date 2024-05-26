@@ -220,7 +220,7 @@ function Admin() {
 
                     <h2>MovieScreening</h2>
                     <div className="container">
-                        <button className="green" onClick={() => openModal("Add New MovieScreening")}>Add New Movie</button>
+                        <button className="green" onClick={() => openModal("Add New Movie Screening")}>Add New Movie Screening</button>
                         <button className="green" onClick={() => openModal("Add Week-Templated Movie Screening")}>Add Week-Templated Movie Screening</button>
                         <button className="white" onClick={() => openModal("Update Movie Screening")}>Update Movie Screening</button>
                         <button className="red" onClick={() => openModal("Delete Movie Screening")}>Delete Movie Screening</button>
@@ -355,7 +355,7 @@ function Admin() {
                                     />
                                 </label>
                                 <label>
-                                    Director:
+                                    Production:
                                     <input
                                         type="text"
                                         value={newProduction}
@@ -363,7 +363,7 @@ function Admin() {
                                     />
                                 </label>
                                 <label>
-                                    Director:
+                                    Language:
                                     <input
                                         type="text"
                                         value={newLanguage}
