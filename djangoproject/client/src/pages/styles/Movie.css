@@ -1,4 +1,5 @@
-/* General styles for the body and container */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
 .Movie {
     display: flex;
     flex-direction: column;
@@ -9,6 +10,7 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    font-family: 'Montserrat', sans-serif;
 }
 
 #header_container {
@@ -72,6 +74,7 @@
     color: #fff;
     padding-top: 20px;
     text-align: left;
+    font-size: 14px;
 }
 
 #title_container h1 {
@@ -94,7 +97,6 @@
     color: #e0e0e0;
     padding: 20px 20px 20px 0;
     border-radius: 10px;
-    font-family: Arial, sans-serif;
 }
 
 #more-details p {
@@ -160,9 +162,22 @@
 }
 
 #category_container {
-    margin: 0;
-    font-size: 1.6em;
+    margin: 10px 0;
+    /* Додає вертикальні відступи */
+    padding: 5px 20px;
+    /* Додає внутрішні відступи */
+    font-size: 1em;
     color: #fff;
+    text-transform: uppercase;
+    background-color: #e64a19;
+    /* border-radius: 12px; */
+    /* Додає заокруглення */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Додає тінь */
+    display: inline-block;
+    /* Щоб елемент прийняв лише необхідну ширину */
+    text-align: center;
+    /* Центрування тексту */
 }
 
 #showtime_container h1 {
@@ -274,12 +289,13 @@
 }
 
 .showtime-details div h5 {
-    margin: 0 5px 0 5px;
+    margin: 0 8px 0 8px;
     color: #666;
+    font-size: 12px;
 }
 
 .showtime-details div span {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
 }
 
@@ -290,8 +306,8 @@
 }
 
 .showtime-details button {
-    padding: 10px 20px;
-    font-size: 14px;
+    padding: 10px 15px;
+    font-size: 12px;
     border: none;
     border-radius: 4px;
     background-color: #ff5722;

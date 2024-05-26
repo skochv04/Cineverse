@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import './styles/Movies.css';
 import Header from "./Header.jsx";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const sortOptions = ['Alphabetical', 'Release Date', 'Rating'];
 
@@ -32,7 +32,7 @@ function Movies() {
             case 'Alphabetical':
                 return [...movies].sort((a, b) => a.title.localeCompare(b.title));
             case 'Release Date':
-                return [...movies].sort((a, b) => new Date(b.startdate) - new Date(a.startdate));
+                return [...movies].sort((a, b) => new Date(a.startdate) - new Date(b.startdate));
             case 'Rating':
                 return [...movies].sort((a, b) => b.rank - a.rank);
             default:
@@ -42,7 +42,7 @@ function Movies() {
 
     const filteredMovies = movies.filter(movie =>
         movie.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        (!selectedCategory || movie.category_name === parseInt(selectedCategory))
+        (!selectedCategory || movie.moviecategoryid === parseInt(selectedCategory))
     );
 
     const sortedAndFilteredMovies = sortMovies(filteredMovies);
@@ -50,7 +50,7 @@ function Movies() {
     return (
         <div className="Movies">
             <div id="header_container">
-                <Header/>
+                <Header />
             </div>
             <div id="content">
                 <div className="filter-sort-container">

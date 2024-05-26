@@ -217,7 +217,7 @@ def get_movie_details(request, title):
 def get_movies(request):
     try:
         with connection.cursor() as cursor:
-            cursor.execute("SELECT m.*, mc.categoryname FROM movies m LEFT JOIN movie_categories mc ON m.moviecategoryid = mc.moviecategoryid")
+            cursor.execute("SELECT m.*, mc.categoryname FROM movies m LEFT JOIN movie_categories mc ON m.moviecategoryid = mc.moviecategoryid where m.enddate >= %s order by startdate", [specific_date])
             columns = [col[0] for col in cursor.description]
             movies = []
             for row in cursor.fetchall():
