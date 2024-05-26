@@ -3,7 +3,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 250vh;
+    height: auto;
     width: 100%;
     background-color: rgb(18, 18, 18);
     background-size: cover;
@@ -21,172 +21,189 @@
     transition: background-color 0.3s ease;
 }
 
-#Movie #content {
+#content {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    width: 70%;
-    height: 90vh;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
     max-width: 1200px;
-    padding: 10px;
-    border-radius: 14px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    padding: 20px;
 }
 
 #movie-details {
     display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
     flex-direction: row;
-    width: 80%;
-    height: 80%;
-    border-radius: 12px;
+    width: 100%;
     padding: 20px;
+    border-radius: 12px;
 }
 
 #img_container {
     flex: 1;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
     margin-right: 20px;
 }
 
 #img_container img {
     width: 100%;
-    max-width: 500px;
-    height: auto;
-    border-radius: 15px;
-    box-shadow: 0 0 0 rgba(0, 0, 0, 0.8);
+    max-width: 400px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
 }
 
 #details_container {
     flex: 2;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    color: white;
+    color: #fff;
 }
 
-#title_container {
-    width: 100%;
-    text-align: left;
-}
-
-#category {
-    margin-top: 10px;
-    font-style: italic;
-    color: #ccc;
+#title_container h1 {
+    margin: 0;
+    font-size: 2.5em;
+    color: #fff;
 }
 
 #description {
     margin: 20px 0;
+    font-size: 1.1em;
+    line-height: 1.6;
 }
 
 #more-details {
     display: flex;
     flex-direction: column;
+    margin-bottom: 20px;
 }
 
 #more-details p {
     margin: 5px 0;
+    font-size: 1em;
+    color: #ccc;
 }
 
+#buy-button {
+    margin-top: 20px;
+}
 
-#details_container a {
-    align-self: flex-start;
-    text-decoration: none;
-    color: white;
-    background-color: #007BFF;
-    padding: 10px;
+#buy-button button {
+    background-color: #ff9800;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
     border-radius: 5px;
-    text-align: center;
+    cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-#details_container a:hover {
+#buy-button button:hover {
     background-color: #0056b3;
 }
-
-#showtime_container {
-    background-color: rgb(18, 18, 18);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    height: 150vh;
-    max-width: 1200px;
-    padding: 10px;
-    border-radius: 14px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+.showtime-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 80%;
+    max-width: 800px;
+    margin: 20px;
 }
 
-#showtime_container h2 {
-    font-size: 24px;
-    font-weight: 600;
+.showtime-container h1 {
+    font-size: 18px;
+    font-weight: bold;
     margin-bottom: 20px;
-    color: #333;
+    text-align: center;
+}
+
+.date-navigation {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.date-navigation span {
+    font-size: 16px;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.date-navigation span:hover {
+    background-color: #e0e0e0;
+}
+
+.selected-date h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.filter-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.filter-controls button {
+    padding: 10px 20px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.filter-controls button:hover {
+    background-color: #e0e0e0;
 }
 
 .showtime-list {
-    list-style: none;
-    width: 80%;
-    height: 10%;
-    padding: 0;
-    margin: 0;
+    border-top: 1px solid #ccc;
+    margin-top: 20px;
 }
 
 .showtime-item {
-    margin-bottom: 15px;
-    transition: transform 0.2s;
+    padding: 20px 0;
+    border-bottom: 1px solid #ccc;
 }
 
-.showtime-item:hover {
-    transform: scale(1.02);
+.showtime-item h3 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
 }
 
-.showtime-link {
-    text-decoration: none;
-    color: inherit;
+.showtime-item p {
+    font-size: 14px;
+    margin: 0 0 10px 0;
 }
 
 .showtime-details {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 15px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.2s;
 }
 
-.showtime-details:hover {
-    background-color: #f1f1f1;
-}
-
-.showtime-movie-title,
-.showtime-info,
-.showtime-datetime {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    margin: 0 10px;
-}
-
-.showtime-movie-title h5,
-.showtime-info h5,
-.showtime-datetime h5 {
-    font-size: 16px;
-    font-weight: 500;
-    margin: 5px 0;
-    color: #555;
-}
-
-.showtime-movie-title span,
-.showtime-info span,
-.showtime-datetime span {
+.showtime-details span {
     font-size: 14px;
-    color: #777;
+    margin-right: 20px;
+}
+
+.showtime-details button {
+    padding: 10px 20px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    background-color: #ff5722;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.showtime-details button:hover {
+    background-color: #e64a19;
 }

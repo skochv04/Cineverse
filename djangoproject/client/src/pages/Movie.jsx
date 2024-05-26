@@ -73,8 +73,20 @@ function Movie() {
                     </div>
                 </div>
             </div>
-            <div id='showtime_container' ref={showtimeRef}>
-                <h2>Available Showtime</h2>
+            <div id="showtime_container" ref={showtimeRef}>
+                <h1>KUP BILETY NA {movie.title}</h1>
+                <div className="date-navigation">
+                    <span>Dziś</span>
+                    <span>Th</span>
+                    <span>Fr</span>
+                    <span>Sa</span>
+                    <span>Su</span>
+                    <span>Mo</span>
+                    <span>Tu</span>
+                </div>
+                <div className="selected-date">
+                    <h2>Wednesday 2024-05-22</h2>
+                </div>
                 {availableShowTime.length === 0 ? (
                     <p>No available showtimes for this movie.</p>
                 ) : (
@@ -109,5 +121,6 @@ function Movie() {
         </div>
     );
 }
+
 
 export default Movie;
