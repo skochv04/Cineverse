@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
 .UserProfile {
     display: flex;
     flex-direction: column;
@@ -9,6 +11,8 @@
     background-position: center;
     align-items: center;
     justify-content: flex-start;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
 }
 
 #header_container {
@@ -90,7 +94,7 @@
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
 }
 
 
@@ -214,4 +218,93 @@
 
 .ticket-info p strong {
     color: #ffffff;
+}
+
+
+/* Styles for the ticket actions container */
+.ticket-actions {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 10px;
+}
+
+/* Common styles for the buttons */
+.ticket-actions .buy-btn,
+.ticket-actions .cancel-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Styles for the "Buy reserved seat" button */
+.ticket-actions .buy-btn {
+    background-color: #4CAF50;
+    /* Green */
+    color: white;
+}
+
+.ticket-actions .buy-btn:hover {
+    background-color: #45a049;
+}
+
+/* Styles for the "Cancel reservation" button */
+.ticket-actions .cancel-btn {
+    background-color: #f44336;
+    /* Red */
+    color: white;
+}
+
+.ticket-actions .cancel-btn:hover {
+    background-color: #e53935;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal {
+    width: 300px;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    background-color: #1e1e1e;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    /* Rounded corners */
+    padding: 20px;
+    /* Optional padding for better content spacing */
+}
+
+.modal p {
+    font-size: 18px;
+}
+
+.close-btn {
+    /* align-self: flex-end; */
+    background-color: #f16000;
+    /* Red background color for the button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    /* Rounded corners for the button */
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    background-color: #e0671c;
+    /* Darker red on hover */
 }

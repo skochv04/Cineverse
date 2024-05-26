@@ -23,6 +23,20 @@ specific_customer = 6
 
 import base64
 
+@csrf_exempt
+def handle_reservation(request):
+    try:
+        data = json.loads(request.body)
+        ticketid = data['ticketid']
+        status = data['status']
+        with connection.cursor() as cursor:
+            cursor.execute("CALL update_ticket_status(%s, %s);", [ticketid, status])
+        return JsonResponse({'message': 'Ticket status updated successfully'}, status=200)
+    except KeyError as e:
+        return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
 def get_movie_screenings(request):
     try:
         with connection.cursor() as cursor:

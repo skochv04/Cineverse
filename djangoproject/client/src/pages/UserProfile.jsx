@@ -3,6 +3,17 @@ import axios from 'axios';
 import Header from "./Header.jsx";
 import "./styles/UserProfile.css";
 
+const Modal = ({ message, onClose }) => {
+    return (
+        <div className="modal-overlay">
+            <div className="modal">
+                <p>{message}</p>
+                <button onClick={onClose} className="close-btn">Close</button>
+            </div>
+        </div>
+    );
+};
+
 function UserProfile() {
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
@@ -10,6 +21,10 @@ function UserProfile() {
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [tickets, setTickets] = useState([]);
     const [activeTab, setActiveTab] = useState("tickets");
+    const [notification, setNotification] = useState("");
+    const [error, setError] = useState("");
+    const [animating, setAnimating] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
 
     const toggleShowCurrentPassword = () => {
         setShowCurrentPassword(!showCurrentPassword);
@@ -27,7 +42,7 @@ function UserProfile() {
                 const ticketsResponse = await axios.get(`http://127.0.0.1:8000/user/${specific_userID}/tickets`);
                 setTickets(ticketsResponse.data);
             } catch (error) {
-                console.error('Error fetching Showtime:', error);
+                console.error('Error fetching tickets:', error);
             }
         };
         fetchTickets();
@@ -41,6 +56,44 @@ function UserProfile() {
                 setAnimating(false);
             }, 500); // Match this duration with the CSS transition duration
         }
+    };
+
+    const handleReservation = async (ticketId, status) => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/handle_reservation/', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ticketid: ticketId,
+                    status: status,
+                }),
+            });
+
+            if (!response.ok) {
+                const errorDetails = await response.json();
+                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`);
+            }
+
+            const result = await response.json();
+            console.log(result.message);
+
+            // Update tickets state
+            setTickets(tickets.map(ticket => ticket.ticket_id === ticketId ? { ...ticket, status } : ticket));
+            setNotification("Ticket status updated successfully!");
+            setIsModalOpen(true); // Show success modal
+        } catch (error) {
+            console.error(error.message);
+            setError("An error occurred while updating the ticket status.");
+            setIsModalOpen(true); // Show error modal
+        }
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setNotification("");
+        setError("");
     };
 
     const renderContent = () => {
@@ -63,9 +116,14 @@ function UserProfile() {
                                         <div className="ticket-info">
                                             <p><strong>Price:</strong> {ticket.price}</p>
                                             <p><strong>Status:</strong> {ticket.status}</p>
-                                            <p><strong>Ordered
-                                                On:</strong> {ticket.ordered_on_date} at {ticket.ordered_on_time}</p>
+                                            <p><strong>Ordered On:</strong> {ticket.ordered_on_date} at {ticket.ordered_on_time}</p>
                                         </div>
+                                        {ticket.status.trim() === 'New' && (
+                                            <div className="ticket-actions">
+                                                <button onClick={() => handleReservation(ticket.ticket_id, 'Confirmed')} className="buy-btn">Buy reserved seat</button>
+                                                <button onClick={() => handleReservation(ticket.ticket_id, 'Canceled')} className="cancel-btn">Cancel reservation</button>
+                                            </div>
+                                        )}
                                     </div>
                                 </li>
                             ))}
@@ -151,6 +209,12 @@ function UserProfile() {
                         My profile
                     </button>
                 </div>
+                {isModalOpen && (
+                    <Modal
+                        message={notification || error}
+                        onClose={closeModal}
+                    />
+                )}
                 {renderContent()}
             </div>
         </div>
