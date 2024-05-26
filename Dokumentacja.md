@@ -422,122 +422,56 @@ $$;
 
 ```postgresql
 CREATE OR REPLACE PROCEDURE add_movie_screening(
-    IN movie_id integer,
+    IN title_val character varying,
     IN date_val date,
-    IN start_time_val time,
+    IN start_time_val time without time zone,
     IN price_standard_val numeric,
     IN price_premium_val numeric,
     IN is_3d boolean,
-    IN language_val varchar,
+    IN language_val character varying,
     IN hall_val integer
 )
-AS $$
-DECLARE
-    movie_start_time time;
-    movie_end_time time;
-    hall_available boolean;
-    end_time_val time;
-    duration int;
-BEGIN
-    IF NOT EXISTS (SELECT 1 FROM movies WHERE movieid = movie_id) THEN
-        RAISE EXCEPTION 'Movie with id % does not exist', movie_id;
-    END IF;
-
-    IF NOT EXISTS (SELECT 1 FROM movie_halls WHERE movie_halls.hall_number = hall_val) THEN
-        RAISE EXCEPTION 'Movie hall with id % does not exist', hall_val;
-    END IF;
-
-    IF NOT (start_time_val >= movie_start_time AND start_time_val <= movie_end_time) THEN
-        RAISE EXCEPTION 'Screening start time is not within movie duration';
-    END IF;
-
-    SELECT m.duration into duration
-    FROM movies as m where m.movieid = movie_id;
-
-    SELECT calculate_end_time(start_time_val, duration) INTO end_time_val;
-
-    hall_available := is_moviehall_available(hall_val, date_val, start_time_val, end_time_val);
-    IF NOT hall_available THEN
-        RAISE EXCEPTION 'Movie hall with id % is not available for the specified time and date', hall_val;
-    END IF;
-
-    INSERT INTO movie_screening (movieid, date, starttime, endtime, pricestandard, pricepremium, threedimensional, language, hallnumber)
-    VALUES (movie_id, date_val, start_time_val, end_time_val, price_standard_val, price_premium_val, is_3d, language_val, hall_val);
-END
-$$ LANGUAGE plpgsql;
-```
-
-- Zmiana danych danego seansu
-
-```postgresql
-CREATE PROCEDURE update_movie_screening(
-    IN screening_id integer, 
-    IN movie_id integer, 
-    IN date_val date, 
-    IN start_time_val time without time zone, 
-    IN price_standard_val numeric, 
-    IN price_premium_val numeric, 
-    IN is_3d boolean, 
-    IN language_val character varying, 
-    IN hall_val integer)
-    LANGUAGE plpgsql
+LANGUAGE plpgsql
 AS
 $$
 DECLARE
-    movie_start_time time;
-    movie_end_time time;
-    hall_available boolean;
+    movie_id integer;
+    duration_val int;
     end_time_val time;
-    duration int;
+    hall_available boolean;
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM movie_screening WHERE moviescreeningid = screening_id) THEN
-        RAISE EXCEPTION 'Movie screening with id % does not exist', screening_id;
+    -- Retrieve the movie_id and duration based on the title
+    SELECT m.movieid, m.duration INTO movie_id, duration_val
+    FROM movies m
+    WHERE m.title = title_val
+    AND date_val BETWEEN m.startdate AND m.enddate; -- Check if date_val is between startdate and enddate of the movie
+
+    -- Check if the movie exists
+    IF movie_id IS NULL THEN
+        RAISE EXCEPTION 'Movie with title % does not exist or is not available on the specified date', title_val;
     END IF;
 
-    IF NOT EXISTS (SELECT 1 FROM movies WHERE movieid = movie_id) THEN
-        RAISE EXCEPTION 'Movie with id % does not exist', movie_id;
-    END IF;
-
+    -- Check if the movie hall exists
     IF NOT EXISTS (SELECT 1 FROM movie_halls WHERE hall_number = hall_val) THEN
         RAISE EXCEPTION 'Movie hall with id % does not exist', hall_val;
     END IF;
 
-    SELECT starttime, calculate_end_time(starttime, duration) INTO movie_start_time, movie_end_time
-    FROM movie_screening
-    WHERE moviescreeningid = screening_id;
+    -- Calculate the end time of the screening
+    SELECT calculate_end_time(start_time_val, duration_val) INTO end_time_val;
 
-    IF NOT (start_time_val >= movie_start_time AND start_time_val <= movie_end_time) THEN
-        RAISE EXCEPTION 'Screening start time is not within movie duration';
-    END IF;
-
-    SELECT duration INTO duration
-    FROM movies
-    WHERE movieid = movie_id;
-
-    SELECT calculate_end_time(start_time_val, duration) INTO end_time_val;
-
+    -- Check if the movie hall is available
     hall_available := is_moviehall_available(hall_val, date_val, start_time_val, end_time_val);
     IF NOT hall_available THEN
         RAISE EXCEPTION 'Movie hall with id % is not available for the specified time and date', hall_val;
     END IF;
 
-    UPDATE movie_screening 
-    SET 
-        movieid = movie_id, 
-        date = date_val, 
-        starttime = start_time_val, 
-        endtime = end_time_val, 
-        pricestandard = price_standard_val, 
-        pricepremium = price_premium_val, 
-        threedimensional = is_3d, 
-        language = language_val, 
-        hallnumber = hall_val
-    WHERE
-        moviescreeningid = screening_id;
+    -- Insert the new movie screening record
+    INSERT INTO movie_screening (movieid, date, starttime, endtime, pricestandard, pricepremium, threedimensional, language, hallnumber)
+    VALUES (movie_id, date_val, start_time_val, end_time_val, price_standard_val, price_premium_val, is_3d, language_val, hall_val);
 END
 $$;
 
-ALTER PROCEDURE update_movie_screening(integer, integer, date, time, numeric, numeric, boolean, varchar, integer) OWNER TO postgres;
+ALTER PROCEDURE add_movie_screening(varchar, date, time, numeric, numeric, boolean, varchar, integer) OWNER TO postgres;
 ```
 
 - Usunięcie danego seansu
@@ -566,21 +500,40 @@ ALTER PROCEDURE delete_movie_screening(integer) OWNER TO postgres;
 
 ```postgresql
 CREATE OR REPLACE PROCEDURE add_movie_screenings_weekly(
-    IN movie_id integer,
+    IN movie_title character varying,
     IN start_date date,
-    IN start_time time,
+    IN start_time time without time zone,
     IN price_standard numeric,
     IN price_premium numeric,
     IN is_3d boolean,
-    IN language_val varchar,
+    IN language_val character varying,
     IN hall_number integer,
     IN repeat_count integer
 )
-AS $$
+LANGUAGE plpgsql
+AS
+$$
 DECLARE
+    movie_id integer;
     current_date_val date := start_date;
     iteration integer := 1;
 BEGIN
+    -- Retrieve the movie_id based on the title
+    SELECT movieid INTO movie_id
+    FROM movies
+    WHERE title = movie_title;
+
+    -- Check if the movie exists
+    IF movie_id IS NULL THEN
+        RAISE EXCEPTION 'Movie with title % does not exist', movie_title;
+    END IF;
+
+    -- Check if the repeat_count is within the valid range
+    IF repeat_count < 1 OR repeat_count > 14 THEN
+        RAISE EXCEPTION 'Repeat count % is out of the valid range (1-14)', repeat_count;
+    END IF;
+
+    -- Loop to add movie screenings for the specified number of repeat days
     WHILE iteration <= repeat_count LOOP
         CALL add_movie_screening(
             movie_id,
@@ -598,7 +551,9 @@ BEGIN
         iteration := iteration + 1;
     END LOOP;
 END;
-$$ LANGUAGE plpgsql;
+$$;
+
+ALTER PROCEDURE add_movie_screenings_weekly(varchar, date, time, numeric, numeric, boolean, varchar, integer, integer) OWNER TO postgres;
 ```
 
 - Zmiana statusu ticketa
@@ -889,6 +844,43 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+```
+
+- Wyświetlenie danych o filmu wraz z nazwą kategorii
+
+```postgresql
+
+create function get_movie_by_title(p_title character varying)
+    returns TABLE(movieid integer, moviecategoryid integer, title character varying, startdate date, enddate date, duration integer, description character varying, image bytea, director character varying, minage integer, production character varying, originallanguage character varying, rank double precision)
+    language plpgsql
+as
+$$
+BEGIN
+    RETURN QUERY
+    SELECT
+        m.movieid,
+        mc.categoryname,
+        m.title,
+        m.startdate,
+        m.enddate,
+        m.duration,
+        m.description,
+        m.image,
+        m.director,
+        m.minage,
+        m.production,
+        m.originallanguage,
+        m.rank
+    FROM
+        movies m
+    INNER JOIN
+        movie_categories as mc
+    on m.moviecategoryid = mc.moviecategoryid
+    WHERE p_title = m.title;
+END;
+$$;
+
+alter function get_movie_by_title(varchar) owner to postgres;
 ```
 
 ## 7. **Triggery**

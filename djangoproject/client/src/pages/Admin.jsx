@@ -13,7 +13,7 @@ function Admin() {
 
     const [newCategory, setNewCategory] = useState('');
     const [newMovie, setNewMovie] = useState('');
-    const [newMovieScreening, setNewMovieScreening] = useState('');
+
     const [newMovieStartDate, setNewMovieStartDate] = useState('');
     const [newMovieEndDate, setNewMovieEndDate] = useState('');
     const [newDuration, setNewDuration] = useState('');
@@ -24,6 +24,18 @@ function Admin() {
     const [newProduction, setNewProduction] = useState('');
     const [newLanguage, setNewLanguage] = useState('');
     const [newRank, setNewRank] = useState('');
+
+    const [newDate, setNewDate] = useState('');
+    const [newScreeningStartTime, setNewScreeningStartTime] = useState('');
+    const [newPriceStandard, setNewPriceStandard] = useState('');
+    const [newPricePremium, setNewPricePremium] = useState('');
+    const [newThreeDimensional, setNewThreeDimensional] = useState('');
+    const [newScreeningLanguage, setNewScreeningLanguage] = useState('');
+    const [newMovieHall, setNewMovieHall] = useState('');
+
+
+    const [newDays, setNewDays] = useState('');
+
 
     const openModal = (title, action) => {
         setModalContent({ title, action });
@@ -106,7 +118,7 @@ function Admin() {
     };
 
     const handleMovie = async () => {
-        if (!newCategory.trim() || !newMovie.trim() || !newMovieStartDate.trim() || !newMovieEndDate.trim()) {
+        if (!newCategory.trim() || !newMovie.trim() || !newMovieStartDate.trim() || !newMovieEndDate.trim() || !newDuration.trim() || !newDescription.trim() || !newImagePath.trim() || !newDirector.trim() || !newMinAge.trim() || !newProduction.trim() || !newLanguage.trim() || !newRank.trim()) {
             setError("Please fill out all fields.");
             return;
         }
@@ -159,6 +171,70 @@ function Admin() {
             setNewProduction('');
             setNewLanguage('');
             setNewRank('');
+
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
+    const handleMovieScreening = async () => {
+        if (
+            !newMovie.trim() ||
+            !newDate.trim() ||
+            !newScreeningStartTime.trim() ||
+            !newPriceStandard.trim() ||
+            !newPricePremium.trim() ||
+            !newThreeDimensional === undefined ||
+            !newScreeningLanguage.trim() ||
+            !newMovieHall.trim() ||
+            !newDays.trim()
+        ) {
+            setError("Please fill out all fields.");
+            return;
+        }
+
+        if (modalContent.action) {
+            await modalContent.action();
+        }
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/handle_movie_screening/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: newMovie,
+                    date: newDate,
+                    starttime: newScreeningStartTime,
+                    pricestandard: newPriceStandard,
+                    pricepremium: newPricePremium,
+                    threedimensional: newThreeDimensional,
+                    language: newScreeningLanguage,
+                    moviehall: newMovieHall,
+                    repeatcount: newDays
+                }),
+            });
+
+            if (!response.ok) {
+                const errorDetails = await response.json();
+                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`);
+            }
+
+            setError("Week-Templated MovieScreening were added successfully!");
+
+            const result = await response.json();
+            console.log(result.message);
+
+            setNewMovie('');
+            setNewDate('');
+            setNewScreeningStartTime('');
+            setNewPriceStandard('');
+            setNewPricePremium('');
+            setNewThreeDimensional('');
+            setNewScreeningLanguage('');
+            setNewMovieHall('');
+            setNewDays('');
 
         } catch (error) {
             setError(error.message);
@@ -220,9 +296,7 @@ function Admin() {
 
                     <h2>MovieScreening</h2>
                     <div className="container">
-                        <button className="green" onClick={() => openModal("Add New Movie Screening")}>Add New Movie Screening</button>
-                        <button className="green" onClick={() => openModal("Add Week-Templated Movie Screening")}>Add Week-Templated Movie Screening</button>
-                        <button className="white" onClick={() => openModal("Update Movie Screening")}>Update Movie Screening</button>
+                        <button className="green" onClick={() => openModal("Add Week-Templated Movie Screenings")}>Add Week-Templated Movie Screenings</button>
                         <button className="red" onClick={() => openModal("Delete Movie Screening")}>Delete Movie Screening</button>
                     </div>
                 </>
@@ -298,7 +372,7 @@ function Admin() {
                                 <label>
                                     Start date:
                                     <input
-                                        type="text"
+                                        type="date"
                                         value={newMovieStartDate}
                                         onChange={(e) => setNewMovieStartDate(e.target.value)}
                                     />
@@ -306,7 +380,7 @@ function Admin() {
                                 <label>
                                     End date:
                                     <input
-                                        type="text"
+                                        type="date"
                                         value={newMovieEndDate}
                                         onChange={(e) => setNewMovieEndDate(e.target.value)}
                                     />
@@ -382,6 +456,95 @@ function Admin() {
                         </div>
 
                         <button onClick={handleMovie}>Confirm</button>
+                        <button onClick={closeModal}>Cancel</button>
+                    </div>
+                )}
+
+                {(modalContent.title === "Add Week-Templated Movie Screenings") && (
+                    <div>
+                        <div className="all-modals">
+                            <div className="left-modal">
+                                <label>
+                                    Movie title:
+                                    <input
+                                        type="text"
+                                        value={newMovie}
+                                        onChange={(e) => setNewMovie(e.target.value)}
+                                    />
+                                </label>
+                                <label>
+                                    Date:
+                                    <input
+                                        type="date"
+                                        value={newDate}
+                                        onChange={(e) => setNewDate(e.target.value)}
+                                    />
+                                </label>
+                                <label>
+                                    Start time:
+                                    <input
+                                        type="time"
+                                        value={newScreeningStartTime}
+                                        onChange={(e) => setNewScreeningStartTime(e.target.value)}
+                                    />
+                                </label>
+                                <label>
+                                    Is 3D?:
+                                    <input
+                                        type="checkbox"
+                                        checked={newThreeDimensional}
+                                        onChange={(e) => setNewThreeDimensional(e.target.checked)}
+                                    />
+                                </label>
+
+                            </div>
+                            <div className="right-modal">
+
+                                <label>
+                                    Price standard:
+                                    <input
+                                        type="number"
+                                        value={newPriceStandard}
+                                        onChange={(e) => setNewPriceStandard(e.target.value)}
+                                    />
+                                </label>
+                                <label>
+                                    Price premium:
+                                    <input
+                                        type="number"
+                                        value={newPricePremium}
+                                        onChange={(e) => setNewPricePremium(e.target.value)}
+                                    />
+                                </label>
+                                <label>
+                                    Language:
+                                    <input
+                                        type="text"
+                                        value={newScreeningLanguage}
+                                        onChange={(e) => setNewScreeningLanguage(e.target.value)}
+                                    />
+                                </label>
+                                <label>
+                                    Movie hall:
+                                    <input
+                                        type="number"
+                                        value={newMovieHall}
+                                        onChange={(e) => setNewMovieHall(e.target.value)}
+                                    />
+                                </label>
+                            </div>
+                        </div>
+
+                        <label>
+                            How much days since given date?
+                            <input
+                                type="number"
+                                value={newDays}
+                                onChange={(e) => setNewDays(e.target.value)}
+                            />
+                        </label>
+
+                        <button onClick={handleMovieScreening}>Confirm</button>
                         <button onClick={closeModal}>Cancel</button>
                     </div>
                 )}

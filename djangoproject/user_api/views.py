@@ -24,6 +24,24 @@ specific_customer = 6
 import base64
 
 @csrf_exempt
+def handle_movie_screening(request):
+    try:
+        data = json.loads(request.body)
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "CALL add_movie_screenings_weekly(%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                [data['title'], data['date'], data['starttime'],
+                 data['pricestandard'], data['pricepremium'], data['threedimensional'],
+                 data['language'], data['moviehall'], data['repeatcount']]
+            )
+        return JsonResponse({'message': 'Movie screenings added successfully'}, status=201)
+        
+    except KeyError as e:
+        return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
 def handle_movie(request):
         try:
             data = json.loads(request.body)
@@ -315,7 +333,7 @@ class UserRegister(APIView):
 class UserLogin(APIView):
     permission_classes = (permissions.AllowAny,)
     # authentication_classes = (SessionAuthentication,)
-    # @csrf_exempt
+    @csrf_exempt
     def post(self, request):
         data = request.data
         if not validate_email(data):
@@ -343,6 +361,7 @@ class UserView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
+    @csrf_exempt
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response({'user': serializer.data}, status=status.HTTP_200_OK)
