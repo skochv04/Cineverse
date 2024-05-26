@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    height: 100vh;
+    height: auto;
     width: 100vw;
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.8) 100%);
     background-size: cover;
@@ -19,6 +19,48 @@
     align-content: center;
     background-color: transparent;
     transition: background-color 0.3s ease;
+}
+
+#tab-buttons {
+    display: flex;
+    justify-content: center;
+    margin: 20px 20px 60px;
+    min-width: 50%;
+    min-height: 20%;
+}
+
+#tab-buttons button {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    padding: 10px 20px;
+    cursor: pointer;
+    color: #ffffff;
+    width: 400px;
+    outline: none; /* Remove outline on focus */
+    position: relative; /* Required for the pseudo-element */
+}
+
+#tab-buttons button::after {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #ff9800;
+    transform: scaleX(0);
+    transition: transform 0.3s ease-in-out;
+}
+
+#tab-buttons button.active::after {
+    transform: scaleX(1);
+}
+
+.UserProfile #content {
+    display: flex;
+    width: 80%;
 }
 
 .welcome-section {
@@ -38,15 +80,17 @@
 
 .section {
     width: 100%;
-    max-width: 700px;
+    max-width: 1000px;
+    min-height: 42vh;
     background-color: #1e1e1e;
-    padding: 5px 20px 20px;
+    padding: 30px 30px 30px;
     border-radius: 12px;
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
+
 
 .section h2 {
     font-size: 1.5em;
@@ -123,6 +167,12 @@
     background-color: #3700b3;
 }
 
+.section p.transaction-history {
+    color: #ff9800;
+    font-weight: bold;
+    cursor: pointer;
+}
+
 .ticket-list {
     list-style: none;
     padding: 0;
@@ -130,17 +180,24 @@
 }
 
 .ticket-card {
-    background-color: #1e1e1e;
+    background-color: #282828;
     padding: 20px;
-    border-radius: 12px;
+    border-radius: 14px;
     margin-bottom: 20px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+}
+
+.ticket-card:hover {
+    scale: 1.02;
+    cursor: pointer;
+    border: 1px solid whitesmoke;
 }
 
 .ticket-info {
-    flex: 1;
+    display: flex;
+    flex-direction: row;
 }
 
 .ticket-info p {

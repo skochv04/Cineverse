@@ -27,9 +27,25 @@ function Movies() {
             .catch(error => console.error('Error fetching movie categories: ', error));
     }, []);
 
+    const sortMovies = (movies) => {
+        switch (sortOption) {
+            case 'Alphabetical':
+                return [...movies].sort((a, b) => a.title.localeCompare(b.title));
+            case 'Release Date':
+                return [...movies].sort((a, b) => new Date(b.startdate) - new Date(a.startdate));
+            case 'Rating':
+                return [...movies].sort((a, b) => b.rank - a.rank);
+            default:
+                return movies;
+        }
+    };
 
-    const filteredMovies = movies.filter(movie => movie.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        (!selectedCategory || movie.category === parseInt(selectedCategory)))
+    const filteredMovies = movies.filter(movie =>
+        movie.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        (!selectedCategory || movie.category === parseInt(selectedCategory))
+    );
+
+    const sortedAndFilteredMovies = sortMovies(filteredMovies);
 
     return (
         <div className="Movies">
@@ -75,9 +91,8 @@ function Movies() {
                     </div>
                 </div>
                 <div className="movies-list">
-                    {filteredMovies.map(movie => (
+                    {sortedAndFilteredMovies.map(movie => (
                         <div key={movie.id} className="movie-item">
-
                             <Link to={`/movie/${movie.title}`}>
                                 <img src={`data:image/jpeg;base64,${movie.image}`} alt={movie.title} />
                                 <div>{movie.title}</div>

@@ -9,8 +9,6 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-
-    position: relative;
 }
 
 #header_container {
@@ -39,7 +37,6 @@
     right: 0;
     bottom: 0;
     height: 20vh;
-
 }
 
 #movies_container {
@@ -94,7 +91,7 @@
     width: 60%;
     justify-content: center;
     align-items: center;
-
+    position: relative;
 }
 
 #for_search input[type="text"] {
@@ -133,4 +130,25 @@
 
 .scrolled #header_container {
     background-color: rgba(18, 18, 18, 1);
+}
+
+.suggestions {
+    border: 3px solid #ccc;
+    border-radius: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #1e1e1e;
+    position: absolute;
+    top: 100%; left: 0;
+    width: 85%;
+    z-index: 10;
+}
+
+.suggestion {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.suggestion:hover {
+    background-color: #ff9800;
 }

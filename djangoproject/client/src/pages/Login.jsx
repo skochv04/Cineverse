@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
-
+import './styles/Login.css'
 const client = axios.create({
     baseURL: "http://127.0.0.1:8000",
 });

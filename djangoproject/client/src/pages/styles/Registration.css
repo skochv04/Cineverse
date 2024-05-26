@@ -23,7 +23,7 @@
     width: 20vw;
     height: 40vh;
     min-width: 350px;
-    min-height: 350px;
+    min-height: 400px;
 }
 
 .content {
@@ -80,6 +80,8 @@
 .message {
     text-align: center;
     margin-top: 15px;
+    color: #141414;
+
 }
 
 .link {
@@ -87,9 +89,7 @@
     text-decoration: none;
     font-weight: bold;
 
-    /* Bold for emphasis */
     &:hover {
         text-decoration: underline;
-        /* Underline on hover for clarity */
     }
 }

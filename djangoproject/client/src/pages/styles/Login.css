@@ -1,17 +1,25 @@
 .Login {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
     height: 100vh;
-    width: 100vw;
+    width: 100%;
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.8) 100%);
     background-size: cover;
     background-position: center;
-    align-items: center;
-    justify-content: flex-start;
+    background-repeat: no-repeat;
 }
 
-.login-form-container {
+#header_container {
+    display: flex;
+    width: 100%;
+    height: 10vh;
+    align-items: center;
+    align-content: center;
+    background-color: transparent;
+    transition: background-color 0.3s ease;
+}
+
+.Login .login-form-container {
     background-color: rgba(255, 255, 255, 0.9); /* Slightly more opaque for focus */
     padding: 25px; /* A bit more padding for a roomier feel */
     border-radius: 15px; /* Larger border-radius for a softer look */
@@ -21,7 +29,7 @@
     min-width: 350px;
     min-height: 350px;
 }
-.content {
+.Login .content {
     width: 100%;
     height: 100%;
 }

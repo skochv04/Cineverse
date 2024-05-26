@@ -55,12 +55,12 @@ const Carousel = ({ slides }) => {
         >
             {slides.map((slide, index) => (
                 <SwiperSlide key={index} className="custom-swiper-slide">
-                    <Link to={`/movie/${slide.content}`}> { }
                         <div className="carousel-slide-container">
+                            <Link to={`/movie/${slide.content}`}>
                             <img src={slide.imageUrl} alt={slide.content} className="carousel-image" />
                             <p className="carousel-caption">{slide.content}</p>
+                            </Link>
                         </div>
-                    </Link>
                 </SwiperSlide>
             ))}
         </Swiper>
