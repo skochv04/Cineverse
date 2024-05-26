@@ -42,7 +42,7 @@ function Movies() {
 
     const filteredMovies = movies.filter(movie =>
         movie.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        (!selectedCategory || movie.category === parseInt(selectedCategory))
+        (!selectedCategory || movie.category_name === parseInt(selectedCategory))
     );
 
     const sortedAndFilteredMovies = sortMovies(filteredMovies);

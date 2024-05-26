@@ -26,31 +26,40 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 80%;
-    max-width: 1200px;
-    padding: 20px;
+    width: 100%;
+    padding: 0 20px 0 20px;
 }
 
-#movie-details {
+#movie-details-container {
     display: flex;
     flex-direction: row;
     width: 100%;
-    padding: 20px;
-    border-radius: 12px;
+    height: 90vh;
+    padding: 10px 30px 30px;
 }
 
 #img_container {
+    position: relative;
+    display: inline-block;
     flex: 1;
-    display: flex;
     justify-content: center;
     align-items: center;
-    margin-right: 20px;
+    margin-right: 10px;
+}
+
+#rank_container {
+    position: absolute;
+    bottom: 12px;
+    right: 30px;
+    background-color: rgb(18, 18, 18);
+    border-radius: 50%;
+    font-weight: bold;
 }
 
 #img_container img {
     width: 100%;
     max-width: 400px;
-    border-radius: 10px;
+    border-radius: 18px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
 }
 
@@ -58,38 +67,58 @@
     flex: 2;
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
     color: #fff;
+    padding-top: 20px;
+    text-align: left;
 }
 
 #title_container h1 {
     margin: 0;
-    font-size: 2.5em;
+    font-size: 2.2em;
     color: #fff;
 }
 
 #description {
+    width: 90%;
     margin: 20px 0;
+    text-align: left;
     font-size: 1.1em;
     line-height: 1.6;
 }
 
 #more-details {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
+    width: 92%;
+    text-align: left;
+    color: #e0e0e0;
+    padding: 20px 20px 20px 0;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
 }
 
 #more-details p {
-    margin: 5px 0;
-    font-size: 1em;
-    color: #ccc;
+    margin: 10px 0;
+    border-bottom: 1px solid  floralwhite;
+    padding-bottom: 5px;
+}
+
+#more-details p strong {
+    color: #fff;
 }
 
 #buy-button {
-    margin-top: 20px;
+    width: 90%;
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    align-content: center;
 }
 
 #buy-button button {
+    width: 140px;
+    height: 50px;
     background-color: #ff9800;
     border: none;
     padding: 10px 20px;
@@ -100,46 +129,75 @@
 }
 
 #buy-button button:hover {
-    background-color: #0056b3;
+    border: 3px solid white;
+    scale: 1.1;
 }
-.showtime-container {
+
+#showtime-details {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#showtime_container {
+    display: flex;
+    min-height: 100vh;
+    height: auto;
+    justify-content: center;
     background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: rgb(18, 18, 18);
     padding: 20px;
-    width: 80%;
-    max-width: 800px;
+    width: 100%;
     margin: 20px;
 }
 
-.showtime-container h1 {
-    font-size: 18px;
+#movie_showtime {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#category_container {
+    margin: 0;
+    font-size: 1.6em;
+    color: #fff;
+}
+
+#showtime_container h1 {
+    font-size: 40px;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     text-align: center;
+    color: #333; /* Darker text color for better readability */
 }
 
 .date-navigation {
     display: flex;
     justify-content: space-around;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .date-navigation span {
-    font-size: 16px;
     cursor: pointer;
-    padding: 10px;
-    border-radius: 4px;
-    transition: background-color 0.3s;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: rgb(18, 18, 18);
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.3s;
 }
 
-.date-navigation span:hover {
-    background-color: #e0e0e0;
+.date-navigation .selected-date {
+    border-color: orange;
+}
+
+.selected-date {
+    margin-bottom: 5px;
 }
 
 .selected-date h2 {
     font-size: 20px;
-    margin-bottom: 20px;
     text-align: center;
 }
 
@@ -160,37 +218,74 @@
 }
 
 .filter-controls button:hover {
-    background-color: #e0e0e0;
+    background-color: #f0f0f0;
 }
 
 .showtime-list {
-    border-top: 1px solid #ccc;
-    margin-top: 20px;
+    width: 100%;
+    border-top: 2px solid rgb(18, 18, 18);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
 }
 
 .showtime-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 85%;
     padding: 20px 0;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid rgb(18, 18, 18);
+    transition: background-color 0.3s;
+}
+
+.showtime-item:hover {
+    background-color: #f0f0f0;
 }
 
 .showtime-item h3 {
     font-size: 18px;
     margin: 0 0 10px 0;
+    color: #333;
 }
 
 .showtime-item p {
     font-size: 14px;
     margin: 0 0 10px 0;
+    color: rgb(18, 18, 18);
 }
 
 .showtime-details {
     display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
+    color: rgb(18, 18, 18);
 }
 
-.showtime-details span {
-    font-size: 14px;
+.showtime-details div {
+    display: flex;
+    flex-direction: row;
     margin-right: 20px;
+    margin-bottom: 10px;
+}
+
+.showtime-details div h5 {
+    margin: 0 5px 0 5px;
+    color: #666;
+}
+
+.showtime-details div span {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#button_container {
+    align-self: stretch;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .showtime-details button {
@@ -202,8 +297,15 @@
     color: #fff;
     cursor: pointer;
     transition: background-color 0.3s;
+    margin-left: auto;
 }
 
 .showtime-details button:hover {
     background-color: #e64a19;
+}
+
+#button_container {
+    align-self: stretch; /* Ensure the button container spans full width */
+    display: flex;
+    justify-content: flex-end; /* Align button to the right */
 }

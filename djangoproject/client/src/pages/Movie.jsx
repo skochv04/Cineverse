@@ -1,15 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Header from "./Header.jsx";
-import { Link, useParams } from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import "./styles/Movie.css";
 import axios from "axios";
+import RankContainer from "./RankContainer.jsx";
+import {format, addDays} from 'date-fns';
+
+const initialDate = new Date(2024, 4, 22);
 
 function Movie() {
-    const { title } = useParams();
+    const {title} = useParams();
     const [movie, setMovie] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [availableShowTime, setAvailableShowTime] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(initialDate);
     const showtimeRef = useRef(null);
 
     useEffect(() => {
@@ -35,29 +40,40 @@ function Movie() {
 
     const scrollToShowtime = () => {
         if (showtimeRef.current) {
-            showtimeRef.current.scrollIntoView({ behavior: 'smooth' });
+            showtimeRef.current.scrollIntoView({behavior: 'smooth'});
         }
     };
+    const handleDateClick = (date) => {
+        setSelectedDate(date);
+    };
+
+    const filteredShowTimes = availableShowTime.filter(showtime =>
+        new Date(showtime.date).toDateString() === selectedDate.toDateString()
+    );
 
     return (
         <div className="Movie">
             <div id="header_container">
-                <Header />
+                <Header/>
             </div>
             <div id="content">
-                <div id="movie-details">
+                <div id="movie-details-container">
                     <div id="img_container">
-                        <img src={movie.image ? `data:image/jpeg;base64,${movie.image}` : movie.title} alt="Movie Poster" />
+                        <img src={movie.image ? `data:image/jpeg;base64,${movie.image}` : movie.title}
+                             alt="Movie Poster"/>
+                        <RankContainer rank={movie.rank}/>
                     </div>
                     <div id="details_container">
                         <div id="title_container">
                             <h1>{movie.title}</h1>
                         </div>
+                        <div id="category_container">
+                            <h4>{movie.category_name}</h4>
+                        </div>
                         <div id="description">
                             <p>{movie.description}</p>
                         </div>
                         <div id="more-details">
-                            <p><strong>Category ID:</strong> {movie.moviecategoryid}</p>
                             <p><strong>Start Date:</strong> {new Date(movie.startdate).toLocaleDateString()}</p>
                             <p><strong>End Date:</strong> {new Date(movie.enddate).toLocaleDateString()}</p>
                             <p><strong>Duration:</strong> {movie.duration} minutes</p>
@@ -65,62 +81,76 @@ function Movie() {
                             <p><strong>Minimum Age:</strong> {movie.minage}</p>
                             <p><strong>Production:</strong> {movie.production}</p>
                             <p><strong>Original Language:</strong> {movie.originallanguage}</p>
-                            <p><strong>Rank:</strong> {movie.rank}</p>
+
                         </div>
                         <div id="buy-button">
                             <button onClick={scrollToShowtime}>Buy Ticket</button>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="showtime_container" ref={showtimeRef}>
-                <h1>KUP BILETY NA {movie.title}</h1>
-                <div className="date-navigation">
-                    <span>Dziś</span>
-                    <span>Th</span>
-                    <span>Fr</span>
-                    <span>Sa</span>
-                    <span>Su</span>
-                    <span>Mo</span>
-                    <span>Tu</span>
-                </div>
-                <div className="selected-date">
-                    <h2>Wednesday 2024-05-22</h2>
-                </div>
-                {availableShowTime.length === 0 ? (
-                    <p>No available showtimes for this movie.</p>
-                ) : (
-                    <ul className="showtime-list">
-                        {availableShowTime.map((showtime) => (
-                            <li key={showtime.moviescreeningid} className="showtime-item">
-                                <Link to={`/showtime/${showtime.moviescreeningid}`} className="showtime-link">
-                                    <div className="showtime-details">
-                                        <div className="showtime-movie-title">
-                                            <h5>Movie title:</h5>
-                                            <span>{movie.title}</span>
-                                            <h5>3D:</h5>
-                                            <span>{showtime.threedimensional ? "Yes" : "No"}</span>
-                                            <h5>Language:</h5>
-                                            <span>{showtime.language}</span>
-                                            <h5>Movie Hall:</h5>
-                                            <span>{showtime.moviehall}</span>
+                <div id="showtime_container" ref={showtimeRef}>
+                    <div id="movie_showtime">
+                        <h1>BUY TICKET ON {movie.title}</h1>
+                        <div className="date-navigation">
+                            {[...Array(7)].map((_, index) => {
+                                const date = addDays(initialDate, index);
+                                return (
+                                    <span
+                                        key={index}
+                                        onClick={() => handleDateClick(date)}
+                                        className={date.toDateString() === selectedDate.toDateString() ? 'selected-date' : ''}
+                                    >
+                                        {format(date, 'EEE')}
+                                    </span>
+                                );
+                            })}
+                        </div>
+                        <div className="selected-date">
+                            <h2>{format(selectedDate, 'EEEE yyyy-MM-dd')}</h2>
+                        </div>
+                        {filteredShowTimes.length === 0 ? (
+                            <p>No available showtime for this movie.</p>
+                        ) : (
+                            <ul className="showtime-list">
+                                {filteredShowTimes.map((showtime) => (
+                                    <li key={showtime.moviescreeningid} className="showtime-item">
+                                        <div className="showtime-details">
+                                            <div className="showtime-movie-title">
+                                                <div className="showtime-datetime">
+                                                    <h5>Date:</h5>
+                                                    <span>{new Date(showtime.date).toLocaleDateString()}</span>
+                                                    <h5>Start:</h5>
+                                                    <span>{showtime.starttime}</span>
+                                                </div>
+                                                <div id="3d_container">
+                                                    <h5>3D:</h5>
+                                                    <span>{showtime.threedimensional ? "Yes" : "No"}</span>
+                                                </div>
+                                                <div id="language_container">
+                                                    <h5>Language:</h5>
+                                                    <span>{showtime.language}</span>
+                                                </div>
+                                                <div id="hall_container">
+                                                    <h5>Movie Hall:</h5>
+                                                    <span>{showtime.moviehall}</span>
+                                                </div>
+                                            </div>
+                                            <div id="button_container">
+                                                <Link to={`/showtime/${showtime.moviescreeningid}`}
+                                                      className="showtime-link">
+                                                    <button> Choose perfect seat</button>
+                                                </Link>
+                                            </div>
                                         </div>
-                                        <div className="showtime-datetime">
-                                            <h5>Date:</h5>
-                                            <span>{new Date(showtime.date).toLocaleDateString()}</span>
-                                            <h5>Start:</h5>
-                                            <span>{showtime.starttime}</span>
-                                        </div>
-                                    </div>
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
-                )}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     );
 }
-
 
 export default Movie;
