@@ -37,8 +37,10 @@
     cursor: pointer;
     color: #ffffff;
     width: 400px;
-    outline: none; /* Remove outline on focus */
-    position: relative; /* Required for the pseudo-element */
+    outline: none;
+    /* Remove outline on focus */
+    position: relative;
+    /* Required for the pseudo-element */
 }
 
 #tab-buttons button::after {
@@ -195,6 +197,11 @@
     border: 1px solid whitesmoke;
 }
 
+.ticket-container {
+    display: flex;
+    flex-direction: column;
+}
+
 .ticket-info {
     display: flex;
     flex-direction: row;
@@ -202,7 +209,7 @@
 
 .ticket-info p {
     color: #bbbbbb;
-    margin: 5px 0;
+    margin: 5px 10px;
 }
 
 .ticket-info p strong {

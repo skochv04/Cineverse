@@ -28,7 +28,7 @@ function Header() {
                             <a href="/user_profile"><img src="/src/assets/user.png" alt="User" /></a>
                         </div>
                         <div id="nav_to_cart">
-                            <a href="/cart"><img src="/src/assets/cart.png" alt="Cart" /></a>
+                            <a href="/user_profile"><img src="/src/assets/cart.png" alt="Cart" /></a>
                         </div>
                     </div>
                 </div>

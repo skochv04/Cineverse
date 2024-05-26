@@ -33,14 +33,57 @@ function Admin() {
     const [newScreeningLanguage, setNewScreeningLanguage] = useState('');
     const [newMovieHall, setNewMovieHall] = useState('');
 
-
     const [newDays, setNewDays] = useState('');
+
+    const [categories, setCategories] = useState([]);
+    const [movies, setMovies] = useState([]);
+    const [selectedMovie, setSelectedMovie] = useState(null);
+
+    const [screenings, setScreenings] = useState([]);
+    const [selectedScreening, setSelectedScreening] = useState(null);
 
 
     const openModal = (title, action) => {
         setModalContent({ title, action });
         setModalIsOpen(true);
-        setError(null); // Reset error when opening a new modal
+        setError(null);
+
+        if (title === "View Categories") {
+            fetchCategories();
+        }
+
+        else if (title === "View Movies") {
+            fetchMovies();
+        }
+
+        else if (title === "View Movie Screenings") {
+            fetchMovieScreenings();
+        }
+
+        setSelectedMovie(null);
+        setSelectedScreening(null);
+    };
+
+    const handleClick = (movie) => {
+        setSelectedMovie(movie);
+        setModalContent({ title: movie.title, action: null }); // Змінюємо заголовок на назву фільму
+        setModalIsOpen(true); // Відкриваємо модальне вікно
+    };
+
+    const handleBack = () => {
+        setSelectedMovie(null); // Очищаємо вибраний фільм
+        setModalContent({ title: "View Movies", action: null }); // Повертаємо заголовок на "View Movies"
+    };
+
+    const handleScreeningClick = (screening) => {
+        setSelectedScreening(screening);
+        setModalContent({ title: screening.title, action: null }); // Змінюємо заголовок на назву фільму
+        setModalIsOpen(true); // Відкриваємо модальне вікно
+    };
+
+    const handleScreeningBack = () => {
+        setSelectedScreening(null);
+        setModalContent({ title: "View Movie Screenings", action: null });
     };
 
     const closeModal = () => {
@@ -236,6 +279,91 @@ function Admin() {
             setNewMovieHall('');
             setNewDays('');
 
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
+    const deleteMovieScreening = async () => {
+        if (
+            !newMovie.trim() ||
+            !newDate.trim() ||
+            !newScreeningStartTime.trim()
+        ) {
+            setError("Please fill out all fields.");
+            return;
+        }
+
+        if (modalContent.action) {
+            await modalContent.action();
+        }
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/delete_movie_screening/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: newMovie,
+                    date: newDate,
+                    starttime: newScreeningStartTime,
+                }),
+            });
+
+            if (!response.ok) {
+                const errorDetails = await response.json();
+                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`);
+            }
+
+            setError("MovieScreening was deleted successfully!");
+
+            const result = await response.json();
+            console.log(result.message);
+
+            setNewMovie('');
+            setNewDate('');
+            setNewScreeningStartTime('');
+
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
+    const fetchCategories = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/categories/');
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}`);
+            }
+            const data = await response.json();
+            setCategories(data);
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
+    const fetchMovies = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/movies/');
+            if (!response.ok) {
+                throw new Error(`Failed to fetch movies: ${response.status} - ${response.statusText}`);
+            }
+            const moviesData = await response.json();
+            setMovies(moviesData);
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
+    const fetchMovieScreenings = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/movie-screenings/');
+            if (!response.ok) {
+                throw new Error(`Failed to fetch movie screenings: ${response.status} - ${response.statusText}`);
+            }
+            const screeningsData = await response.json();
+            setScreenings(screeningsData);
         } catch (error) {
             setError(error.message);
         }
@@ -546,6 +674,143 @@ function Admin() {
 
                         <button onClick={handleMovieScreening}>Confirm</button>
                         <button onClick={closeModal}>Cancel</button>
+                    </div>
+                )}
+
+                {(modalContent.title === "Delete Movie Screening") && (
+                    <div>
+                        <div className="all-modals">
+
+                            <label>
+                                Movie title:
+                                <input
+                                    type="text"
+                                    value={newMovie}
+                                    onChange={(e) => setNewMovie(e.target.value)}
+                                />
+                            </label>
+                            <label>
+                                Date:
+                                <input
+                                    type="date"
+                                    value={newDate}
+                                    onChange={(e) => setNewDate(e.target.value)}
+                                />
+                            </label>
+                            <label>
+                                Start time:
+                                <input
+                                    type="time"
+                                    value={newScreeningStartTime}
+                                    onChange={(e) => setNewScreeningStartTime(e.target.value)}
+                                />
+                            </label>
+                        </div>
+
+                        <button onClick={deleteMovieScreening}>Confirm</button>
+                        <button onClick={closeModal}>Cancel</button>
+                    </div>
+                )}
+
+
+                {modalContent.title === "View Categories" && (
+                    <div className="modal-model">
+                        <div className="modal-content-scrollable">
+                            {categories.length > 0 ? (
+                                <ul className="category-list">
+                                    {categories.map((category, index) => (
+                                        <li key={index}>{category.categoryname}</li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>No categories available.</p>
+                            )}
+                        </div>
+                        <button onClick={closeModal}>Cancel</button>
+                    </div>
+                )}
+
+                {modalContent.title === "View Movies" && (
+                    <div className="modal-model">
+                        <div className="modal-content-scrollable">
+                            {movies.length > 0 ? (
+                                <ul className="movie-list">
+                                    {movies.map((movie, index) => (
+                                        <li key={index}>
+                                            <button class="list-button" onClick={() => handleClick(movie)}>{movie.title}</button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>No movies available.</p>
+                            )}
+
+                        </div>
+                        <button onClick={closeModal}>Cancel</button>
+                    </div>
+                )}
+
+                {selectedMovie && (
+                    <div className="modal-content-scrollable">
+                        <div className="movie-details-img">
+                            {selectedMovie.image && <img src={`data:image/jpeg;base64,${selectedMovie.image}`} alt={selectedMovie.title} />}
+                        </div>
+                        <div className="movie-details">
+
+                            <p><b>Category:</b> {selectedMovie.categoryname}</p>
+                            <p><b>Start date:</b> {selectedMovie.startdate}</p>
+                            <p><b>End date:</b> {selectedMovie.enddate}</p>
+                            <p><b>Duration:</b> {selectedMovie.duration}</p>
+                            <p><b>Description:</b> {selectedMovie.description}</p>
+                            <p><b>Minage:</b> {selectedMovie.minage}</p>
+                            <p><b>Director:</b> {selectedMovie.director}</p>
+                            <p><b>Production:</b> {selectedMovie.production}</p>
+                            <p><b>Original language:</b> {selectedMovie.originallanguage}</p>
+                            <p><b>Rank:</b> {selectedMovie.rank}</p>
+
+                            <button onClick={handleBack}>Back</button>
+                        </div>
+
+                    </div>
+                )}
+
+                {modalContent.title === "View Movie Screenings" && (
+                    <div className="modal-model">
+                        <div className="modal-content-scrollable">
+                            {screenings.length > 0 ? (
+                                <ul className="movie-list">
+                                    {screenings.map((screening, index) => (
+                                        <li key={index}>
+                                            <button class="list-button" onClick={() => handleScreeningClick(screening)}>{screening.title} - {screening.date} {screening.starttime}</button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>No movie screenings available.</p>
+                            )}
+                        </div>
+                        <button onClick={closeModal}>Cancel</button>
+                    </div>
+                )}
+
+                {selectedScreening && (
+                    <div className="modal-content-scrollable">
+                        <div className="movie-details-img">
+                            {selectedScreening.image && <img src={`data:image/jpeg;base64,${selectedScreening.image}`} alt={selectedScreening.title} />}
+                        </div>
+                        <div className="movie-details">
+                            <p><b>Date:</b> {selectedScreening.date}</p>
+                            <p><b>Starttime:</b> {selectedScreening.starttime}</p>
+                            <p><b>Endtime:</b> {selectedScreening.endtime}</p>
+                            <p><b>Pricestandard:</b> {selectedScreening.pricestandard}</p>
+                            <p><b>Pricepremium:</b> {selectedScreening.pricepremium}</p>
+                            <p><b>3D:</b> {selectedScreening.threedimensional ? "Yes" : "No"}</p>
+                            <p><b>Language:</b> {selectedScreening.language}</p>
+                            <p><b>Hallnumber:</b> {selectedScreening.hallnumber}</p>
+
+                            <button onClick={handleScreeningBack}>Back</button>
+                        </div>
+
                     </div>
                 )}
 

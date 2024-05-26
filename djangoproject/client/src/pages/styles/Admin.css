@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
 .Admin {
     display: flex;
     flex-direction: column;
@@ -9,6 +11,7 @@
     background-position: center;
     background-repeat: no-repeat;
     color: #fff;
+    font-family: 'Montserrat', sans-serif;
 }
 
 #header_container {
@@ -124,7 +127,7 @@
 .Modal {
     background: #fff;
     padding: 20px;
-    max-width: 500px;
+    max-width: 800px;
     width: 100%;
     margin: 0 auto;
     border-radius: 8px;
@@ -134,12 +137,31 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    font-family: 'Montserrat', sans-serif;
+}
+
+.modal-content-scrollable img {
+    width: 80%;
+    height: auto;
+}
+
+.movie-details-img {
+    flex: 1;
+    align-self: center;
+    display: flex;
+    /* Додаємо flex для контролю по горизонталі */
+    justify-content: center;
+    /* Вирівнюємо по центру по горизонталі */
+    align-items: center;
+    width: 50%;
 }
 
 .Modal h2 {
     margin-top: 0;
     text-align: center;
     width: 100%;
+    color: #000;
 }
 
 .Modal label {
@@ -178,14 +200,158 @@
     background-color: #ce651f;
 }
 
-.Modal button:last-of-type {
-    background-color: #6c757d;
-}
 
-.Modal button:last-of-type:hover {
-    background-color: #5a6268;
-}
 
 .all-modals {
     display: flex;
+}
+
+.category-list {
+    list-style-type: none;
+    /* Видаляє маркери списку */
+    padding: 0;
+    /* Видаляє відступи */
+    margin: 0;
+    /* Видаляє поля */
+    list-style-type: none;
+}
+
+.category-list li {
+    background-color: #f9f9f9;
+    /* Світло-сірий фон для кожного елемента */
+    border: 1px solid #ddd;
+    /* Світло-сіра рамка */
+    margin-bottom: 5px;
+    /* Відступ між елементами */
+    padding: 10px;
+    /* Відступи всередині елементів */
+    border-radius: 5px;
+    /* Закруглені кути */
+    transition: background-color 0.3s;
+    /* Плавний перехід фону */
+    font-size: 12px;
+}
+
+.category-list li:hover {
+    background-color: #e9e9e9;
+    /* Темніший фон при наведенні */
+}
+
+.category-list li strong {
+    color: #171717;
+    /* Темний колір для заголовків властивостей */
+    display: inline-block;
+    width: 100px;
+    /* Ширина для вирівнювання заголовків */
+}
+
+/* Стиль для контейнера категорій */
+.categories-container {
+    max-width: 600px;
+    /* Максимальна ширина контейнера */
+    margin: 0 auto;
+    /* Центрування контейнера */
+    padding: 20px;
+    /* Внутрішні відступи */
+    background-color: #fff;
+    /* Білий фон */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    /* Легка тінь */
+    border-radius: 10px;
+    /* Закруглені кути */
+}
+
+/* Загальні стилі для списку категорій */
+.category-list {
+    list-style-type: none;
+    /* Видаляє маркери списку */
+    padding: 0;
+    /* Видаляє відступи */
+    margin: 0;
+    /* Видаляє поля */
+}
+
+.modal li button {
+    background-color: #c50000;
+}
+
+.category-list li:hover {
+    background-color: #e9e9e9;
+    /* Темніший фон при наведенні */
+}
+
+/* Стиль для контейнера категорій */
+.categories-container {
+    max-width: 600px;
+    /* Максимальна ширина контейнера */
+    margin: 0 auto;
+    /* Центрування контейнера */
+    padding: 20px;
+    /* Внутрішні відступи */
+    background-color: #fff;
+    /* Білий фон */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    /* Легка тінь */
+    border-radius: 10px;
+    /* Закруглені кути */
+}
+
+/* Стиль для модального вікна з прокручуванням */
+.modal-content-scrollable {
+    max-height: 400px;
+    /* Фіксована висота модального вікна */
+    overflow-y: auto;
+    /* Дозвіл на вертикальне прокручування */
+    padding: 20px;
+    /* Внутрішні відступи */
+    display: flex;
+}
+
+.modal-model {
+    display: flex;
+    flex-direction: column;
+}
+
+.Modal button {
+    background-color: #ff7011;
+}
+
+.Modal button:hover {
+    background-color: #ce651f;
+}
+
+.Modal .list-button {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    margin-bottom: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    color: black;
+    font-size: 12px;
+}
+
+.Modal .list-button:hover {
+    background-color: #d9d9d9;
+}
+
+.movie-list {
+    list-style-type: none;
+}
+
+.movie-details {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    flex: 1;
+    font-size: 12px;
+    width: 50%;
+}
+
+.movie-details h2 {
+    margin-bottom: 10px;
+}
+
+.movie-details p {
+    margin-bottom: 5px;
 }

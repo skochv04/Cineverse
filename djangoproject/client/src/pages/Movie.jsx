@@ -1,15 +1,15 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Header from "./Header.jsx";
-import {Link, useParams} from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import "./styles/Movie.css";
 import axios from "axios";
 import RankContainer from "./RankContainer.jsx";
-import {format, addDays} from 'date-fns';
+import { format, addDays } from 'date-fns';
 
 const initialDate = new Date(2024, 4, 22);
 
 function Movie() {
-    const {title} = useParams();
+    const { title } = useParams();
     const [movie, setMovie] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -40,7 +40,7 @@ function Movie() {
 
     const scrollToShowtime = () => {
         if (showtimeRef.current) {
-            showtimeRef.current.scrollIntoView({behavior: 'smooth'});
+            showtimeRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     };
     const handleDateClick = (date) => {
@@ -54,21 +54,21 @@ function Movie() {
     return (
         <div className="Movie">
             <div id="header_container">
-                <Header/>
+                <Header />
             </div>
             <div id="content">
                 <div id="movie-details-container">
                     <div id="img_container">
                         <img src={movie.image ? `data:image/jpeg;base64,${movie.image}` : movie.title}
-                             alt="Movie Poster"/>
-                        <RankContainer rank={movie.rank}/>
+                            alt="Movie Poster" />
+                        <RankContainer rank={movie.rank} />
                     </div>
                     <div id="details_container">
                         <div id="title_container">
                             <h1>{movie.title}</h1>
                         </div>
                         <div id="category_container">
-                            <h4>{movie.category_name}</h4>
+                            <h4>{movie.categoryname}</h4>
                         </div>
                         <div id="description">
                             <p>{movie.description}</p>
@@ -81,11 +81,11 @@ function Movie() {
                             <p><strong>Minimum Age:</strong> {movie.minage}</p>
                             <p><strong>Production:</strong> {movie.production}</p>
                             <p><strong>Original Language:</strong> {movie.originallanguage}</p>
+                            <div id="buy-button">
+                                <button onClick={scrollToShowtime}>Buy Ticket</button>
+                            </div>
+                        </div>
 
-                        </div>
-                        <div id="buy-button">
-                            <button onClick={scrollToShowtime}>Buy Ticket</button>
-                        </div>
                     </div>
                 </div>
                 <div id="showtime_container" ref={showtimeRef}>
@@ -137,7 +137,7 @@ function Movie() {
                                             </div>
                                             <div id="button_container">
                                                 <Link to={`/showtime/${showtime.moviescreeningid}`}
-                                                      className="showtime-link">
+                                                    className="showtime-link">
                                                     <button> Choose perfect seat</button>
                                                 </Link>
                                             </div>

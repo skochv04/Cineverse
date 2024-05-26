@@ -23,6 +23,38 @@ specific_customer = 6
 
 import base64
 
+def get_movie_screenings(request):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT ms.*, m.title, m.image FROM movie_screening ms LEFT JOIN movies m ON m.movieid = ms.movieid order by ms.date, ms.starttime")
+            columns = [col[0] for col in cursor.description]
+            movies = []
+            for row in cursor.fetchall():
+                movie = dict(zip(columns, row))
+                # Check if 'image' exists and is not None before encoding
+                if movie.get('image'):
+                    movie['image'] = base64.b64encode(movie['image']).decode('utf-8')
+                movies.append(movie)
+        return JsonResponse(movies, safe=False)
+    except Exception as e:
+        # Consider logging the exception here
+        return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
+def delete_movie_screening(request):
+    try:
+        data = json.loads(request.body)
+        title = data['title']
+        date = data['date']
+        time = data['starttime']
+        with connection.cursor() as cursor:
+            cursor.execute("CALL delete_movie_screening(%s, %s, %s);", [title, date, time])
+        return JsonResponse({'message': 'Movie screening deleted successfully'}, status=200)
+    except KeyError as e:
+        return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
 @csrf_exempt
 def handle_movie_screening(request):
     try:
@@ -109,8 +141,8 @@ def handle_movie_category(request):
 def get_tickets_for_user(request, user_id):
     with connection.cursor() as cursor:
         cursor.execute("""
-            SELECT * FROM get_tickets_for_user(%s)
-        """, [user_id])
+            SELECT * FROM get_tickets_for_user(%s) where date >= (%s)
+        """, [user_id, specific_date])
         columns = [col[0] for col in cursor.description]
         results = [dict(zip(columns, row)) for row in cursor.fetchall()]
     return JsonResponse(results, safe=False)
@@ -171,7 +203,7 @@ def get_movie_details(request, title):
 def get_movies(request):
     try:
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM movies")
+            cursor.execute("SELECT m.*, mc.categoryname FROM movies m LEFT JOIN movie_categories mc ON m.moviecategoryid = mc.moviecategoryid")
             columns = [col[0] for col in cursor.description]
             movies = []
             for row in cursor.fetchall():
@@ -216,7 +248,7 @@ def get_movie_sessions(request, title):
     try:
         with connection.cursor() as cursor:
             cursor.execute(
-                "SELECT * FROM get_movie_sessions(%s, %s, %s) order by date",
+                "SELECT * FROM get_movie_sessions(%s, %s, %s) order by date, starttime",
                 [title, specific_date, specific_time]
             )
             rows = cursor.fetchall()

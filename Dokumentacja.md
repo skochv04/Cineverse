@@ -477,23 +477,37 @@ ALTER PROCEDURE add_movie_screening(varchar, date, time, numeric, numeric, boole
 - Usunięcie danego seansu
 
 ```postgresql
-CREATE PROCEDURE delete_movie_screening(
-    IN screening_id integer
-)
+CREATE OR REPLACE PROCEDURE delete_movie_screening(
+    IN movie_title TEXT,
+    IN screening_date DATE,
+    IN screening_time TIME)
 LANGUAGE plpgsql
 AS
 $$
+DECLARE
+    screening_id INTEGER;
 BEGIN
+    -- Перевірка наявності показу фільму з заданими параметрами
+    SELECT ms.moviescreeningid
+    INTO screening_id
+    FROM movie_screening ms
+    JOIN movies m ON ms.movieid = m.movieid
+    WHERE m.title = movie_title
+      AND ms.date = screening_date
+      AND ms.starttime = screening_time;
+
+    -- Якщо показ не знайдено, викликаємо помилку
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'No movie screening for the movie "%", date "%", and time "%" exists', movie_title, screening_date, screening_time;
+    END IF;
+
+    -- Видалення знайденого показу
     DELETE FROM movie_screening
     WHERE moviescreeningid = screening_id;
-
-    IF NOT FOUND THEN
-        RAISE EXCEPTION 'Movie screening with id % does not exist', screening_id;
-    END IF;
 END
 $$;
 
-ALTER PROCEDURE delete_movie_screening(integer) OWNER TO postgres;
+ALTER PROCEDURE delete_movie_screening(TEXT, DATE, TIME) OWNER TO postgres;
 ```
 
 - Cykliczne dodawanie seansów dla filmu na tą samą godzinę i tą samą salę na 7 kolejnych dni od zadangeo
@@ -785,20 +799,9 @@ $$ LANGUAGE plpgsql;
 - Wyświetlenie wszystkich biletów dla danego użytkownika
 
 ```postgresql
-create or replace function get_tickets_for_user(user_id integer)
-returns table (
-    ticket_id integer,
-    status char(10),
-    date date,
-    start_time time,
-    duration integer,
-    hall_number integer,
-    sit_number integer,
-    price numeric,
-    ordered_on_date date,
-    ordered_on_time time
-)
-language plpgsql
+create function get_tickets_for_user(user_id integer)
+    returns TABLE(ticket_id integer, status char(10), date date, title varchar(40), start_time time without time zone, duration integer, hall_number integer, sit_number integer, price numeric, ordered_on_date date, ordered_on_time time without time zone)
+    language plpgsql
 as
 $$
 begin
@@ -807,6 +810,7 @@ begin
         t.ticketid,
         t.status,
         ms.Date,
+        m.title,
         ms.StartTime,
         m.duration,
         ms.hallnumber,
@@ -824,26 +828,31 @@ begin
     inner join
         movies as m on m.movieid = ms.movieid
     where
-        t.customerid = user_id;
+        t.customerid = user_id
+    order by date, starttime;
 end;
 $$;
+
+alter function get_tickets_for_user(integer) owner to postgres;
 ```
 
 - Sprawdzenie, czy dane miejsce jest mejscem z kategorii Premium (wszystkie sale mają tyle samo miejsc, ostatni rząd symbolizuje premium mejsca)
 
 ```postgresql
-CREATE OR REPLACE FUNCTION is_premium_place(place_value integer)
-RETURNS boolean AS
+create function is_premium_place(place_value integer) returns boolean
+    language plpgsql
+as
 $$
 BEGIN
-    IF place_value >= 79 AND place_value <= 84 THEN
+    IF place_value >= 1 AND place_value <= 11 THEN
         RETURN TRUE;
     ELSE
         RETURN FALSE;
     END IF;
 END;
-$$
-LANGUAGE plpgsql;
+$$;
+
+alter function is_premium_place(integer) owner to postgres;
 ```
 
 - Wyświetlenie danych o filmu wraz z nazwą kategorii
