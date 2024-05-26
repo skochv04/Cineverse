@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
 .Showtime {
     font-family: 'Montserrat', sans-serif;
     display: flex;
@@ -10,6 +12,7 @@
     background-position: center;
     background-repeat: no-repeat;
     position: relative;
+    font-family: 'Montserrat', sans-serif;
 }
 
 
@@ -41,6 +44,7 @@ h2 {
     align-content: center;
     align-items: center;
 }
+
 .seating-chart {
     min-width: 400px;
     min-height: 400px;
@@ -62,6 +66,23 @@ h2 {
     margin-bottom: 5px;
 }
 
+.availableSeatPremium {
+    min-width: 30px;
+    min-height: 30px;
+    width: 2vw;
+    height: 2vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #210585;
+    border: 2px solid #20047e;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    margin: 0 2px;
+}
+
 .availableSeat {
     min-width: 30px;
     min-height: 30px;
@@ -70,7 +91,7 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #4B0000;
+    background-color: #bd2214;
     border: 2px solid #2B0000;
     border-radius: 5px;
     cursor: pointer;
@@ -96,13 +117,15 @@ h2 {
     margin: 0 2px;
 }
 
-.availableSeat.selected {
+.availableSeat.selected,
+.availableSeatPremium.selected {
     background-color: #007bff;
     color: #fff;
     scale: 1.1;
 }
 
-.availableSeat:hover {
+.availableSeat:hover,
+.availableSeatPremium:hover {
     border-color: #007bff;
     scale: 1.1;
 }

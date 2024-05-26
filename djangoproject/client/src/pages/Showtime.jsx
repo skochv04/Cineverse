@@ -1,12 +1,12 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import Header from "./Header.jsx";
 import "./styles/Showtime.css";
-import {getCsrfToken} from "../utils/csrf.js";
-import {useParams} from "react-router-dom";
+import { getCsrfToken } from "../utils/csrf.js";
+import { useParams } from "react-router-dom";
 import axios from 'axios';
 
 function Showtime() {
-    const {moviescreeningID} = useParams();
+    const { moviescreeningID } = useParams();
     const [selectedSeat, setSelectedSeat] = useState(null);
     const [occupiedSeats, setOccupiedSeats] = useState([]);
     const [showtime, setShowtime] = useState(null);
@@ -136,12 +136,14 @@ function Showtime() {
     return (
         <div className="Showtime">
             <div id="header_container">
-                <Header/>
+                <Header />
             </div>
             <div id="content">
                 <div id="title_container">
-                    <h2>Select Your Seat:</h2>
-                    <h4>Your seat: {selectedSeat}</h4>
+                    <h5>Standard price: {showtime.pricestandard}</h5>
+                    <h5>Premium price: {showtime.pricepremium}</h5>
+                    <h3>Select Your Seat:</h3>
+                    <h5>Your seat: {selectedSeat}</h5>
                 </div>
                 {error && <p className="error">{error}</p>}
                 <div id="seating-chart-container">
@@ -150,13 +152,20 @@ function Showtime() {
                             <div
                                 key={rowIndex}
                                 className="seat-row"
-                                style={{justifyContent: rowIndex > 3 ? 'center' : 'start'}}
+                                style={{ justifyContent: rowIndex > 3 ? 'center' : 'start' }}
                             >
-                                {row.map((seat) => (
+                                {row.map((seat, seatIndex) => (
                                     <div
                                         key={seat}
-                                        className={`seat ${isSeatOccupied(seat) ? 'non-availableSeat' : 'availableSeat'} ${selectedSeat === seat ? 'selected' : ''}`}
-                                        onClick={() => !isSeatOccupied(seat) && handleSelectSeat(seat)}
+                                        className={`seat ${isSeatOccupied(seat)
+                                            ? 'non-availableSeat'
+                                            : rowIndex === 0
+                                                ? 'availableSeatPremium'
+                                                : 'availableSeat'
+                                            } ${selectedSeat === seat ? 'selected' : ''}`}
+                                        onClick={() =>
+                                            !isSeatOccupied(seat) && handleSelectSeat(seat)
+                                        }
                                     >
                                         {seat}
                                     </div>
