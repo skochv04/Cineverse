@@ -23,6 +23,42 @@ specific_customer = 6
 
 import base64
 
+def get_categories_average(request):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM average_ticket_prices_by_category")
+            columns = [col[0] for col in cursor.description]
+            categories = []
+            for row in cursor.fetchall():
+                category = dict(zip(columns, row))
+                categories.append(category)
+        return JsonResponse(categories, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
+def get_movie_revenue_on_date(request):
+    if request.method == 'GET':
+        movie_title = request.GET.get('title')
+        order_date = request.GET.get('date')
+
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "SELECT * FROM movies_revenue WHERE title = %s AND orderedondate = %s",
+                    [movie_title, order_date]
+                )
+                columns = [col[0] for col in cursor.description]
+                result = cursor.fetchone()  # Fetch only one row
+
+            if result:
+                result_dict = dict(zip(columns, result))
+                return JsonResponse(result_dict, safe=False)
+            else:
+                return JsonResponse({'error': 'No results found for the given movie title and date.'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
 @csrf_exempt
 def handle_reservation(request):
     try:

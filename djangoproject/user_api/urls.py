@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from .views import OccupiedSeatsList, handle_request, set_csrf_token, get_movie_sessions, get_categories, get_showtime, get_tickets_for_user 
 from .views import handle_movie_category, delete_movie_by_name, handle_movie, handle_movie_screening, delete_movie_screening, handle_reservation
-
+from .views import get_movie_revenue_on_date
 
 urlpatterns = [
 	path('register/', views.UserRegister.as_view(), name='register'),
@@ -27,4 +27,6 @@ urlpatterns = [
 	path('delete_movie_screening/', delete_movie_screening, name='delete_movie_screening'),
 	path('movie-screenings/', views.get_movie_screenings, name='movie-screenings'),
 	path('handle_reservation/', handle_reservation, name='handle_reservation'),
+	path('movies-revenue/', get_movie_revenue_on_date, name='movies-revenue'),
+	path('categories-average/', views.get_categories_average, name='categories-average'),
 ]

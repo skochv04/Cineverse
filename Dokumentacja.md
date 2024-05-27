@@ -13,121 +13,118 @@ W ramach projektu została stworzona strona kina z możliwością rejestracji, l
 
 ## 3. **Tabele**
 
-```sql
--- Table: MovieCategories
-CREATE TABLE MovieCategories (
-    MovieCategoryID int  NOT NULL,
-    CategoryName varchar(40)  NOT NULL,
-    CONSTRAINT MovieCategories_pk PRIMARY KEY (MovieCategoryID)
+```postgresql
+create table movie_categories
+(
+    moviecategoryid integer default nextval('moviecategories_moviecategoryid_seq'::regclass) not null
+        constraint moviecategories_pk
+            primary key,
+    categoryname    varchar(40)                                                              not null
 );
 
--- Table: MovieHalls
-CREATE TABLE movie_halls (
-    MovieHallID serial PRIMARY KEY,
-    hall_number INTEGER NOT NULL
+alter table movie_categories
+    owner to postgres;
+
+create table movies
+(
+    movieid          serial
+        constraint movies_pk
+            primary key,
+    moviecategoryid  integer          not null
+        constraint product_category_product
+            references movie_categories,
+    title            varchar(40)      not null,
+    startdate        date             not null,
+    enddate          date             not null,
+    duration         integer          not null,
+    description      varchar(255)     not null,
+    image            bytea            not null,
+    director         varchar(40)      not null,
+    minage           integer          not null,
+    production       varchar(40)      not null,
+    originallanguage varchar(40)      not null,
+    rank             double precision not null
 );
 
--- Table: movie_screening
-CREATE TABLE movie_screening (
-    MovieScreeningID serial  NOT NULL,
-    MovieID int  NOT NULL,
-    Date date  NOT NULL,
-    StartTime time  NOT NULL,
-    EndTime time  NOT NULL,
-    PriceStandard decimal(12,2)  NOT NULL,
-    PricePremium decimal(12,2)  NOT NULL,
-    ThreeDimensional boolean  NOT NULL,
-    Language varchar(40)  NOT NULL,
-    HallNumber int  NOT NULL,
-    CONSTRAINT movie_screening_pk PRIMARY KEY (MovieScreeningID)
+alter table movies
+    owner to postgres;
+
+create table movie_halls
+(
+    moviehallid serial
+        primary key,
+    hall_number integer not null
+        constraint movie_halls_hall_number_unique
+            unique
 );
 
--- Table: hall_seats
-CREATE TABLE hall_seats (
-    SeatID serial  NOT NULL,
-    SeatNumber int  NOT NULL,
-    MovieHallNumber int  NOT NULL,
-    CONSTRAINT hall_seats_pk PRIMARY KEY (SeatID)
+alter table movie_halls
+    owner to postgres;
+
+create table movie_screening
+(
+    moviescreeningid serial
+        constraint movie_screening_pk
+            primary key,
+    movieid          integer        not null
+        constraint session_movies
+            references movies,
+    date             date           not null,
+    starttime        time           not null,
+    endtime          time           not null,
+    pricestandard    numeric(12, 2) not null,
+    pricepremium     numeric(12, 2) not null,
+    threedimensional boolean        not null,
+    language         varchar(40)    not null,
+    hallnumber       integer        not null
+        constraint hallnumber
+            references movie_halls (hall_number)
 );
 
--- Table: Movies
-CREATE TABLE Movies (
-    MovieID int  NOT NULL,
-    MovieCategoryID int  NOT NULL,
-    Title varchar(40)  NOT NULL,
-    StartDate date  NOT NULL,
-    EndDate date  NOT NULL,
-    Duration int  NOT NULL,
-    Description varchar(255)  NOT NULL,
-    Image bytea  NOT NULL,
-    Director varchar(40)  NOT NULL,
-    MinAge int  NOT NULL,
-    Production varchar(40)  NOT NULL,
-    OriginalLanguage varchar(40)  NOT NULL,
-    Rank double precision NOT NULL,
-    CONSTRAINT Movies_pk PRIMARY KEY (MovieID)
+alter table movie_screening
+    owner to postgres;
+
+create table hall_seats
+(
+    seatid          serial
+        constraint hall_seats_pk
+            primary key,
+    seatnumber      integer not null,
+    moviehallnumber integer not null
+        constraint hallseats_moviehalls
+            references movie_halls (hall_number)
 );
 
--- Table: tickets
-CREATE TABLE tickets (
-    TickedID serial  NOT NULL,
-    CustomerID int  NOT NULL,
-    OrderedOnDate date  NOT NULL,
-    OrderedOnTime time  NOT NULL,
-    Status char(10)  NOT NULL,
-    MovieScreeningID int  NOT NULL,
-    SeatNumber int  NOT NULL,
-    CONSTRAINT tickets_pk PRIMARY KEY (TickedID)
+alter table hall_seats
+    owner to postgres;
+
+create table tickets
+(
+    ticketid         integer default nextval('tickets_tickedid_seq'::regclass) not null
+        constraint tickets_pk
+            primary key,
+    customerid       integer                                                   not null
+        constraint client_purchase
+            references user_api_appuser,
+    orderedondate    date                                                      not null,
+    orderedontime    time                                                      not null,
+    status           char(10)                                                  not null,
+    moviescreeningid integer                                                   not null
+        constraint tickets_moviescreening
+            references movie_screening,
+    seatnumber       integer                                                   not null
+        constraint tickets_hallseats
+            references hall_seats
 );
 
--- foreign keys
--- Reference: HallSeats_MovieHalls (table: hall_seats)
-ALTER TABLE hall_seats ADD CONSTRAINT HallSeats_MovieHalls
-    FOREIGN KEY (MovieHallNumber)
-    REFERENCES movie_halls (MovieHallNumber)
-    NOT DEFERRABLE
-    INITIALLY IMMEDIATE
-;
+alter table tickets
+    owner to postgres;
 
--- Reference: Session_Movies (table: movie_screening)
-ALTER TABLE movie_screening ADD CONSTRAINT Session_Movies
-    FOREIGN KEY (MovieID)
-    REFERENCES movies (MovieID)
-    NOT DEFERRABLE
-    INITIALLY IMMEDIATE
-;
-
--- Reference: Tickets_HallSeats (table: tickets)
-ALTER TABLE tickets ADD CONSTRAINT Tickets_HallSeats
-    FOREIGN KEY (SeatNumber)
-    REFERENCES hall_seats (SeatID)
-    NOT DEFERRABLE
-    INITIALLY IMMEDIATE
-;
-
--- Reference: Tickets_MovieScreening (table: tickets)
-ALTER TABLE tickets ADD CONSTRAINT Tickets_MovieScreening
-    FOREIGN KEY (MovieScreeningID)
-    REFERENCES movie_screening (MovieScreeningID)
-    NOT DEFERRABLE
-    INITIALLY IMMEDIATE
-;
-
--- Reference: client_purchase (table: tickets)
-ALTER TABLE tickets ADD CONSTRAINT client_purchase
-    FOREIGN KEY (CustomerID)
-    REFERENCES user_api_appuser (user_id)
-    NOT DEFERRABLE
-    INITIALLY IMMEDIATE
-;
-
--- Reference: product_category_product (table: Movies)
-ALTER TABLE Movies ADD CONSTRAINT product_category_product
-    FOREIGN KEY (MovieCategoryID)
-    REFERENCES MovieCategories (MovieCategoryID)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
+create trigger validate_reservation_time
+    before insert
+    on tickets
+    for each row
+execute procedure check_reservation_period();
 ```
 
 ## 4. **Widoki**

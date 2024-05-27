@@ -42,6 +42,10 @@ function Admin() {
     const [screenings, setScreenings] = useState([]);
     const [selectedScreening, setSelectedScreening] = useState(null);
 
+    const [newRevenueDate, setNewRevenueDate] = useState('');
+    const [revenue, setRevenue] = useState(null);
+
+    const [average, setAverage] = useState([]);
 
     const openModal = (title, action) => {
         setModalContent({ title, action });
@@ -60,8 +64,13 @@ function Admin() {
             fetchMovieScreenings();
         }
 
+        else if (title === "Show average prices per category over past/upcoming 6 months") {
+            fetchAverage();
+        }
+
         setSelectedMovie(null);
         setSelectedScreening(null);
+        setRevenue(null);
     };
 
     const handleClick = (movie) => {
@@ -84,6 +93,11 @@ function Admin() {
     const handleScreeningBack = () => {
         setSelectedScreening(null);
         setModalContent({ title: "View Movie Screenings", action: null });
+    };
+
+    const handleRevenueClick = () => {
+        fetchRevenue();
+        setModalIsOpen(true); // Відкриваємо модальне вікно
     };
 
     const closeModal = () => {
@@ -369,6 +383,53 @@ function Admin() {
         }
     };
 
+    const fetchRevenue = async () => {
+        if (
+            !newMovie.trim() ||
+            !newRevenueDate.trim()
+        ) {
+            setError("Please fill out all fields.");
+            return;
+        }
+
+        if (modalContent.action) {
+            await modalContent.action();
+        }
+
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/movies-revenue/?title=${encodeURIComponent(newMovie)}&date=${encodeURIComponent(newRevenueDate)}`);
+
+            if (!response.ok) {
+                const errorDetails = await response.json();
+                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`);
+            }
+            setError('');
+            const revenue_data = await response.json();
+            setRevenue(revenue_data);
+
+            console.log(revenue_data.message);
+
+            setNewMovie('');
+            setNewRevenueDate('');
+
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
+    const fetchAverage = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/categories-average/');
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}`);
+            }
+            const data = await response.json();
+            setAverage(data);
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
     return (
         <div className="Admin">
             <div id="header_container">
@@ -435,6 +496,8 @@ function Admin() {
                     <h2>MovieScreening</h2>
                     <div className="container">
                         <button className="blue" onClick={() => openModal("Show Moviescreenings by Hall")}>Show Moviescreenings by Hall</button>
+                        <button className="blue" onClick={() => openModal("Show revenue for Movie on OrderDate")}>Show revenue for Movie on OrderDate</button>
+                        <button className="blue" onClick={() => openModal("Show average prices per category over past/upcoming 6 months")}>Show average prices per category over past/upcoming 6 months</button>
                     </div>
                 </>
             )}
@@ -814,6 +877,67 @@ function Admin() {
                     </div>
                 )}
 
+                {(modalContent.title === "Show revenue for Movie on OrderDate") && (
+                    <div>
+                        <div className="all-modals">
+                            <label>
+                                Movie title:
+                                <input
+                                    type="text"
+                                    value={newMovie}
+                                    onChange={(e) => setNewMovie(e.target.value)}
+                                />
+                            </label>
+                            <label>
+                                Ordered on date:
+                                <input
+                                    type="date"
+                                    value={newRevenueDate}
+                                    onChange={(e) => setNewRevenueDate(e.target.value)}
+                                />
+                            </label>
+                        </div>
+
+                        <button onClick={() => handleRevenueClick()}>Confirm</button>
+                        <button onClick={closeModal}>Cancel</button>
+                    </div>
+                )}
+
+                {revenue && (
+                    <div className="modal-content-scrollable">
+                        <div className="movie-details">
+                            <p><b>Categoryname:</b> {revenue.categoryname}</p>
+                            <p><b>Startdate:</b> {revenue.startdate}</p>
+                            <p><b>Enddate:</b> {revenue.enddate}</p>
+                            <p><b>Ordered on date:</b> {revenue.orderedondate}</p>
+                            <p><b>Tickets bought:</b> {revenue.tickets_amount}</p>
+                            <p><b>Revenue:</b> {revenue.revenue}</p>
+                        </div>
+
+                    </div>
+                )}
+
+                {modalContent.title === "Show average prices per category over past/upcoming 6 months" && (
+                    <div className="modal-model">
+                        <div className="modal-content-scrollable">
+                            {average.length > 0 ? (
+                                <ul className="category-list">
+                                    {average.map((category, index) => (
+                                        <li key={index}>
+                                            <span><b>Category:</b> {category.categoryname} <br /></span>
+                                            <span><b>Movies Screenings Amount:</b> {category.moviescreenings_amount} <br /></span>
+                                            <span><b>Average Price (Standard):</b> {category.average_pricestandard} <br /></span>
+                                            <span><b>Average Price (Premium):</b> {category.average_pricepremium} <br /></span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>No categories available.</p>
+                            )}
+                        </div>
+                        <button onClick={closeModal}>Cancel</button>
+                    </div>
+                )}
                 {error && <div className="error">{error}</div>}
             </Modal>
         </div>
