@@ -23,6 +23,29 @@ specific_customer = 6
 
 import base64
 
+@csrf_exempt
+def get_movie_screenings_by_hall(request):
+    if request.method == 'GET':
+        movie_hall = request.GET.get('number')
+        hall_date = request.GET.get('date')
+
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "SELECT * FROM get_screenings_by_hall(%s, %s)",
+                    [movie_hall, hall_date]
+                )
+                columns = [col[0] for col in cursor.description]
+                results = cursor.fetchall()  # Fetch all rows
+
+            if results:
+                result_dicts = [dict(zip(columns, row)) for row in results]
+                return JsonResponse(result_dicts, safe=False)
+            else:
+                return JsonResponse({'error': 'No results found for the given movie hall and date.'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
 def get_categories_average(request):
     try:
         with connection.cursor() as cursor:

@@ -47,6 +47,10 @@ function Admin() {
 
     const [average, setAverage] = useState([]);
 
+    const [newHallNumber, setNewHallNumber] = useState('');
+    const [newHallDate, setNewHallDate] = useState('');
+    const [hall, setHall] = useState([]);
+
     const openModal = (title, action) => {
         setModalContent({ title, action });
         setModalIsOpen(true);
@@ -71,6 +75,7 @@ function Admin() {
         setSelectedMovie(null);
         setSelectedScreening(null);
         setRevenue(null);
+        setHall(null);
     };
 
     const handleClick = (movie) => {
@@ -97,6 +102,12 @@ function Admin() {
 
     const handleRevenueClick = () => {
         fetchRevenue();
+        setModalIsOpen(true); // Відкриваємо модальне вікно
+    };
+
+    const handleHallClick = () => {
+        setHall(null);
+        fetchHall();
         setModalIsOpen(true); // Відкриваємо модальне вікно
     };
 
@@ -430,6 +441,40 @@ function Admin() {
         }
     };
 
+    const fetchHall = async () => {
+        if (
+            !newHallNumber.trim() ||
+            !newHallDate.trim()
+        ) {
+            setError("Please fill out all fields.");
+            return;
+        }
+
+        if (modalContent.action) {
+            await modalContent.action();
+        }
+
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/hall/?number=${encodeURIComponent(newHallNumber)}&date=${encodeURIComponent(newHallDate)}`);
+
+            if (!response.ok) {
+                const errorDetails = await response.json();
+                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`);
+            }
+            setError('');
+            const hall_data = await response.json();
+            setHall(hall_data);
+
+            console.log(hall_data.message);
+
+            setNewHallNumber('');
+            setNewHallDate('');
+
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
     return (
         <div className="Admin">
             <div id="header_container">
@@ -495,7 +540,7 @@ function Admin() {
                 <>
                     <h2>MovieScreening</h2>
                     <div className="container">
-                        <button className="blue" onClick={() => openModal("Show Moviescreenings by Hall")}>Show Moviescreenings by Hall</button>
+                        <button className="blue" onClick={() => openModal("Show Movie Screenings by Hall")}>Show Movie Screenings by Hall</button>
                         <button className="blue" onClick={() => openModal("Show revenue for Movie on OrderDate")}>Show revenue for Movie on OrderDate</button>
                         <button className="blue" onClick={() => openModal("Show average prices per category over past/upcoming 6 months")}>Show average prices per category over past/upcoming 6 months</button>
                     </div>
@@ -938,6 +983,56 @@ function Admin() {
                         <button onClick={closeModal}>Cancel</button>
                     </div>
                 )}
+
+                {(modalContent.title === "Show Movie Screenings by Hall") && (
+                    <div>
+                        <div className="all-modals">
+                            <label>
+                                Hall number:
+                                <input
+                                    type="number"
+                                    value={newHallNumber}
+                                    onChange={(e) => setNewHallNumber(e.target.value)}
+                                />
+                            </label>
+                            <label>
+                                Date:
+                                <input
+                                    type="date"
+                                    value={newHallDate}
+                                    onChange={(e) => setNewHallDate(e.target.value)}
+                                />
+                            </label>
+                        </div>
+
+                        <button onClick={() => handleHallClick()}>Confirm</button>
+                        <button onClick={closeModal}>Cancel</button>
+                    </div>
+                )}
+
+                {hall && (
+                    <div className="modal-content-scrollable">
+                        <div className="movie-details">
+                            {hall.length > 0 ? (
+                                <ul className="category-list">
+                                    {hall.map((session, index) => (
+                                        <li key={index}>
+                                            <span><b>Title:</b> {session.title} <br /></span>
+                                            <span><b>StartTime:</b> {session.starttime} <br /></span>
+                                            <span><b>EndTime:</b> {session.endtime} <br /></span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>No screenings available.</p>
+                            )}
+                        </div>
+
+                    </div>
+                )}
+
+
+
                 {error && <div className="error">{error}</div>}
             </Modal>
         </div>
