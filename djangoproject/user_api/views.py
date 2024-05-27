@@ -23,6 +23,19 @@ specific_customer = 6
 
 import base64
 
+def get_today_screenings(request):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM get_movie_screenings_on_date(%s)", [specific_date])
+            columns = [col[0] for col in cursor.description]
+            screenings = []
+            for row in cursor.fetchall():
+                screening = dict(zip(columns, row))
+                screenings.append(screening)
+        return JsonResponse(screenings, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
 @csrf_exempt
 def get_movie_screenings_by_hall(request):
     if request.method == 'GET':

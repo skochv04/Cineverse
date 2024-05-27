@@ -30,4 +30,5 @@ urlpatterns = [
 	path('movies-revenue/', get_movie_revenue_on_date, name='movies-revenue'),
 	path('categories-average/', views.get_categories_average, name='categories-average'),
 	path('hall/', views.get_movie_screenings_by_hall, name='hall'),
+	path('today-screenings/', views.get_today_screenings, name='today-screenings'),
 ]

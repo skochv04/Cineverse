@@ -51,6 +51,8 @@ function Admin() {
     const [newHallDate, setNewHallDate] = useState('');
     const [hall, setHall] = useState([]);
 
+    const [todayScreenings, setTodayScreenings] = useState([]);
+
     const openModal = (title, action) => {
         setModalContent({ title, action });
         setModalIsOpen(true);
@@ -70,6 +72,10 @@ function Admin() {
 
         else if (title === "Show average prices per category over past/upcoming 6 months") {
             fetchAverage();
+        }
+
+        else if (title === "Show today Movie Screenings") {
+            fetchScreenings();
         }
 
         setSelectedMovie(null);
@@ -475,6 +481,19 @@ function Admin() {
         }
     };
 
+    const fetchScreenings = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/today-screenings/');
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}`);
+            }
+            const data = await response.json();
+            setTodayScreenings(data);
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
     return (
         <div className="Admin">
             <div id="header_container">
@@ -543,6 +562,7 @@ function Admin() {
                         <button className="blue" onClick={() => openModal("Show Movie Screenings by Hall")}>Show Movie Screenings by Hall</button>
                         <button className="blue" onClick={() => openModal("Show revenue for Movie on OrderDate")}>Show revenue for Movie on OrderDate</button>
                         <button className="blue" onClick={() => openModal("Show average prices per category over past/upcoming 6 months")}>Show average prices per category over past/upcoming 6 months</button>
+                        <button className="blue" onClick={() => openModal("Show today Movie Screenings")}>Show today Movie Screenings</button>
                     </div>
                 </>
             )}
@@ -820,7 +840,6 @@ function Admin() {
                     </div>
                 )}
 
-
                 {modalContent.title === "View Categories" && (
                     <div className="modal-model">
                         <div className="modal-content-scrollable">
@@ -1031,7 +1050,27 @@ function Admin() {
                     </div>
                 )}
 
-
+                {modalContent.title === "Show today Movie Screenings" && (
+                    <div className="modal-model">
+                        <div className="modal-content-scrollable">
+                            {todayScreenings.length > 0 ? (
+                                <ul className="category-list">
+                                    {todayScreenings.map((screening, index) => (
+                                        <li key={index}>
+                                            <span><b>Move title</b> {screening.movie_title} <br /></span>
+                                            <span><b>Start time:</b> {screening.start_time} <br /></span>
+                                            <span><b>Hall number:</b> {screening.hall_number} <br /></span>
+                                            <span><b>Available seats:</b> {screening.available_seats} <br /></span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>No screenings available.</p>
+                            )}
+                        </div>
+                        <button onClick={closeModal}>Cancel</button>
+                    </div>
+                )}
 
                 {error && <div className="error">{error}</div>}
             </Modal>
