@@ -15,7 +15,7 @@ Database project, carried out in the 4th semester of studies at AGH.
    - Framework:
      React JS
    - Server part:
-     Flask (Python)
+     Django (Python)
 
 4) Link to the repository (GitHub, Bitbucket, GitLab, itp.): 
    - https://github.com/skochv04/BD2_PROJECT
