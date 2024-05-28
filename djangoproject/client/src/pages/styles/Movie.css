@@ -76,13 +76,23 @@
     text-align: left;
     font-size: 14px;
 }
-
+#title_container {
+    display: flex;
+    min-width: 80%;
+    text-align: left;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+}
 #title_container h1 {
     margin: 0;
+    padding: 0;
     font-size: 2.2em;
     color: #fff;
+    width: 100%; /* Rozciągnij h1 na całą szerokość rodzica */
+    text-align: left; /* Wyrównaj tekst do lewej */
+    box-sizing: border-box; /* Upewnij się, że padding i border są wliczane w szerokość */
 }
-
 #description {
     width: 90%;
     margin: 20px 0;
@@ -125,14 +135,13 @@
     border: none;
     padding: 10px 20px;
     font-size: 1em;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 #buy-button button:hover {
     border: 3px solid white;
-    scale: 1.1;
 }
 
 #showtime-details {
@@ -163,25 +172,19 @@
 
 #category_container {
     margin: 10px 0;
-    /* Додає вертикальні відступи */
     padding: 5px 20px;
-    /* Додає внутрішні відступи */
     font-size: 1em;
     color: #fff;
     text-transform: uppercase;
     background-color: #e64a19;
-    /* border-radius: 12px; */
-    /* Додає заокруглення */
+     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    /* Додає тінь */
     display: inline-block;
-    /* Щоб елемент прийняв лише необхідну ширину */
     text-align: center;
-    /* Центрування тексту */
 }
 
 #showtime_container h1 {
-    font-size: 40px;
+    font-size: 30px;
     font-weight: bold;
     margin-bottom: 10px;
     text-align: center;
