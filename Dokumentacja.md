@@ -3,24 +3,23 @@
 
 ## 1. **Opis projektu**
 
-W ramach projektu została stworzona strona kina z możliwością rejestracji, logowania się na stronie, rezerwacją i zakupem biletów na dostępne seansy. Wybrane przez nas technologie: PostgreSQL (baza danych), ReactJS (frontend), Django (backend).
+W ramach projektu została stworzona strona kina z możliwością rejestracji, logowania się na stronie, rezerwacją i zakupem biletów na dostępne seanse. Wybrane przez nas technologie: PostgreSQL (baza danych), ReactJS (frontend), Django (backend).
 
 ## 2. **Schemat bazy danych**
 
 ![dbschema](img/schema.png)
 
-Dany schemat przedstawia podstawowe encji, niezbędne do poprawnego działania strony kina. Do uproszczenia modelu bazy danych przyjęliśmy kilka zasad:
+Dany schemat przedstawia podstawowe encje, niezbędne do poprawnego działania strony kina. Do uproszczenia modelu bazy danych przyjęliśmy kilka zasad:
 
 1. Kino posiada tylko jedną lokalizację
-2. Wszystkie filmy są przydzielone tylko jednej kategorii, posiadają tylko jednego reżysera
-3. Seansy filmów odbywają się w salach (1-6), przy czym każda sala posiada taką samą liczbę miejsc (84), chociaż to zawsze można zmienić
-4. Bilety na seans mają dwie ceny: Standard & Premium. Premium-bilet odpowiada ostatniemu rzędu w kinie, czyli miejscam 1-11
-5. Klienci mogą jak kupować, tak i rezerwować bilety na określone miejsca. W przypadku rezerwacji w profilu oni mają możliwość kupienia danego biletu albo jego anulowania
+2. Wszystkie filmy są przydzielone tylko jednej kategorii oraz posiadają tylko jednego reżysera
+3. Seanse filmów odbywają się w salach (1-6), przy czym każda sala posiada taką samą liczbę miejsc (84), chociaż to zawsze można zmienić
+4. Bilety na seans mają dwie ceny: Standard & Premium. Premium-bilet odpowiada ostatniemu rzędowi w kinie, czyli miejscom 1-11
+5. Klienci mogą kupować i rezerwować bilety na określone miejsca. W przypadku rezerwacji w profilu mają oni możliwość kupienia danego biletu albo jego anulowania
 6. Każdy bilet posiada status. Istnieją 3 opcję tego statusu: "New" - nowy nieopłacony bilet (rezerwacja), "Confirmed" - opłacony bilet (nie da się jego anulować), "Canceled" - anulowany bilet
-7. Klienci nie mogą zarezewować miejsce na seans, do rozpoczęcia którego pozostało mniej niż 2 godziny. W takim przypadku mogą one wyłącznie kupić bilet na dane miejsce
-8. Tabela Tickets posiada redundantne pole "MovieScreeningID", do którego można by było się dostać poprzez wykonanie kilku opercaji łączenia tabel, ale takie podejście byłoby mniej efektywne, ponieważ możliwe że często będziemy potrzebować tej informacji
-9. Na stronie ustawiliśmy datę 22-05-2024 oraz czas 13-00, który jest "aktualnym" czasem przeglądania strony. To jest umotywowane tym, że filmy i seansy są przyznaczone na określone daty, więc niezmienna data była wygodna do testowania poprawności działania systemu i bazy danych
-10. Nie udało się zrealizować utworzenia sesji użytkownika na froncie (mimo, że logowanie i rejestracja na poziomie backendu i bazy danych działają poprawnie), więc na stronie ustawiliśmy użytkownika domyślnego i ID = 6
+7. Klienci nie mogą zarezewować miejsca na seans, do rozpoczęcia którego pozostało mniej niż 2 godziny. W takim przypadku mogą oni wyłącznie kupić bilet na dane miejsce
+8. Na stronie ustawiliśmy datę 22-05-2024 oraz czas 13-00, który jest "aktualnym" czasem przeglądania strony. To jest umotywowane tym, że filmy i seansy są ustawione na określone daty, więc stała data była wygodna do testowania poprawności działania systemu i bazy danych
+9. Nie udało się zrealizować utworzenia sesji użytkownika na froncie (mimo, że logowanie i rejestracja na poziomie backendu i bazy danych działają poprawnie), więc na stronie ustawiliśmy użytkownika domyślnego i ID = 6
 
 ## 3. **Tabele**
 
@@ -407,22 +406,18 @@ $$
 DECLARE
     v_moviecategoryid integer;
 BEGIN
-    -- Отримати ID категорії за її назвою
     SELECT moviecategoryid INTO v_moviecategoryid
     FROM movie_categories
     WHERE categoryname = p_categoryname;
 
-    -- Перевірка наявності категорії
     IF v_moviecategoryid IS NULL THEN
         RAISE EXCEPTION 'Category with name % does not exist', p_categoryname;
     END IF;
 
-    -- Перевірка наявності фільмів з цією категорією
     IF EXISTS (SELECT 1 FROM movies WHERE moviecategoryid = v_moviecategoryid) THEN
         RAISE EXCEPTION 'Cannot delete category because there are movies associated with it';
     END IF;
 
-    -- Видалення категорії
     DELETE FROM movie_categories
     WHERE moviecategoryid = v_moviecategoryid;
 END;
@@ -963,7 +958,7 @@ $$;
 alter function is_premium_place(integer) owner to postgres;
 ```
 
-- Wyświetlenie danych o filmu wraz z nazwą kategorii
+- Wyświetlenie danych o filmie wraz z nazwą kategorii
 
 ```postgresql
 create function get_movie_by_title(p_title character varying)
@@ -1021,7 +1016,7 @@ alter function get_movie_screenings_on_date(date) owner to postgres;
 
 ## 7. **Triggery**
 
-- Zabronienie rezerwacji na seans który jest grany w najbliższe 2 godziny (możliwy jest wyłącznie ZAKUP biletu na taki seans)
+- Zabronienie rezerwacji na seans który jest grany za mniej niż 2 godziny (możliwy jest wyłącznie ZAKUP biletu na taki seans)
 
 ```postgresql
 create function check_reservation_period() returns trigger
@@ -1095,7 +1090,7 @@ Na stronie są pokazane grane teraz i w przyszłości filmy, działa wyszukiwani
 
 ### Movies
 
-Na stronie są wyświetlane wszystkie movies dostępne teraz, oraz movies, które będą dostępne w przyszłości. Sortowanie domyślnie ustawione od daty permiery filmu. Na stronie działa wyszukiwanie po nazwie filmu, filtrowanie po kategorii, sortowanie według zadanych parametrów
+Na stronie są wyświetlane wszystkie movies dostępne teraz, oraz movies, które będą dostępne w przyszłości. Sortowanie domyślnie ustawione od daty premiery filmu. Na stronie działa wyszukiwanie po nazwie filmu, filtrowanie po kategorii, sortowanie według zadanych parametrów
 
 ![](img/12.png)
 
@@ -1196,6 +1191,8 @@ Show today Movie Screenings:
 ![](img/32.png)
 
 ## 10. **Testowanie poprawności działania procedur na stronie**
+
+(Test został wykonany na wcześniejszej wersji frontendu jednak działanie bazy danych nie zmieniło się)
 
 ### Użytkownik
 
