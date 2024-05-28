@@ -12,7 +12,7 @@ cur = conn.cursor()
 with open('client/src/assets/movies_img/undefined.png', 'rb') as file:
     binary_data = file.read()
 
-cur.execute("UPDATE movies SET image= %s  where title = 'TEST' or title = 'TEST2'", (binary_data,))
+cur.execute("UPDATE movies SET image= %s  where title = 'TestMovie' or title = 'TEST2'", (binary_data,))
 
 conn.commit()
 cur.close()

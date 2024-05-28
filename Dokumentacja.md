@@ -17,9 +17,10 @@ Dany schemat przedstawia podstawowe encji, niezbędne do poprawnego działania s
 4. Bilety na seans mają dwie ceny: Standard & Premium. Premium-bilet odpowiada ostatniemu rzędu w kinie, czyli miejscam 1-11
 5. Klienci mogą jak kupować, tak i rezerwować bilety na określone miejsca. W przypadku rezerwacji w profilu oni mają możliwość kupienia danego biletu albo jego anulowania
 6. Każdy bilet posiada status. Istnieją 3 opcję tego statusu: "New" - nowy nieopłacony bilet (rezerwacja), "Confirmed" - opłacony bilet (nie da się jego anulować), "Canceled" - anulowany bilet
-7. Tabela Tickets posiada redundantne pole "MovieScreeningID", do którego można by było się dostać poprzez wykonanie kilku opercaji łączenia tabel, ale takie podejście byłoby mniej efektywne, ponieważ możliwe że często będziemy potrzebować tej informacji
-8. Na stronie ustawiliśmy datę 22-05-2024 oraz czas 13-00, który jest "aktualnym" czasem przeglądania strony. To jest umotywowane tym, że filmy i seansy są przyznaczone na określone daty, więc niezmienna data była wygodna do testowania poprawności działania systemu i bazy danych
-9. Nie udało się zrealizować utworzenia sesji użytkownika na froncie (mimo, że logowanie i rejestracja na poziomie backendu i bazy danych działają poprawnie), więc na stronie ustawiliśmy użytkownika domyślnego i ID = 6
+7. Klienci nie mogą zarezewować miejsce na seans, do rozpoczęcia którego pozostało mniej niż 2 godziny. W takim przypadku mogą one wyłącznie kupić bilet na dane miejsce
+8. Tabela Tickets posiada redundantne pole "MovieScreeningID", do którego można by było się dostać poprzez wykonanie kilku opercaji łączenia tabel, ale takie podejście byłoby mniej efektywne, ponieważ możliwe że często będziemy potrzebować tej informacji
+9. Na stronie ustawiliśmy datę 22-05-2024 oraz czas 13-00, który jest "aktualnym" czasem przeglądania strony. To jest umotywowane tym, że filmy i seansy są przyznaczone na określone daty, więc niezmienna data była wygodna do testowania poprawności działania systemu i bazy danych
+10. Nie udało się zrealizować utworzenia sesji użytkownika na froncie (mimo, że logowanie i rejestracja na poziomie backendu i bazy danych działają poprawnie), więc na stronie ustawiliśmy użytkownika domyślnego i ID = 6
 
 ## 3. **Tabele**
 
@@ -1057,6 +1058,31 @@ EXECUTE FUNCTION check_reservation_period();
 
 ## 8. **Indeksy**
 
+```postgresql
+-- Tabela Appuser
+CREATE INDEX idx_appuser_email ON user_api_appuser(email);
+CREATE INDEX idx_appuser_username ON user_api_appuser(username);
+
+-- Tabela HallSeats
+CREATE INDEX idx_hallseats_moviehallnumber ON hall_seats(moviehallnumber);
+
+-- Tabela MovieScreening
+CREATE INDEX idx_moviescreening_movieid ON movie_screening(movieid);
+CREATE INDEX idx_moviescreening_date ON movie_screening(date);
+CREATE INDEX idx_moviescreening_starttime ON movie_screening(starttime);
+
+-- Tabela Movies
+CREATE INDEX idx_movies_moviecategoryid ON movies(moviecategoryid);
+CREATE INDEX idx_movies_title ON movies(title);
+CREATE INDEX idx_movies_startdate ON movies(startdate);
+CREATE INDEX idx_movies_enddate ON movies(enddate);
+
+-- Tabela Tickets
+CREATE INDEX idx_tickets_customerid ON tickets(customerid);
+CREATE INDEX idx_tickets_moviescreeningid ON tickets(moviescreeningid);
+CREATE INDEX idx_tickets_seatnumber ON tickets(seatnumber);
+```
+
 ## 9. **Widoki strony internetowej**
 
 ### Strona główna (home)
@@ -1065,17 +1091,23 @@ Na stronie są pokazane grane teraz i w przyszłości filmy, działa wyszukiwani
 
 ![](img/11.png)
 
+<div style="page-break-after: always;"></div>
+
 ### Movies
 
 Na stronie są wyświetlane wszystkie movies dostępne teraz, oraz movies, które będą dostępne w przyszłości. Sortowanie domyślnie ustawione od daty permiery filmu. Na stronie działa wyszukiwanie po nazwie filmu, filtrowanie po kategorii, sortowanie według zadanych parametrów
 
 ![](img/12.png)
 
+<div style="page-break-after: always;"></div>
+
 ### Movie
 
 Strona wybranego filmu, gdzie są wyświetlane informację dotyczące danego filmu wraz z kategorią. Jest możliwość przeglądania dostępnych w ciągu przyszłych 7 dni terminów seansów i przejście do strony danego seansu (opisana niżej)
 
 ![](img/13.png)
+
+<div style="page-break-after: always;"></div>
 
 ### Showtime
 
@@ -1089,6 +1121,8 @@ Wygląd strony po kliknięciu na miejsce:
 
 ![](img/15.png)
 
+<div style="page-break-after: always;"></div>
+
 ### UserProfile
 
 Strona profilu użytkownika, gdzie są 2 przełączniki pomiędzy ticketami i ustawieniami. W zakładce "My tickets" są wyświetlane wszystkie tickety klienta wraz z informacją o seansie. W contenerze biletów, mających status "New", jest możliwość zakupu danego biletu lub jego anulowania. W zakładce "Settings" istnieje możliwość zmiany hasła użytkownika (na razie nie zrealizowana technicznie)
@@ -1097,6 +1131,8 @@ Strona profilu użytkownika, gdzie są 2 przełączniki pomiędzy ticketami i us
 
 ![](img/17.png)
 
+<div style="page-break-after: always;"></div>
+
 ### Login & Register
 
 Na razie logowanie i rejestracja działają na poziomie bazy danych (pojawiają się odpowiednie dane w tabelu userów), natomiast w tym momencie nie działa ustawienie sesji użytkownika
@@ -1104,6 +1140,8 @@ Na razie logowanie i rejestracja działają na poziomie bazy danych (pojawiają 
 ![](img/18.png)
 
 ![](img/19.png)
+
+<div style="page-break-after: always;"></div>
 
 ### Admin
 
@@ -1159,4 +1197,165 @@ Show today Movie Screenings:
 
 ## 10. **Testowanie poprawności działania procedur na stronie**
 
-coming soon...............................................
+### Użytkownik
+
+Najpierw przetestujemy rezerwację i zakup biletu, zróbmy to dla przykładu na jednym seansie, przy czym weźmiemy różne miejsca, żeby sprawdzić, czy cena będzie się różniła.
+
+- Rezerwacja biletu
+
+Tabela tickets przed wywołaniem procedury:
+
+![](img/51.png)
+
+Wybrane przez nas miejsce F4, którego cena jest Standard:
+
+![](img/52.png)
+
+![](img/53.png)
+
+Jak widzimy, nie da się zarezerwować tego miejsca, ponieważ seans zaczyna się 22.05.2024 o 14:30, a ustawiony systemowy czas to 22.05.2024, 13:00 (patrz punkt 2.10).
+Spróbujemy więc wybrać inny seans, to samo miejsce:
+
+![](img/54.png)
+
+Widzimy, że miejsce już jest zajęte:
+
+![](img/55.png)
+
+Tabela tickets po wywołaniu procedury:
+
+![](img/56.png)
+
+- Zakup biletu
+
+Tabela tickets przed wywołaniem procedury:
+
+![](img/51.png)
+
+Wybrane przez nas miejsce A2, którego cena jest Premium:
+
+![](img/57.png)
+
+Widzimy, że miejsce już jest zajęte:
+
+![](img/58.png)
+
+Tabela tickets po wywołaniu procedury:
+
+![](img/59.png)
+
+A teraz sprawdźmy poprawność wyliczania ceny dla tych biletów (Standard/Premium). W tym celu popatrzymy na informację wyświetlane w profilu użytkownika:
+
+![](img/60.png)
+
+Jak widać, cena biletu została policzona poprawnie.
+
+- Zmiana statusu biletu
+
+Spróbujmy kupić bilet, który jest zarezerwowany. W tym celu klikniemy odpowiedni przycisk w profilu użytkownika.
+Dostaliśmy wiadomość, że zmiana się powiodła:
+
+![](img/61.png)
+
+Już teraz ten zarezerwowany ticket jest opłacony:
+
+![](img/62.png)
+
+### Admin
+
+- Dodanie nowej kategorii
+
+Tabela movie_categories przed wywołaniem procedury:
+
+![](img/33.png)
+
+Wywołanie procedury z panelu admina na stronie:
+
+![](img/34.png)
+
+Tabela movie_categories po wywołaniu procedury:
+
+![](img/35.png)
+
+- Usunięcie kategorii
+
+Wywołanie procedury z panelu admina na stronie:
+
+![](img/36.png)
+
+Tabela movie_categories po wywołaniu procedury:
+
+![](img/33.png)
+
+- Dodanie nowego filmu
+
+Tabela movies przed wywołaniem procedury:
+
+![](img/37.png)
+
+Wywołanie procedury z panelu admina na stronie:
+
+![](img/38.png)
+
+Tabela movies po wywołaniu procedury:
+
+![](img/39.png)
+
+Powstała nowa strona:
+
+![](img/40.png)
+
+- Aktualizacja danych wybranego filmu
+
+Wywołanie procedury z panelu admina na stronie:
+
+![](img/41.png)
+
+Tabela movies po wywołaniu procedury:
+
+![](img/42.png)
+
+- Usunięcie filmu
+
+Wywołanie procedury z panelu admina na stronie:
+
+![](img/43.png)
+
+Tabela movies po wywołaniu procedury:
+
+![](img/44.png)
+
+- Dodanie seansów na określoną liczbę dni
+
+Tabela movie_screening przed wywołaniem procedury:
+
+![](img/45.png)
+
+Spróbujemy dodać seansy na 7 dni, zaczynając od 11-06-2024, mimo że ostatni dzień kiedy film jest grany to 15-06-2024.
+Wywołanie procedury z panelu admina na stronie:
+
+![](img/46.png)
+
+Jak widać, dostaliśmy błąd. Sprawdźmy, czy zostałe utrwalone seansy dla terminów, które są poprawne.
+Tabela movie_screening po wywołaniu procedury:
+
+![](img/45.png)
+
+Jak widać, błąd przerwał całą transakcję i poprawne dane nie zostały dodane. Spróbujmy zmienić liczbę dni na zgodne z zasadami:
+
+![](img/47.png)
+
+Po wpisywaniu liczby dni równej 4, dostaliśmy komunikat, że udało się dodać te dane. 
+Tabela movie_screening po wywołaniu procedury:
+
+![](img/48.png)
+
+- Usunięcie wybranego seansu
+
+Wywołanie procedury z panelu admina na stronie:
+
+![](img/49.png)
+
+Tabela movie_screening po wywołaniu procedury:
+
+![](img/50.png)
