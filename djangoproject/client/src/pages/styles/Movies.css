@@ -96,7 +96,7 @@
 }
 
 .movie-item {
-    width: calc(25% - 20px);
+    width: calc(20% - 25px);
     /* Four items per row with 20px gap */
     margin: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -107,7 +107,7 @@
 
 .movie-item img {
     width: 100%;
-    height: auto;
+    height: 40vh;
     object-fit: cover;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
@@ -120,20 +120,21 @@
     padding: 10px;
     text-align: center;
     /* font-family: 'Poppins', sans-serif; */
-    font-weight: 500;
+    font-weight: 700;
 }
 
 .movie-item a:hover {
     display: block;
     text-decoration: none;
     color: #adadad;
-    padding: 10px;
+    padding: 12px;
     text-align: center;
     /* font-family: 'Poppins', sans-serif; */
-    font-weight: 500;
+    font-weight: 700;
 }
 
 .movie-item:hover {
     transform: translateY(-10px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    border: 2px solid whitesmoke;
 }

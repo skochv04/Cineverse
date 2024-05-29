@@ -3,7 +3,9 @@ import Header from "./Header.jsx";
 import "./styles/Showtime.css";
 import { getCsrfToken } from "../utils/csrf.js";
 import { useParams } from "react-router-dom";
-import axios from 'axios';
+import Loading from "./Loading.jsx";
+import ErrorMessage from "./ErrorMessage";  // Importujemy nowy komponent
+import { handleServerError } from "../utils/errorHandler.js";  // Importujemy funkcję obsługi błędów
 
 function Showtime() {
     const { moviescreeningID } = useParams();
@@ -11,26 +13,32 @@ function Showtime() {
     const [occupiedSeats, setOccupiedSeats] = useState([]);
     const [showtime, setShowtime] = useState(null);
     const [error, setError] = useState(null);
+    const [seatType, setSeatType] = useState('');
 
     useEffect(() => {
         const fetchShowtime = async () => {
             try {
                 const response = await fetch(`http://127.0.0.1:8000/showtime/${moviescreeningID}`);
+                await handleServerError(response);
                 const data = await response.json();
+                console.log("Showtime data:", data); // Debugging log
                 setShowtime(data);
             } catch (error) {
                 console.error('Error fetching Showtime:', error);
+                setError(error.message);
             }
         };
 
         const fetchOccupiedSeats = async () => {
             try {
                 const response = await fetch(`http://127.0.0.1:8000/api/occupied_seats/${moviescreeningID}`);
+                await handleServerError(response);
                 const data = await response.json();
+                console.log("Occupied seats data:", data); // Debugging log
                 setOccupiedSeats(data);
-
             } catch (error) {
                 console.error('Error fetching occupied seats:', error);
+                setError(error.message);
             }
         };
 
@@ -40,6 +48,11 @@ function Showtime() {
 
     const handleSelectSeat = (seat) => {
         setSelectedSeat(seat);
+        if (seat.startsWith('A')) {
+            setSeatType('Premium');
+        } else {
+            setSeatType('Standard');
+        }
     };
 
     const convertSeatToId = (seat) => {
@@ -94,10 +107,7 @@ function Showtime() {
                     available: false,
                 }),
             });
-            if (!response.ok) {
-                const errorDetails = await response.json();
-                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`);
-            }
+            await handleServerError(response);
         } catch (error) {
             setError(error.message);
         }
@@ -120,17 +130,25 @@ function Showtime() {
                     available: false,
                 }),
             });
-            if (!response.ok) {
-                const errorDetails = await response.json();
-                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`);
-            }
+            await handleServerError(response);
         } catch (error) {
             setError(error.message);
         }
     };
 
+    const getSeatPrice = () => {
+        if (showtime) {
+            if (seatType === 'Premium') {
+                return showtime.pricepremium;
+            } else if (seatType === 'Standard') {
+                return showtime.pricestandard;
+            }
+        }
+        return null;
+    };
+
     if (!showtime) {
-        return <div>Loading...</div>;
+        return <div><Loading/></div>;
     }
 
     return (
@@ -138,14 +156,21 @@ function Showtime() {
             <div id="header_container">
                 <Header />
             </div>
+            <div id="showtime-info">
+                <h2>Chosen Date: {showtime.date} at {showtime.starttime}</h2>
+            </div>
             <div id="content">
                 <div id="title_container">
-                    <h5>Standard price: {showtime.pricestandard}</h5>
-                    <h5>Premium price: {showtime.pricepremium}</h5>
-                    <h3>Select Your Seat:</h3>
-                    <h5>Your seat: {selectedSeat}</h5>
+                    <div id="title">
+                        <h3>Select Your Seat:</h3>
+                    </div>
+                    <div id="title_details">
+                        <div id="your_seat"><h5>Your seat: </h5>{selectedSeat}</div>
+                        <div id="seat_type"><h5>Type of seat: </h5>{seatType}</div>
+                        <div id="price"><h5>Price: </h5>{getSeatPrice()}</div>
+                    </div>
                 </div>
-                {error && <p className="error">{error}</p>}
+                {error && <ErrorMessage message={error} clearError={() => setError(null)} />}  {/* Używamy komponentu ErrorMessage */}
                 <div id="seating-chart-container">
                     <div className="seating-chart">
                         {seats.map((row, rowIndex) => (
@@ -162,7 +187,7 @@ function Showtime() {
                                             : rowIndex === 0
                                                 ? 'availableSeatPremium'
                                                 : 'availableSeat'
-                                            } ${selectedSeat === seat ? 'selected' : ''}`}
+                                        } ${selectedSeat === seat ? 'selected' : ''}`}
                                         onClick={() =>
                                             !isSeatOccupied(seat) && handleSelectSeat(seat)
                                         }
@@ -179,6 +204,7 @@ function Showtime() {
                     <div id="button-container">
                         <div>
                             <button
+                                id="button1"
                                 onClick={() => reserveSeat(convertSeatToId(selectedSeat), moviescreeningID)}
                                 className="proceed-button"
                                 disabled={!selectedSeat || isSeatOccupied(selectedSeat)}
@@ -188,6 +214,7 @@ function Showtime() {
                         </div>
                         <div>
                             <button
+                                id="button2"
                                 onClick={() => buySeat(convertSeatToId(selectedSeat), moviescreeningID)}
                                 className="proceed-button"
                                 disabled={!selectedSeat || isSeatOccupied(selectedSeat)}

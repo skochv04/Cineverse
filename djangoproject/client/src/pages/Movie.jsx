@@ -5,6 +5,7 @@ import "./styles/Movie.css";
 import axios from "axios";
 import RankContainer from "./RankContainer.jsx";
 import { format, addDays } from 'date-fns';
+import Loading from "./Loading.jsx";
 
 const initialDate = new Date(2024, 4, 22);
 
@@ -35,7 +36,7 @@ function Movie() {
         fetchData();
     }, [title]);
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <Loading/>;
     if (error) return <p>Error fetching movie details: {error.message}</p>;
 
     const scrollToShowtime = () => {
