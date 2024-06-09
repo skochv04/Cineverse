@@ -71,24 +71,41 @@ function Showtime() {
         return occupiedSeats.some(seatObj => seatObj.seat_number === seatId);
     };
 
-    const generateSeats = () => {
+        const generateSeats = () => {
         const rows = [];
-        let seatsInRow = 11;
+        let seatsInRow = 6;
 
-        for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
+        for (let rowIndex = 8; rowIndex >= 0; rowIndex--) {
             const row = [];
             for (let seatIndex = 1; seatIndex <= seatsInRow; seatIndex++) {
                 row.push(`${String.fromCharCode(65 + rowIndex)}${seatIndex}`);
             }
             rows.push(row);
-            if (rowIndex >= 3) {
-                seatsInRow -= 1;
+            if (rowIndex > 3) {
+                seatsInRow += 1;
             }
         }
         return rows;
     };
 
     const seats = generateSeats();
+
+    //     const generateSeats = () => {
+    //         const rows = [];
+    //         let seatsInRow = 6;
+    //
+    //         for (let rowIndex = 9; rowIndex >= 0; rowIndex--) {
+    //             const row = [];
+    //             for (let seatIndex = 1; seatIndex <= seatsInRow; seatIndex++) {
+    //                 row.push(`${String.fromCharCode(65 + rowIndex)}${seatIndex}`);
+    //             }
+    //             rows.push(row);
+    //             if (rowIndex >= 3) {
+    //                 seatsInRow += 1;
+    //             }
+    //         }
+    //         return rows;
+    //     };
 
     const reserveSeat = async (newSeatNumber, newMovieScreeningId) => {
         try {
@@ -160,19 +177,27 @@ function Showtime() {
                 <h2>Chosen Date: {showtime.date} at {showtime.starttime}</h2>
             </div>
             <div id="content">
-                <div id="title_container">
-                    <div id="title">
-                        <h3>Select Your Seat:</h3>
-                    </div>
-                    <div id="title_details">
-                        <div id="your_seat"><h5>Your seat: </h5>{selectedSeat}</div>
-                        <div id="seat_type"><h5>Type of seat: </h5>{seatType}</div>
-                        <div id="price"><h5>Price: </h5>{getSeatPrice()}</div>
-                    </div>
-                </div>
-                {error && <ErrorMessage message={error} clearError={() => setError(null)} />}  {/* Używamy komponentu ErrorMessage */}
                 <div id="seating-chart-container">
                     <div className="seating-chart">
+                        <div className="cinema-screen">
+                            <div className="screen-container">
+                                <svg className="screen-svg" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                    <defs>
+                                        <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style={{ stopColor: "whitesmoke", stopOpacity: 1 }} />
+                                            <stop offset="10%" style={{ stopColor: "whitesmoke", stopOpacity: 0.5 }} />
+                                            <stop offset="20%" style={{ stopColor: 'whitesmoke', stopOpacity: 0.4 }} />
+                                            <stop offset="40%" style={{ stopColor: 'whitesmoke', stopOpacity: 0.3 }} />
+                                            <stop offset="60%" style={{ stopColor: 'whitesmoke', stopOpacity: 0.2 }} />
+                                            <stop offset="80%" style={{ stopColor: 'whitesmoke', stopOpacity: 0.1 }} />
+                                            <stop offset="100%" style={{ stopColor: 'whitesmoke', stopOpacity: 0 }} />
+                                        </linearGradient>
+                                    </defs>
+                                    <path d="M0,4 Q50,0 100,4 L96,15 L4,15 Z" fill="url(#gradient)" />
+                                    <path d="M0,4 Q50,0 100,4" stroke="white" fill="none" strokeWidth="1" />
+                                </svg>
+                            </div>
+                        </div>
                         {seats.map((row, rowIndex) => (
                             <div
                                 key={rowIndex}
@@ -184,7 +209,7 @@ function Showtime() {
                                         key={seat}
                                         className={`seat ${isSeatOccupied(seat)
                                             ? 'non-availableSeat'
-                                            : rowIndex === 0
+                                            : rowIndex === 8
                                                 ? 'availableSeatPremium'
                                                 : 'availableSeat'
                                         } ${selectedSeat === seat ? 'selected' : ''}`}
@@ -197,30 +222,37 @@ function Showtime() {
                                 ))}
                             </div>
                         ))}
-                        <div id="screen_container">
-                            <div className="screen">SCREEN</div>
-                        </div>
                     </div>
-                    <div id="button-container">
-                        <div>
-                            <button
-                                id="button1"
-                                onClick={() => reserveSeat(convertSeatToId(selectedSeat), moviescreeningID)}
-                                className="proceed-button"
-                                disabled={!selectedSeat || isSeatOccupied(selectedSeat)}
-                            >
-                                Reserve seat
-                            </button>
+                    <div id="summary_container">
+                        <div id="title_container">
+                            <div id="title_details">
+                                <div id="your_seat"><h5>Your seat: </h5>{selectedSeat}</div>
+                                <div id="seat_type"><h5>Type of seat: </h5>{seatType}</div>
+                                <div id="price"><h5>Price: </h5>{getSeatPrice()}</div>
+                            </div>
                         </div>
-                        <div>
-                            <button
-                                id="button2"
-                                onClick={() => buySeat(convertSeatToId(selectedSeat), moviescreeningID)}
-                                className="proceed-button"
-                                disabled={!selectedSeat || isSeatOccupied(selectedSeat)}
-                            >
-                                Buy seat
-                            </button>
+                        {error && <ErrorMessage message={error} clearError={() => setError(null)} />}  {/* Używamy komponentu ErrorMessage */}
+                        <div id="button-container">
+                            <div>
+                                <button
+                                    id="button1"
+                                    onClick={() => reserveSeat(convertSeatToId(selectedSeat), moviescreeningID)}
+                                    className="proceed-button"
+                                    disabled={!selectedSeat || isSeatOccupied(selectedSeat)}
+                                >
+                                    Reserve seat
+                                </button>
+                            </div>
+                            <div>
+                                <button
+                                    id="button2"
+                                    onClick={() => buySeat(convertSeatToId(selectedSeat), moviescreeningID)}
+                                    className="proceed-button"
+                                    disabled={!selectedSeat || isSeatOccupied(selectedSeat)}
+                                >
+                                    Buy seat
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -1,19 +1,18 @@
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Scrollbar, A11y } from 'swiper/modules';
-import { Link } from 'react-router-dom'; // Імпорт React Router Link
+import { Link } from 'react-router-dom';
 import './styles/Carousel.css';
 
 import 'swiper/css';
 import 'swiper/css/navigation';
-import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 
 const Carousel = ({ slides }) => {
     return (
         <Swiper
             modules={[Navigation, Scrollbar, A11y]}
-            spaceBetween={0}
+            spaceBetween={10}
             navigation
             pagination={{ clickable: true }}
             scrollbar={{ draggable: true }}
@@ -55,12 +54,12 @@ const Carousel = ({ slides }) => {
         >
             {slides.map((slide, index) => (
                 <SwiperSlide key={index} className="custom-swiper-slide">
-                        <div className="carousel-slide-container">
-                            <Link to={`/movie/${slide.content}`}>
+                    <div className="carousel-slide-container">
+                        <Link to={`/movie/${slide.content}`}>
                             <img src={slide.imageUrl} alt={slide.content} className="carousel-image" />
                             <p className="carousel-caption">{slide.content}</p>
-                            </Link>
-                        </div>
+                        </Link>
+                    </div>
                 </SwiperSlide>
             ))}
         </Swiper>
