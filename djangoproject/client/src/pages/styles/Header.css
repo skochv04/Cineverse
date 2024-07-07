@@ -35,7 +35,20 @@
     margin: 0;
 }
 
+@keyframes shine {
+    0% {
+        background-position: 0;
+    }
+    100% {
+        background-position: 200%;
+    }
+}
+
 .logo:hover {
+    animation: shine 1.2s forwards;
+    background: linear-gradient(45deg, #333333, #ffffff, #333333);
+    background-size: 200%;
+    -webkit-background-clip: text;
     cursor: pointer;
 }
 

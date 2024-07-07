@@ -90,23 +90,6 @@ function Showtime() {
 
     const seats = generateSeats();
 
-    //     const generateSeats = () => {
-    //         const rows = [];
-    //         let seatsInRow = 6;
-    //
-    //         for (let rowIndex = 9; rowIndex >= 0; rowIndex--) {
-    //             const row = [];
-    //             for (let seatIndex = 1; seatIndex <= seatsInRow; seatIndex++) {
-    //                 row.push(`${String.fromCharCode(65 + rowIndex)}${seatIndex}`);
-    //             }
-    //             rows.push(row);
-    //             if (rowIndex >= 3) {
-    //                 seatsInRow += 1;
-    //             }
-    //         }
-    //         return rows;
-    //     };
-
     const reserveSeat = async (newSeatNumber, newMovieScreeningId) => {
         try {
             const csrfToken = getCsrfToken();
@@ -174,7 +157,7 @@ function Showtime() {
                 <Header />
             </div>
             <div id="showtime-info">
-                <h2>Chosen Date: {showtime.date} at {showtime.starttime}</h2>
+                <h2>Chosen Date: <span>{showtime.date}</span> at <span>{showtime.starttime}</span></h2>
             </div>
             <div id="content">
                 <div id="seating-chart-container">

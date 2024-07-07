@@ -15,17 +15,21 @@
 }
 
 #showtime-info {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Delikatny cień */
-    margin-top: 5px;
-    margin-left: 10px; /* Odstęp od dołu */
-    color: #ecf0f1; /* Jasny kolor tekstu */
-    font-family: 'Poppins', sans-serif; /* Elegancka czcionka */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px;
+    margin-bottom: 0;
 }
 
 #showtime-info h2 {
-    margin: 0;
-    font-size: 1.2em;
-    font-weight: 300;
+    font-size: 1.5em;
+    color: #e0e0e0;
+}
+
+#showtime-info h2 span {
+    font-weight: 700;
+    color: #ff9800;
 }
 
 

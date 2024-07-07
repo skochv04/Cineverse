@@ -93,6 +93,20 @@
     text-align: left; /* Wyrównaj tekst do lewej */
     box-sizing: border-box; /* Upewnij się, że padding i border są wliczane w szerokość */
 }
+
+#category_container {
+    margin: 10px 0;
+    padding: 5px 20px;
+    font-size: 1em;
+    color: #fff;
+    text-transform: uppercase;
+    background-color: #e64a19;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: inline-block;
+    text-align: center;
+}
+
 #description {
     width: 90%;
     margin: 20px 0;
@@ -163,24 +177,13 @@
 }
 
 #movie_showtime {
-    width: 70%;
+    width: 80%;
+    height: auto;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
-
-#category_container {
-    margin: 10px 0;
-    padding: 5px 20px;
-    font-size: 1em;
-    color: #fff;
-    text-transform: uppercase;
-    background-color: #e64a19;
-     border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    display: inline-block;
-    text-align: center;
 }
 
 #showtime_container h1 {
@@ -201,10 +204,10 @@
 .date-navigation span {
     cursor: pointer;
     padding: 5px 10px;
-    border-radius: 5px;
+    border-radius: 8px;
     color: rgb(18, 18, 18);
-    border-bottom: 2px solid transparent;
-    transition: border-color 0.3s;
+    border-bottom: 3px solid transparent;
+    transition: border-color 0.2s;
 }
 
 .date-navigation .selected-date {

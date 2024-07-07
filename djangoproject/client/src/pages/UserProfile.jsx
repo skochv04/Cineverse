@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import axios from 'axios';
 import Header from "./Header.jsx";
 import "./styles/UserProfile.css";
 
-const Modal = ({ message, onClose }) => {
+const Modal = ({message, onClose}) => {
     return (
         <div className="modal-overlay">
             <div className="modal">
@@ -48,15 +48,6 @@ function UserProfile() {
         fetchTickets();
     }, [specific_userID]);
 
-    const handleTabClick = (tab) => {
-        if (tab !== activeTab && !animating) {
-            setAnimating(true);
-            setTimeout(() => {
-                setActiveTab(tab);
-                setAnimating(false);
-            }, 500); // Match this duration with the CSS transition duration
-        }
-    };
 
     const handleReservation = async (ticketId, status) => {
         try {
@@ -80,7 +71,7 @@ function UserProfile() {
             console.log(result.message);
 
             // Update tickets state
-            setTickets(tickets.map(ticket => ticket.ticket_id === ticketId ? { ...ticket, status } : ticket));
+            setTickets(tickets.map(ticket => ticket.ticket_id === ticketId ? {...ticket, status} : ticket));
             setNotification("Ticket status updated successfully!");
             setIsModalOpen(true); // Show success modal
         } catch (error) {
@@ -105,23 +96,30 @@ function UserProfile() {
                             {tickets.map(ticket => (
                                 <li key={ticket.ticket_id} className="ticket-card">
                                     <div className="ticket-container">
+                                        <div id="ticket-title">
+                                            <p><h3>{ticket.title}</h3></p>
+                                        </div>
                                         <div className="ticket-info">
-                                            <p><strong>Movie:</strong> {ticket.title}</p>
-                                            <p><strong>Date:</strong> {ticket.date}</p>
-                                            <p><strong>Start Time:</strong> {ticket.start_time}</p>
-                                            <p><strong>Duration:</strong> {ticket.duration} minutes</p>
-                                            <p><strong>Hall Number:</strong> {ticket.hall_number}</p>
-                                            <p><strong>Seat Number:</strong> {ticket.sit_number}</p>
+                                            <p><strong>Date: </strong>{ticket.date}</p>
+                                            <p><strong>Start Time: </strong>{ticket.start_time}</p>
+                                            <p><strong>Duration: </strong>{ticket.duration} minutes</p>
+                                            <p><strong>Hall Number: </strong>{ticket.hall_number}</p>
+                                            <p><strong>Seat Number: </strong>{ticket.sit_number}</p>
                                         </div>
                                         <div className="ticket-info">
                                             <p><strong>Price:</strong> {ticket.price}</p>
                                             <p><strong>Status:</strong> {ticket.status}</p>
-                                            <p><strong>Ordered On:</strong> {ticket.ordered_on_date} at {ticket.ordered_on_time}</p>
+                                            <p><strong>Ordered
+                                                On:</strong> {ticket.ordered_on_date} at {ticket.ordered_on_time}</p>
                                         </div>
                                         {ticket.status.trim() === 'New' && (
                                             <div className="ticket-actions">
-                                                <button onClick={() => handleReservation(ticket.ticket_id, 'Confirmed')} className="buy-btn">Buy reserved seat</button>
-                                                <button onClick={() => handleReservation(ticket.ticket_id, 'Canceled')} className="cancel-btn">Cancel reservation</button>
+                                                <button onClick={() => handleReservation(ticket.ticket_id, 'Confirmed')}
+                                                        className="buy-btn">Buy reserved seat
+                                                </button>
+                                                <button onClick={() => handleReservation(ticket.ticket_id, 'Canceled')}
+                                                        className="cancel-btn">Cancel reservation
+                                                </button>
                                             </div>
                                         )}
                                     </div>
@@ -138,7 +136,7 @@ function UserProfile() {
                 <div className="section settings">
                     <form>
                         <h3>Change Password</h3>
-                        <hr className="underline" />
+                        <hr className="underline"/>
                         <div className="input-group">
                             <label htmlFor="currentPassword">Current Password</label>
                             <input
@@ -171,14 +169,18 @@ function UserProfile() {
                                 {showNewPassword ? "HIDE" : "SHOW"}
                             </button>
                         </div>
-                        <p className="password-requirements">
-                            Password must be at least 8 characters long and include at least 3 of the following:
-                            uppercase
-                            letter, lowercase letter, number, special character.
-                        </p>
-                        <button type="submit" className="change-password-btn">
-                            Change Password
-                        </button>
+                        <div className="password-requirements-container">
+                            <p className="password-requirements">
+                                Password must be at least 8 characters long and include at least 3 of the following:
+                                uppercase
+                                letter, lowercase letter, number, special character.
+                            </p>
+                        </div>
+                        <div id="change-password-btn-container">
+                            <button type="submit" className="change-password-btn">
+                                Change Password
+                            </button>
+                        </div>
                     </form>
                 </div>
             );
@@ -188,7 +190,7 @@ function UserProfile() {
     return (
         <div className="UserProfile">
             <div id="header_container">
-                <Header />
+                <Header/>
             </div>
             <div className="welcome-section">
                 <h1>Welcome, [Username]!</h1>
