@@ -169,8 +169,8 @@
     min-height: 100vh;
     height: auto;
     justify-content: center;
-    background-color: #fff;
-    color: rgb(18, 18, 18);
+    background-color: rgb(18, 18, 18);
+    color: whitesmoke;
     padding: 20px;
     width: 100%;
     margin: 20px;
@@ -191,8 +191,7 @@
     font-weight: bold;
     margin-bottom: 10px;
     text-align: center;
-    color: #333;
-    /* Darker text color for better readability */
+    color: whitesmoke;
 }
 
 .date-navigation {
@@ -205,7 +204,7 @@
     cursor: pointer;
     padding: 5px 10px;
     border-radius: 8px;
-    color: rgb(18, 18, 18);
+    color: whitesmoke;
     border-bottom: 3px solid transparent;
     transition: border-color 0.2s;
 }
@@ -232,7 +231,7 @@
 .filter-controls button {
     padding: 10px 20px;
     font-size: 14px;
-    border: 1px solid #ccc;
+    border: 1px solid whitesmoke;
     border-radius: 4px;
     background-color: #fff;
     cursor: pointer;
@@ -245,7 +244,7 @@
 
 .showtime-list {
     width: 100%;
-    border-top: 2px solid rgb(18, 18, 18);
+    border-top: 2px solid whitesmoke;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -259,12 +258,8 @@
     justify-content: center;
     width: 85%;
     padding: 20px 0;
-    border-bottom: 1px solid rgb(18, 18, 18);
+    border-bottom: 1px solid whitesmoke;
     transition: background-color 0.3s;
-}
-
-.showtime-item:hover {
-    background-color: #f0f0f0;
 }
 
 .showtime-item h3 {
@@ -276,7 +271,7 @@
 .showtime-item p {
     font-size: 14px;
     margin: 0 0 10px 0;
-    color: rgb(18, 18, 18);
+    color: whitesmoke;
 }
 
 .showtime-details {
@@ -284,7 +279,7 @@
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
-    color: rgb(18, 18, 18);
+    color: whitesmoke;
     justify-content: space-between;
 }
 
@@ -297,7 +292,7 @@
 
 .showtime-details div h5 {
     margin: 0 8px 0 8px;
-    color: #666;
+    color: whitesmoke;
     font-size: 12px;
 }
 
@@ -315,10 +310,9 @@
 .showtime-details button {
     padding: 10px 15px;
     font-size: 12px;
-    border: none;
-    border-radius: 4px;
+    border: 2px solid #ff5722;
+    border-radius: 8px;
     background-color: #ff5722;
-    color: #fff;
     cursor: pointer;
     transition: background-color 0.3s;
     margin-left: auto;
@@ -326,12 +320,11 @@
 
 .showtime-details button:hover {
     background-color: #e64a19;
+    border: 2px solid white;
 }
 
 #button_container {
     align-self: stretch;
-    /* Ensure the button container spans full width */
     display: flex;
     justify-content: flex-end;
-    /* Align button to the right */
 }
