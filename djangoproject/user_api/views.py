@@ -3,7 +3,7 @@ import json
 from django.contrib.auth import login, logout
 from django.db import connection
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_GET
 from rest_framework import permissions, status, generics
 from rest_framework.authentication import SessionAuthentication
@@ -251,6 +251,7 @@ def get_showtime(request, moviescreeningid):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+@require_GET
 def get_categories(request):
     try:
         with connection.cursor() as cursor:
@@ -285,7 +286,7 @@ def get_movie_details(request, title):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-
+@require_GET
 def get_movies(request):
     try:
         with connection.cursor() as cursor:
@@ -303,7 +304,7 @@ def get_movies(request):
         # Consider logging the exception here
         return JsonResponse({'error': str(e)}, status=500)
 
-
+@require_GET
 def get_current_movies(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM get_current_movies(%s)", [specific_date])
@@ -315,7 +316,7 @@ def get_current_movies(request):
             movies.append(movie)
     return JsonResponse(movies, safe=False)
 
-
+@require_GET
 def get_upcoming_movies(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM get_upcoming_movies(%s)", [specific_date])
@@ -327,7 +328,7 @@ def get_upcoming_movies(request):
             movies.append(movie)
     return JsonResponse(movies, safe=False)
 
-
+@require_GET
 def get_movie_sessions(request, title):
     if not title:
         return JsonResponse({'error': 'Title parameter is required'}, status=400)
@@ -348,7 +349,7 @@ def get_movie_sessions(request, title):
 
 @ensure_csrf_cookie
 def set_csrf_token(request):
-    return JsonResponse({'detail': 'CSRF cookie set'})
+    return JsonResponse({'details': 'CSRF cookie set'})
 
 
 @csrf_exempt
@@ -406,7 +407,6 @@ def buy_movie_screening_seat(data):
     try:
         seat_number = data['seat_number']
         movie_screening_id = data['movie_screening_id']
-        available = data['available']
         with connection.cursor() as cursor:
             cursor.execute("CALL buy_movie_screening_seat(%s, %s, %s, %s, %s);",
                            [specific_customer, seat_number, movie_screening_id, specific_date, specific_time])

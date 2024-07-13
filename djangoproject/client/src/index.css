@@ -43,11 +43,11 @@ body{
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #777; /* Lighter gray on hover */
+  background: #777;
 }
 
 ::-webkit-scrollbar-thumb:active {
-  background: #999; /* Even lighter gray when active */
+  background: #999;
 }
 
 a {

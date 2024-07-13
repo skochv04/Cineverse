@@ -15,15 +15,21 @@
 
 #navbar_container {
     display: flex;
-    width: 70%;
+    width: 100%;
+    max-width: 1200px;
     justify-content: space-between;
     align-items: center;
+    padding: 0 40px;
+    box-sizing: border-box;
+    background-color: transparent;
+    transition: background-color 0.3s ease;
 }
-
 
 #logo_container {
-    flex: 1;
+    flex: 5;
+    text-align: left;
 }
+
 
 .logo {
     font-size: 26px;
@@ -53,14 +59,15 @@
 }
 
 #navbar {
-    flex: 2;
     display: flex;
     justify-content: flex-end;
+    flex: 1;
 }
 
 #navbar_items {
     display: flex;
     align-items: center;
+    white-space: nowrap;
 }
 
 .nav_item {
@@ -68,11 +75,11 @@
     cursor: pointer;
     font-size: 16px;
     font-weight: bolder;
+    text-align: center;
+    flex: 1;
+    white-space: nowrap;
 }
 
-#about_us {
-    width: 110px;
-}
 
 
 #nav_to_login img, #nav_to_cart img {
@@ -85,4 +92,32 @@
 #nav_to_login img:hover, #nav_to_cart img:hover {
     opacity: 99;
     cursor: pointer;
+}
+
+#mobile_navbar {
+    display: none;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.mobile_nav_item {
+    flex: 1;
+    text-align: center;
+}
+
+.mobile_nav_item img {
+    width: 24px;
+    height: 24px;
+}
+
+@media (max-width: 620px) {
+    #navbar_container {
+        flex-direction: column;
+    }
+    .logo {
+        font-size: 20px;
+    }
+    .nav_item a {
+        font-size: 16px;
+    }
 }

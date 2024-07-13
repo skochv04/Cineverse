@@ -32,6 +32,26 @@ function Header() {
                         </div>
                     </div>
                 </div>
+                <div id="mobile_navbar">
+                    <div className="mobile_nav_item">
+                        <a href="/"><span>Home</span></a>
+                    </div>
+                    <div className="mobile_nav_item">
+                        <a href="/about_us"><span>About us</span></a>
+                    </div>
+                    <div className="mobile_nav_item">
+                        <a href="/login"><span>Login</span></a>
+                    </div>
+                    <div className="mobile_nav_item">
+                        <a href="/movies"><span>Movies</span></a>
+                    </div>
+                    <div className="mobile_nav_item">
+                        <a href="/user_profile"><img src="/src/assets/user.png" alt="User" /></a>
+                    </div>
+                    <div className="mobile_nav_item">
+                        <a href="/user_profile"><img src="/src/assets/cart.png" alt="Cart" /></a>
+                    </div>
+                </div>
             </div>
         </div>
     );
