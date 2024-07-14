@@ -1,17 +1,33 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import './styles/Login.css'
+import Cookies from 'js-cookie';
+
 const client = axios.create({
     baseURL: "http://127.0.0.1:8000",
+    withCredentials: true,
 });
+
+async function getCsrfToken() {
+    await client.get("/set_csrf_token/");
+}
+
+const csrfToken = Cookies.get('csrftoken');
 
 function Login({ setCurrentUser }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
+
+    useEffect(() => {
+        getCsrfToken().then(() => {
+            const csrfToken = Cookies.get('csrftoken');
+            console.log("CSRF Token after getCsrfToken:", csrfToken);
+        });
+    }, []);
 
     const validateForm = () => {
         let formIsValid = true;
@@ -31,14 +47,21 @@ function Login({ setCurrentUser }) {
         return formIsValid;
     };
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
         if (validateForm()) {
+            await getCsrfToken();
+            const csrfToken = Cookies.get('csrftoken');
+            console.log("CSRF Token before login:", csrfToken);
             client.post(
                 "/api/login/",
                 {
                     email: email,
                     password: password
+                }, {
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    }
                 }
             ).then(function (res) {
                 if (res.data.success) {

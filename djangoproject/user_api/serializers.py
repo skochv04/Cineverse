@@ -28,7 +28,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         user_obj = UserModel.objects.create_user(
             email=validated_data['email'],
             password=validated_data['password'],
-            username=validated_data['username']  # Додано username
+            username=validated_data['username']
         )
         return user_obj
 

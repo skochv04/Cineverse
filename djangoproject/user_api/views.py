@@ -3,6 +3,7 @@ import json
 from django.contrib.auth import login, logout
 from django.db import connection
 from django.http import JsonResponse
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_GET
 from rest_framework import permissions, status, generics
@@ -349,7 +350,10 @@ def get_movie_sessions(request, title):
 
 @ensure_csrf_cookie
 def set_csrf_token(request):
-    return JsonResponse({'details': 'CSRF cookie set'})
+    csrf_token = request.COOKIES.get('csrftoken', 'Not Set')
+    response = JsonResponse({'detail': 'CSRF cookie set', 'csrf_token': csrf_token})
+    print("CSRF Cookie Set:", csrf_token)
+    return response
 
 
 @csrf_exempt
@@ -447,11 +451,10 @@ class UserRegister(APIView):
 			return JsonResponse({'success': True, 'redirect_url': '/'}, status=status.HTTP_201_CREATED)
 		return JsonResponse({'success': False, 'error': 'Failed to register'}, status=status.HTTP_400_BAD_REQUEST)
 
-
+@method_decorator(ensure_csrf_cookie, name='dispatch')
 class UserLogin(APIView):
     permission_classes = (permissions.AllowAny,)
     # authentication_classes = (SessionAuthentication,)
-    @csrf_exempt
     def post(self, request):
         data = request.data
         if not validate_email(data):

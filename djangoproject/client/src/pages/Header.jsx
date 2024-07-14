@@ -1,7 +1,7 @@
 import React from 'react';
 import './styles/Header.css';
 
-function Header() {
+function Header({ currentUser, onLogout }) {
     return (
         <div id="Header">
             <div id="navbar_container">
@@ -18,9 +18,15 @@ function Header() {
                         <div className="nav_item">
                             <a href="/about_us"><span>About us</span></a>
                         </div>
-                        <div className="nav_item">
-                            <a href="/login"><span>Login</span></a>
-                        </div>
+                        {currentUser ? (
+                            <div className="nav_item">
+                                <button onClick={onLogout}><span>Logout</span></button>
+                            </div>
+                        ) : (
+                            <div className="nav_item">
+                                <a href="/login"><span>Login</span></a>
+                            </div>
+                        )}
                         <div className="nav_item">
                             <a href="/movies"><span>Movies</span></a>
                         </div>
@@ -39,9 +45,15 @@ function Header() {
                     <div className="mobile_nav_item">
                         <a href="/about_us"><span>About us</span></a>
                     </div>
-                    <div className="mobile_nav_item">
-                        <a href="/login"><span>Login</span></a>
-                    </div>
+                    {currentUser ? (
+                        <div className="mobile_nav_item">
+                            <button onClick={onLogout}><span>Logout</span></button>
+                        </div>
+                    ) : (
+                        <div className="mobile_nav_item">
+                            <a href="/login"><span>Login</span></a>
+                        </div>
+                    )}
                     <div className="mobile_nav_item">
                         <a href="/movies"><span>Movies</span></a>
                     </div>

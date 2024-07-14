@@ -23,6 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@ocmg81jnp5=qpdczb6o+u)brk06ntlw7jzwnqnni+jrmp6lz+'
 
 CSRF_COOKIE_NAME = "csrftoken"
+CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = False
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:3000"
+]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
