@@ -4,11 +4,16 @@ import { Navigation, Scrollbar, A11y } from 'swiper/modules';
 import { Link } from 'react-router-dom';
 import './styles/Carousel.css';
 
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/scrollbar';
+const PlaceholderSlide = () => (
+    <div className="carousel-slide-container">
+        <div className="placeholder-image" />
+        <p className="carousel-caption">Loading...</p>
+    </div>
+);
 
 const Carousel = ({ slides }) => {
+    const slidesToRender = slides.length > 0 ? slides : Array(20).fill(null);
+
     return (
         <Swiper
             modules={[Navigation, Scrollbar, A11y]}
@@ -52,14 +57,18 @@ const Carousel = ({ slides }) => {
                 }
             }}
         >
-            {slides.map((slide, index) => (
+            {slidesToRender.map((slide, index) => (
                 <SwiperSlide key={index} className="custom-swiper-slide">
-                    <div className="carousel-slide-container">
-                        <Link to={`/movie/${slide.content}`}>
-                            <img src={slide.imageUrl} alt={slide.content} className="carousel-image" />
-                            <p className="carousel-caption">{slide.content}</p>
-                        </Link>
-                    </div>
+                    {slide ? (
+                        <div className="carousel-slide-container">
+                            <Link to={`/movie/${slide.content}`}>
+                                <img src={slide.imageUrl} alt={slide.content} className="carousel-image" />
+                                <p className="carousel-caption">{slide.content}</p>
+                            </Link>
+                        </div>
+                    ) : (
+                        <PlaceholderSlide />
+                    )}
                 </SwiperSlide>
             ))}
         </Swiper>

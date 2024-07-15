@@ -1,6 +1,9 @@
-.movies_container {
-    padding-top: 10%;
+#movies_container {
+    padding: 30% 5% 10%;
+    height: auto;
+    min-height: 200vh;
 }
+
 .slider_title {
     display: flex;
     justify-content: flex-start;
@@ -11,5 +14,10 @@
     background: linear-gradient(1deg, #333333, #ffffff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+#soon_movies, #best_rate_movies {
+    background-color: black;
+    height: 85vh;
 }
 
