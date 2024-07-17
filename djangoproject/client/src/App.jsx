@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
 import './App.css';
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
@@ -25,23 +25,14 @@ const client = axios.create({
 
 function App() {
     const [isLogin, setIsLogin] = useState(false);
-    const [username, setUsername] = useState('Username');
-
-    useEffect(() => {
-        client.get("/api/user")
-            .then(function (res) {
-                setIsLogin(true);
-                setUsername(res.data.name);
-            })
-            .catch(function (error) {
-                setIsLogin(false);
-            });
-    }, []);
+    const [username, setUsername] = useState('Newcomer');
 
     const handleLogout = () => {
         client.post("/api/logout")
             .then(() => {
                 setIsLogin(false);
+                setUsername('Username');
+                console.log("Logout successful")
             })
             .catch(error => {
                 console.error("There was an error logging out:", error);
@@ -60,7 +51,7 @@ function App() {
                     <Route path="/register" element={<Registration/>}/>
                     <Route path="/movies" element={<Movies/>}/>
                     <Route path="/about_us" element={<AboutUs/>}/>
-                    <Route path="/user_profile" element={<UserProfile isLogin={isLogin} username={username} setUsername={setUsername}/>} />
+                    <Route path="/user_profile" element={<UserProfile isLogin={isLogin} username={username} setUsername={setUsername}/>}/>
                     <Route path="/admin" element={<Admin/>}/>
                     <Route path="/movie/:title" element={<Movie/>}/>
                     <Route path="/showtime/:moviescreeningID" element={<Showtime/>} />

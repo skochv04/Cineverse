@@ -39,27 +39,45 @@ function UserProfile({isLogin, username, setUsername}) {
     });
 
     useEffect(() => {
+        const getUsername = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/api/user', {
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        setUsername('Newcomer');
+                        console.error('Username: You are not logged in');
+                    } else {
+                        throw new Error('Failed to fetch user data');
+                    }
+                } else {
+                    const content = await response.json();
+                    console.log('Content:', content);
+                    setUsername(content.username);
+                    console.log('User profile:', content.username);
+                }
+            } catch (error) {
+                setUsername('Newcomer');
+                console.error('Failed to fetch user data:', error);
+            }
+        }
+
+        getUsername();
         const fetchTickets = async () => {
             try {
                 const ticketsResponse = await axios.get(`http://127.0.0.1:8000/user/${specific_userID}/tickets`);
-                setTickets(ticketsResponse.data);
+                if (isLogin) {
+                    setTickets(ticketsResponse.data);
+                } else {
+                    console.log('Tickets error: You are not logged in.');
+                }
             } catch (error) {
                 console.error('Error fetching tickets:', error);
             }
         };
-        const getUsername = async () => {
-            const response = await fetch('http://localhost:8000/api/user', {
-                headers: {'Content-Type': 'application/json'},
-                credentials: 'include',
-            });
-
-            const content = await response.json();
-            console.log('Content:', content);
-
-            setUsername(content.username);
-            console.log('User profile:', content.username);
-            };
-        getUsername();
         fetchTickets();
     }, [specific_userID]);
 
@@ -88,7 +106,7 @@ function UserProfile({isLogin, username, setUsername}) {
             // Update tickets state
             setTickets(tickets.map(ticket => ticket.ticket_id === ticketId ? {...ticket, status} : ticket));
             setNotification("Ticket status updated successfully!");
-            setIsModalOpen(true); // Show success modal
+            setIsModalOpen(true);
         } catch (error) {
             console.error(error.message);
             setError("An error occurred while updating the ticket status.");

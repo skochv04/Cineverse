@@ -36,23 +36,25 @@ function Login({ setIsLogin, setUsername }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await fetch('http://localhost:8000/api/login/', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            credentials: 'include',
-            body: JSON.stringify({
-                email,
-                password
-            })
-        });
+        if(validateForm()) {
+            const response = await fetch('http://localhost:8000/api/login/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                credentials: 'include',
+                body: JSON.stringify({
+                    email,
+                    password
+                })
+            });
 
-        const content = await response.json();
+            const content = await response.json();
 
-        setIsLogin(true);
-        setUsername(content.name);
-        navigate('/');
-        console.log('Login successful:');
-        console.log(content);
+            setIsLogin(true);
+            setUsername(content.name);
+            navigate('/');
+            console.log('Login successful:');
+            console.log(content);
+        }
     }
 
     return (
