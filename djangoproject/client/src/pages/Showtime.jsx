@@ -153,9 +153,6 @@ function Showtime() {
 
     return (
         <div className="Showtime">
-            <div id="header_container">
-                <Header />
-            </div>
             <div id="showtime-info">
                 <h2>Chosen Date: <span>{showtime.date}</span> at <span>{showtime.starttime}</span></h2>
             </div>

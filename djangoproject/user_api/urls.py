@@ -1,14 +1,14 @@
 from django.urls import path
 from . import views
-from .views import OccupiedSeatsList, handle_request, set_csrf_token
+from .views import OccupiedSeatsList, handle_request
 from .views import handle_movie_category, delete_movie_by_name, handle_movie, handle_movie_screening, delete_movie_screening, handle_reservation
 from .views import get_movie_revenue_on_date
 
 urlpatterns = [
 	path('register/', views.UserRegister.as_view(), name='register'),
-	path('login', views.UserLogin.as_view(), name='login'),
-	path('logout', views.UserLogout.as_view(), name='logout'),
-	path('user', views.UserView.as_view(), name='user'),
+	path('login/', views.UserLogin.as_view(), name='login'),
+	path('logout/', views.UserLogout.as_view(), name='logout'),
+	path('user/', views.UserView.as_view(), name='user'),
 	path('handle_request/', handle_request, name='handle_request'),
 	path('set_csrf_token/', views.set_csrf_token, name='set_csrf_token'),
 	path('movies/', views.get_movies, name='movies'),

@@ -5,9 +5,6 @@ import "./styles/AboutUs.css";
 function AboutUs() {
     return (
         <div className="AboutUs">
-            <div id="header_container">
-                <Header/>
-            </div>
             <div id="content-container">
                 <div id="content">
                     <div className="about-section">

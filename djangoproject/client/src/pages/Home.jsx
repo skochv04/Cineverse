@@ -51,9 +51,6 @@ function Home() {
     };
     return (
         <div id="Home">
-            <div id="header_container">
-                <Header/>
-            </div>
             <div id="content_container">
                 <div id="content">
                     <div id="for_title">

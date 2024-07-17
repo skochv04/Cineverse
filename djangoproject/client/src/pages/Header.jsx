@@ -1,7 +1,7 @@
 import React from 'react';
 import './styles/Header.css';
 
-function Header({ currentUser, onLogout }) {
+function Header({ isLogin, onLogout }) {
     return (
         <div id="Header">
             <div id="navbar_container">
@@ -18,7 +18,7 @@ function Header({ currentUser, onLogout }) {
                         <div className="nav_item">
                             <a href="/about_us"><span>About us</span></a>
                         </div>
-                        {currentUser ? (
+                        {isLogin ? (
                             <div className="nav_item">
                                 <button onClick={onLogout}><span>Logout</span></button>
                             </div>
@@ -45,7 +45,7 @@ function Header({ currentUser, onLogout }) {
                     <div className="mobile_nav_item">
                         <a href="/about_us"><span>About us</span></a>
                     </div>
-                    {currentUser ? (
+                    {isLogin ? (
                         <div className="mobile_nav_item">
                             <button onClick={onLogout}><span>Logout</span></button>
                         </div>

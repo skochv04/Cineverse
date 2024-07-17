@@ -10,7 +10,8 @@ from rest_framework import permissions, status, generics
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+import jwt, datetime
+from .models import AppUser
 from .models import Movie, OccupiedSeat
 from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer, MovieSerializer, \
     OccupiedSeatSerializer
@@ -451,10 +452,10 @@ class UserRegister(APIView):
 			return JsonResponse({'success': True, 'redirect_url': '/'}, status=status.HTTP_201_CREATED)
 		return JsonResponse({'success': False, 'error': 'Failed to register'}, status=status.HTTP_400_BAD_REQUEST)
 
-@method_decorator(ensure_csrf_cookie, name='dispatch')
 class UserLogin(APIView):
     permission_classes = (permissions.AllowAny,)
     # authentication_classes = (SessionAuthentication,)
+
     def post(self, request):
         data = request.data
         if not validate_email(data):
@@ -464,25 +465,53 @@ class UserLogin(APIView):
 
         serializer = UserLoginSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
-            user = serializer.check_user(data)
-            login(request, user)
-            return JsonResponse({'success': True, 'redirect_url': '/'}, status=status.HTTP_200_OK)
-        return JsonResponse({'success': False, 'error': 'Failed to log in'}, status=status.HTTP_400_BAD_REQUEST)
+            user = serializer.check_user(serializer.validated_data)
 
+            login(request, user)
+
+            payload = {
+                'id': user.user_id,
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1),
+                'iat': datetime.datetime.utcnow()
+            }
+
+            token = jwt.encode(payload, 'secret', algorithm='HS256')
+
+            response = Response({
+                'success': True,
+                'redirect_url': '/'
+            }, status=status.HTTP_200_OK)
+            response.set_cookie(key='jwt', value=token, httponly=token)
+            return response
+        return Response({
+            'error': 'Failed to log in',
+            'details': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 class UserLogout(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
         logout(request)
+        response = JsonResponse({'success': True, 'redirect_url': '/login'}, status=status.HTTP_200_OK)
+        response.delete_cookie('jwt')
         return JsonResponse({'success': True, 'redirect_url': '/login'}, status=status.HTTP_200_OK)
-
 
 class UserView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
-    @csrf_exempt
+
     def get(self, request):
-        serializer = UserSerializer(request.user)
-        return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+        token = request.COOKIES.get('jwt')
+        if not token:
+            return JsonResponse({'error': 'No JWT token'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            return JsonResponse({'error': 'Invalid JWT token'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = AppUser.objects.filter(user_id=payload['id']).first()
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)

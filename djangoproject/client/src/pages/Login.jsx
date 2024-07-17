@@ -1,33 +1,13 @@
-import React, {useEffect, useState} from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Header from './Header';
-import './styles/Login.css'
-import Cookies from 'js-cookie';
+import './styles/Login.css';
+import axios from 'axios';
 
-const client = axios.create({
-    baseURL: "http://127.0.0.1:8000",
-    withCredentials: true,
-});
-
-async function getCsrfToken() {
-    await client.get("/set_csrf_token/");
-}
-
-const csrfToken = Cookies.get('csrftoken');
-
-function Login({ setCurrentUser }) {
+function Login({ setIsLogin, setUsername }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
-
-    useEffect(() => {
-        getCsrfToken().then(() => {
-            const csrfToken = Cookies.get('csrftoken');
-            console.log("CSRF Token after getCsrfToken:", csrfToken);
-        });
-    }, []);
 
     const validateForm = () => {
         let formIsValid = true;
@@ -47,41 +27,36 @@ function Login({ setCurrentUser }) {
         return formIsValid;
     };
 
-    async function handleSubmit(e) {
-        e.preventDefault();
-        if (validateForm()) {
-            await getCsrfToken();
-            const csrfToken = Cookies.get('csrftoken');
-            console.log("CSRF Token before login:", csrfToken);
-            client.post(
-                "/api/login/",
-                {
-                    email: email,
-                    password: password
-                }, {
-                    headers: {
-                        'X-CSRFToken': csrfToken
-                    }
-                }
-            ).then(function (res) {
-                if (res.data.success) {
-                    setCurrentUser(true);
-                    navigate(res.data.redirect_url);
-                } else {
-                    setErrors({ server: res.data.error || 'Failed to log in' });
-                }
-            }).catch(function (error) {
-                console.error("There was an error logging in:", error);
-                setErrors({ server: 'Failed to log in. Please try again.' });
-            });
+    const client = axios.create({
+        baseURL: "http://127.0.0.1:8000",
+        headers: {
+            'Content-Type': 'application/json'
         }
+    });
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const response = await fetch('http://localhost:8000/api/login/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            credentials: 'include',
+            body: JSON.stringify({
+                email,
+                password
+            })
+        });
+
+        const content = await response.json();
+
+        setIsLogin(true);
+        setUsername(content.name);
+        navigate('/');
+        console.log('Login successful:');
+        console.log(content);
     }
 
     return (
         <div className="Login">
-            <div id="header_container">
-                <Header />
-            </div>
             <div id="content">
                 <div className="login-form-container">
                     <h2 className="title">Log in</h2>
@@ -113,3 +88,5 @@ function Login({ setCurrentUser }) {
 }
 
 export default Login;
+
+

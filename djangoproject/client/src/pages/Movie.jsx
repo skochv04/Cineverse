@@ -54,9 +54,6 @@ function Movie() {
 
     return (
         <div className="Movie">
-            <div id="header_container">
-                <Header />
-            </div>
             <div id="content">
                 <div id="movie-details-container">
                     <div id="img_container">

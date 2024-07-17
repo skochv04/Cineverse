@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from "react";
 import axios from 'axios';
-import Header from "./Header.jsx";
 import "./styles/UserProfile.css";
 
 const Modal = ({message, onClose}) => {
@@ -14,7 +13,7 @@ const Modal = ({message, onClose}) => {
     );
 };
 
-function UserProfile() {
+function UserProfile({isLogin, username, setUsername}) {
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [showCurrentPassword, setShowCurrentPassword] = useState(false);
@@ -23,8 +22,7 @@ function UserProfile() {
     const [activeTab, setActiveTab] = useState("tickets");
     const [notification, setNotification] = useState("");
     const [error, setError] = useState("");
-    const [animating, setAnimating] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const toggleShowCurrentPassword = () => {
         setShowCurrentPassword(!showCurrentPassword);
@@ -37,6 +35,10 @@ function UserProfile() {
     const specific_userID = 6;
 
     useEffect(() => {
+
+    });
+
+    useEffect(() => {
         const fetchTickets = async () => {
             try {
                 const ticketsResponse = await axios.get(`http://127.0.0.1:8000/user/${specific_userID}/tickets`);
@@ -45,6 +47,19 @@ function UserProfile() {
                 console.error('Error fetching tickets:', error);
             }
         };
+        const getUsername = async () => {
+            const response = await fetch('http://localhost:8000/api/user', {
+                headers: {'Content-Type': 'application/json'},
+                credentials: 'include',
+            });
+
+            const content = await response.json();
+            console.log('Content:', content);
+
+            setUsername(content.username);
+            console.log('User profile:', content.username);
+            };
+        getUsername();
         fetchTickets();
     }, [specific_userID]);
 
@@ -77,7 +92,7 @@ function UserProfile() {
         } catch (error) {
             console.error(error.message);
             setError("An error occurred while updating the ticket status.");
-            setIsModalOpen(true); // Show error modal
+            setIsModalOpen(true);
         }
     };
 
@@ -97,7 +112,7 @@ function UserProfile() {
                                 <li key={ticket.ticket_id} className="ticket-card">
                                     <div className="ticket-container">
                                         <div id="ticket-title">
-                                            <p><h3>{ticket.title}</h3></p>
+                                            <h3>{ticket.title}</h3>
                                         </div>
                                         <div className="ticket-info">
                                             <p><strong>Date: </strong>{ticket.date}</p>
@@ -189,11 +204,8 @@ function UserProfile() {
 
     return (
         <div className="UserProfile">
-            <div id="header_container">
-                <Header/>
-            </div>
             <div className="welcome-section">
-                <h1>Welcome, [Username]!</h1>
+                <h1>Welcome, {username}!</h1>
                 <p>We're glad to have you back.</p>
             </div>
             <div id="content">
