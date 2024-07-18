@@ -1,8 +1,7 @@
-import React, {useState, useEffect} from "react";
-import axios from 'axios';
+import React, { useState } from "react";
 import "./styles/UserProfile.css";
 
-const Modal = ({message, onClose}) => {
+const Modal = ({ message, onClose }) => {
     return (
         <div className="modal-overlay">
             <div className="modal">
@@ -13,7 +12,7 @@ const Modal = ({message, onClose}) => {
     );
 };
 
-function UserProfile({tickets, isLogin, username}) {
+function UserProfile({ tickets, setTickets, username }) {
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [showCurrentPassword, setShowCurrentPassword] = useState(false);
@@ -52,8 +51,7 @@ function UserProfile({tickets, isLogin, username}) {
             const result = await response.json();
             console.log(result.message);
 
-            // Update tickets state
-            setTickets(tickets.map(ticket => ticket.ticket_id === ticketId ? {...ticket, status} : ticket));
+            setTickets(tickets.map(ticket => ticket.ticket_id === ticketId ? { ...ticket, status } : ticket));
             setNotification("Ticket status updated successfully!");
             setIsModalOpen(true);
         } catch (error) {
@@ -118,7 +116,7 @@ function UserProfile({tickets, isLogin, username}) {
                 <div className="section settings">
                     <form>
                         <h3>Change Password</h3>
-                        <hr className="underline"/>
+                        <hr className="underline" />
                         <div className="input-group">
                             <label htmlFor="currentPassword">Current Password</label>
                             <input
@@ -203,3 +201,4 @@ function UserProfile({tickets, isLogin, username}) {
 }
 
 export default UserProfile;
+

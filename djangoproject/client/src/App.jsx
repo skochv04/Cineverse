@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Home from "./pages/Home.jsx";
@@ -16,28 +16,39 @@ import Logout from "./pages/Logout.jsx";
 import axios from "axios";
 
 function App() {
-    const [isLogin, setIsLogin] = useState(false);
-    const [username, setUsername] = useState('Newcomer');
+    const [isLogin, setIsLogin] = useState(localStorage.getItem('isLogin') === 'true');
+    const [username, setUsername] = useState(localStorage.getItem('username') || 'Newcomer');
+    const [tickets, setTickets] = useState([]);
     const specific_userID = 6;
     const [logoutModalOpen, setLogoutModalOpen] = useState(false);
-    const [tickets, setTickets] = useState([]);
+
+    useEffect(() => {
+        if (isLogin) {
+            localStorage.setItem('isLogin', isLogin);
+            localStorage.setItem('username', username);
+        } else {
+            localStorage.removeItem('isLogin');
+            localStorage.removeItem('username');
+        }
+    }, [isLogin, username]);
 
     useEffect(() => {
         const fetchTickets = async () => {
             try {
-                const ticketsResponse = await axios.get(`http://127.0.0.1:8000/user/${specific_userID}/tickets`);
-                if (isLogin) {
+                if (!isLogin) {
+                    console.log('Tickets error: You are not logged in.');
+                } else {
+                    const ticketsResponse = await axios.get(`http://127.0.0.1:8000/user/${specific_userID}/tickets`);
                     setTickets(ticketsResponse.data);
                     console.log('Tickets fetched:', ticketsResponse.data);
-                } else {
-                    console.log('Tickets error: You are not logged in.');
                 }
             } catch (error) {
                 console.error('Error fetching tickets:', error);
             }
         };
         fetchTickets();
-    }, [specific_userID, isLogin]);
+    }, [isLogin]);
+
     const handleLogoutClick = () => {
         setLogoutModalOpen(true);
     };
@@ -46,7 +57,7 @@ function App() {
         <Router>
             <main>
                 <div id="header_container">
-                    <Header isLogin={isLogin} onLogout={handleLogoutClick} />
+                    <Header isLogin={isLogin} username={username} onLogout={handleLogoutClick} />
                 </div>
                 <Routes>
                     <Route path="/" element={<Home />} />
@@ -54,18 +65,21 @@ function App() {
                     <Route path="/register" element={<Registration />} />
                     <Route path="/movies" element={<Movies />} />
                     <Route path="/about_us" element={<AboutUs />} />
-                    <Route path="/user_profile" element={<UserProfile tickets={tickets} isLogin={isLogin} username={username} />} />
+                    <Route path="/user_profile" element={<UserProfile tickets={tickets} setTickets={setTickets} username={username} />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/movie/:title" element={<Movie />} />
                     <Route path="/showtime/:moviescreeningID" element={<Showtime />} />
                     <Route path="/*" element={<Error />} />
                 </Routes>
-                <Logout open={logoutModalOpen} setIsLogin={setIsLogin} setUsername={setUsername} setLogoutModalOpen={setLogoutModalOpen} />
+                <Logout open={logoutModalOpen} setLogoutModalOpen={setLogoutModalOpen} isLogin={isLogin} setIsLogin={setIsLogin} username={username} setUsername={setUsername} />
             </main>
         </Router>
     );
 }
 
 export default App;
+
+
+
 
 

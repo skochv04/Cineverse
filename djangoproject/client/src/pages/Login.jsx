@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './styles/Login.css';
 import axios from 'axios';
@@ -6,6 +6,7 @@ import axios from 'axios';
 function Login({ setIsLogin, setUsername }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loginAttempt, setLoginAttempt] = useState(false);
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
 
@@ -27,35 +28,37 @@ function Login({ setIsLogin, setUsername }) {
         return formIsValid;
     };
 
-    const client = axios.create({
-        baseURL: "http://127.0.0.1:8000",
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if(validateForm()) {
+        if (validateForm()) {
             const response = await fetch('http://localhost:8000/api/login/', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
                 body: JSON.stringify({
                     email,
                     password
                 })
             });
-
             const content = await response.json();
-
-            setIsLogin(true);
-            setUsername(content.name);
-            navigate('/');
-            console.log('Login successful:');
-            console.log(content);
+            if (response.ok) {
+                setIsLogin(true);
+                setUsername(content.username);
+                localStorage.setItem('isLogin', true);
+                localStorage.setItem('username', content.username);
+                setLoginAttempt(true);
+                navigate('/');
+            } else {
+                console.error('Login error:', content);
+            }
         }
-    }
+    };
+
+    useEffect(() => {
+        if (loginAttempt) {
+            setLoginAttempt(false);
+        }
+    }, [loginAttempt]);
 
     return (
         <div className="Login">
@@ -90,5 +93,6 @@ function Login({ setIsLogin, setUsername }) {
 }
 
 export default Login;
+
 
 

@@ -36,18 +36,29 @@ const StyledButton = styled(Button)({
     marginRight: theme.spacing(2),
 });
 
-function Logout({ open, setIsLogin, setUsername, setLogoutModalOpen }) {
-    const handleLogoutConfirm = () => {
-        client.post("/api/logout/")
-            .then(() => {
+function Logout({ open, setLogoutModalOpen, isLogin, setIsLogin, username, setUsername }) {
+    const handleLogoutConfirm = async () => {
+        console.log("Before logout - Is Login: ", isLogin);
+        console.log("Before logout - Username: ", username);
+
+        try {
+            const response = await client.post("/api/logout/");
+            if (response.status === 200) {
                 setIsLogin(false);
                 setUsername('Newcomer');
+                localStorage.removeItem('isLogin');
+                localStorage.removeItem('username');
                 setLogoutModalOpen(false);
                 console.log("Logout successful");
-            })
-            .catch(error => {
-                console.error("There was an error logging out:", error);
-            });
+            } else {
+                console.error("Logout error:", response);
+            }
+        } catch (error) {
+            console.error("There was an error logging out:", error);
+        }
+
+        console.log("After logout - Is Login: ", isLogin);
+        console.log("After logout - Username: ", username);
     };
 
     const handleClose = () => {
@@ -82,5 +93,6 @@ function Logout({ open, setIsLogin, setUsername, setLogoutModalOpen }) {
 }
 
 export default Logout;
+
 
 
