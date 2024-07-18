@@ -13,12 +13,11 @@ const Modal = ({message, onClose}) => {
     );
 };
 
-function UserProfile({isLogin, username, setUsername}) {
+function UserProfile({tickets, isLogin, username}) {
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [showCurrentPassword, setShowCurrentPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
-    const [tickets, setTickets] = useState([]);
     const [activeTab, setActiveTab] = useState("tickets");
     const [notification, setNotification] = useState("");
     const [error, setError] = useState("");
@@ -31,56 +30,6 @@ function UserProfile({isLogin, username, setUsername}) {
     const toggleShowNewPassword = () => {
         setShowNewPassword(!showNewPassword);
     };
-
-    const specific_userID = 6;
-
-    useEffect(() => {
-
-    });
-
-    useEffect(() => {
-        const getUsername = async () => {
-            try {
-                const response = await fetch('http://localhost:8000/api/user', {
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                });
-
-                if (!response.ok) {
-                    if (response.status === 401) {
-                        setUsername('Newcomer');
-                        console.error('Username: You are not logged in');
-                    } else {
-                        throw new Error('Failed to fetch user data');
-                    }
-                } else {
-                    const content = await response.json();
-                    console.log('Content:', content);
-                    setUsername(content.username);
-                    console.log('User profile:', content.username);
-                }
-            } catch (error) {
-                setUsername('Newcomer');
-                console.error('Failed to fetch user data:', error);
-            }
-        }
-
-        getUsername();
-        const fetchTickets = async () => {
-            try {
-                const ticketsResponse = await axios.get(`http://127.0.0.1:8000/user/${specific_userID}/tickets`);
-                if (isLogin) {
-                    setTickets(ticketsResponse.data);
-                } else {
-                    console.log('Tickets error: You are not logged in.');
-                }
-            } catch (error) {
-                console.error('Error fetching tickets:', error);
-            }
-        };
-        fetchTickets();
-    }, [specific_userID]);
-
 
     const handleReservation = async (ticketId, status) => {
         try {

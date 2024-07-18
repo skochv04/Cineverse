@@ -20,7 +20,7 @@ function Header({ isLogin, onLogout }) {
                         </div>
                         {isLogin ? (
                             <div className="nav_item">
-                                <button onClick={onLogout}><span>Logout</span></button>
+                                <a href="#" onClick={onLogout}><span>Logout</span></a>
                             </div>
                         ) : (
                             <div className="nav_item">
