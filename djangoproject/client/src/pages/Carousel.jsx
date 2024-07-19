@@ -1,6 +1,6 @@
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Scrollbar, A11y } from 'swiper/modules';
+import {Navigation, Scrollbar, A11y, Autoplay} from 'swiper/modules';
 import { Link } from 'react-router-dom';
 import './styles/Carousel.css';
 
@@ -16,12 +16,15 @@ const Carousel = ({ slides }) => {
 
     return (
         <Swiper
-            modules={[Navigation, Scrollbar, A11y]}
+            modules={[Navigation, Scrollbar, A11y, Autoplay]}
             spaceBetween={10}
             navigation
             pagination={{ clickable: true }}
-            scrollbar={{ draggable: true }}
             loop={true}
+            autoplay={{
+                delay: 3000,
+                disableOnInteraction: true,
+            }}
             breakpoints={{
                 320: {
                     slidesPerView: 1,

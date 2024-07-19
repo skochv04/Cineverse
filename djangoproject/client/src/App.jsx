@@ -57,7 +57,7 @@ function App() {
         <Router>
             <main>
                 <div id="header_container">
-                    <Header isLogin={isLogin} username={username} onLogout={handleLogoutClick} />
+                    <Header isLogin={isLogin} onLogout={handleLogoutClick} />
                 </div>
                 <Routes>
                     <Route path="/" element={<Home />} />
