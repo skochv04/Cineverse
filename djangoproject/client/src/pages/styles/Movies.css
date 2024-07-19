@@ -3,6 +3,7 @@
 .Movies {
     display: flex;
     flex-direction: column;
+    padding-top: 12vh;
     min-height: 100vh;
     width: 100vw;
     background-color: rgb(18, 18, 18);

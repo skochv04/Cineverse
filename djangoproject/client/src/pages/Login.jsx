@@ -43,10 +43,17 @@ function Login({ setIsLogin, setUsername }) {
             const content = await response.json();
             if (response.ok) {
                 setIsLogin(true);
-                setUsername(content.username);
                 localStorage.setItem('isLogin', true);
-                localStorage.setItem('username', content.username);
                 setLoginAttempt(true);
+                const response = await fetch('http://localhost:8000/api/user/', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+
+                });
+                const content = await response.json();
+                setUsername(content.username);
+                localStorage.setItem('username', content.username);
                 navigate('/');
             } else {
                 console.error('Login error:', content);

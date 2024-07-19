@@ -4,7 +4,7 @@
     min-height: 100vh;
     height: 100vh;
     width: 100vw;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.8) 100%);
+    background: linear-gradient(to bottom, rgba(18, 18, 18, 0.9) 0%, rgba(18, 18, 18, 0.9) 100%), url("../../assets/mountains.jpg");
     background-size: cover;
     background-position: center;
     align-items: center;
@@ -13,13 +13,9 @@
 
 .registration-form-container {
     background-color: rgba(255, 255, 255, 0.9);
-    /* Slightly more opaque for focus */
     padding: 25px;
-    /* A bit more padding for a roomier feel */
     border-radius: 15px;
-    /* Larger border-radius for a softer look */
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    /* Stronger shadow for more depth */
     width: 20vw;
     height: 40vh;
     min-width: 350px;
