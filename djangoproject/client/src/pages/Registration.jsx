@@ -14,7 +14,6 @@ function Registration() {
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
-    const [redirect, setRedirect] = useState(false);
 
     const validateForm = () => {
         let formIsValid = true;
@@ -48,16 +47,12 @@ function Registration() {
                     username,
                     password
                 });
-                setRedirect(true);
+                navigate('/login')
             } catch (error) {
                 setErrors({ server: 'Failed to register. Please try again.' });
             }
         }
     };
-
-    if (redirect) {
-        return <Navigate to="/login" />;
-    }
 
     return (
         <div className="Registration">

@@ -10,6 +10,12 @@ function Login({ setIsLogin, setUsername }) {
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
 
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            handleSubmit(event);
+        }
+    };
+
     const validateForm = () => {
         let formIsValid = true;
         let errors = {};
@@ -54,7 +60,7 @@ function Login({ setIsLogin, setUsername }) {
                 const content = await response.json();
                 setUsername(content.username);
                 localStorage.setItem('username', content.username);
-                navigate('/');
+                navigate('/user_profile');
             } else {
                 console.error('Login error:', content);
             }
@@ -80,6 +86,7 @@ function Login({ setIsLogin, setUsername }) {
                             placeholder={errors.email || "Email"}
                             value={email}
                             onChange={e => setEmail(e.target.value)}
+                            onKeyPress={handleKeyPress}
                         />
                         <input
                             type="password"
@@ -87,6 +94,7 @@ function Login({ setIsLogin, setUsername }) {
                             placeholder={errors.password || "Password"}
                             value={password}
                             onChange={e => setPassword(e.target.value)}
+                            onKeyPress={handleKeyPress}
                         />
                         <button type="submit" className="button">Log in</button>
                         <p className="message">

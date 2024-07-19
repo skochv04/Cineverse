@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Box, Typography, Modal, createTheme } from '@mui/material';
 import { styled } from '@mui/system';
 import axios from 'axios';
+import {useNavigate} from "react-router-dom";
 
 const client = axios.create({
     baseURL: "http://127.0.0.1:8000"
@@ -37,10 +38,8 @@ const StyledButton = styled(Button)({
 });
 
 function Logout({ open, setLogoutModalOpen, isLogin, setIsLogin, username, setUsername }) {
+    const navigate = useNavigate();
     const handleLogoutConfirm = async () => {
-        console.log("Before logout - Is Login: ", isLogin);
-        console.log("Before logout - Username: ", username);
-
         try {
             const response = await client.post("/api/logout/");
             if (response.status === 200) {
@@ -50,15 +49,13 @@ function Logout({ open, setLogoutModalOpen, isLogin, setIsLogin, username, setUs
                 localStorage.removeItem('username');
                 setLogoutModalOpen(false);
                 console.log("Logout successful");
+                navigate('/login')
             } else {
                 console.error("Logout error:", response);
             }
         } catch (error) {
             console.error("There was an error logging out:", error);
         }
-
-        console.log("After logout - Is Login: ", isLogin);
-        console.log("After logout - Username: ", username);
     };
 
     const handleClose = () => {

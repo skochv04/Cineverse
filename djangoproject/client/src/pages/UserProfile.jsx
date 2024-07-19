@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./styles/UserProfile.css";
+import {useNavigate} from "react-router-dom";
 
 const Modal = ({ message, onClose }) => {
     return (
@@ -21,6 +22,7 @@ function UserProfile({ tickets, setTickets, username }) {
     const [notification, setNotification] = useState("");
     const [error, setError] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const navigate = useNavigate();
 
     const toggleShowCurrentPassword = () => {
         setShowCurrentPassword(!showCurrentPassword);

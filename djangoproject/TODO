@@ -1,0 +1,1 @@
+Provide CSRF authentication token in the header of the request.

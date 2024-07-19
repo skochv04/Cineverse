@@ -5,26 +5,24 @@ import "./styles/AboutUs.css";
 function AboutUs() {
     return (
         <div className="AboutUs">
-            <div id="content-container">
-                <div id="content">
-                    <div className="about-section">
-                        <p>Cinverse is dedicated to bringing the magic of cinema to life. Located in the heart of
-                            Poland, Cinverse offers an unparalleled movie-going experience, blending state-of-the-art
-                            technology with timeless storytelling. Our mission is to create a sanctuary for movie
-                            lovers, where every screening is a journey into the world of imagination.</p>
-                    </div>
-                    <div className="mission-section">
-                        <h2>Our Mission</h2>
-                        <p>To provide a premium cinema experience that entertains, inspires, and connects people through
-                            the power of film.</p>
-                    </div>
-                    <div className="vision-section">
-                        <h2>Our Vision</h2>
-                        <p>To be the leading destination for film enthusiasts, fostering a community that celebrates the
-                            art of cinema.</p>
-                    </div>
-                </div>
-            </div>
+            <section className="content">
+                <h2>About Us</h2>
+                <p>
+                    Welcome to Cineverse, your ultimate destination for a cinematic experience like no other.
+                    At Cineverse, we believe in the power of movies to transport you to different worlds,
+                    evoke emotions, and create unforgettable memories. Our state-of-the-art theaters are designed
+                    to provide you with the highest quality audio and visual experience.
+                </p>
+                <p>
+                    Our mission is to bring the magic of cinema to life, offering a diverse selection of films
+                    from around the world, including the latest blockbusters, indie gems, and timeless classics.
+                    Whether you're a casual moviegoer or a film enthusiast, Cineverse is the place to be.
+                </p>
+                <p>
+                    Join us at Cineverse and embark on a journey through the captivating world of cinema.
+                    We are dedicated to making every visit an extraordinary experience for you, your friends, and family.
+                </p>
+            </section>
         </div>
     );
 }

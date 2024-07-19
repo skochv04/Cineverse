@@ -1,22 +1,24 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Header from "./Header.jsx";
-import { Link, useParams } from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import "./styles/Movie.css";
 import axios from "axios";
 import RankContainer from "./RankContainer.jsx";
-import { format, addDays } from 'date-fns';
+import {format, addDays} from 'date-fns';
 import Loading from "./Loading.jsx";
 
 const initialDate = new Date(2024, 4, 22);
 
 function Movie() {
-    const { title } = useParams();
+    const {title} = useParams();
     const [movie, setMovie] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [availableShowTime, setAvailableShowTime] = useState([]);
     const [selectedDate, setSelectedDate] = useState(initialDate);
     const showtimeRef = useRef(null);
+    const isLogin = Boolean(localStorage.getItem('isLogin'));
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -41,7 +43,7 @@ function Movie() {
 
     const scrollToShowtime = () => {
         if (showtimeRef.current) {
-            showtimeRef.current.scrollIntoView({ behavior: 'smooth' });
+            showtimeRef.current.scrollIntoView({behavior: 'smooth'});
         }
     };
     const handleDateClick = (date) => {
@@ -52,14 +54,30 @@ function Movie() {
         new Date(showtime.date).toDateString() === selectedDate.toDateString()
     );
 
+    const handleBuyTicket = () => {
+        if (isLogin) {
+            scrollToShowtime();
+        } else {
+            navigate('/login');
+        }
+    };
+
+    const handleChooseSeat = (movieScreeningId) => {
+        if (isLogin) {
+            navigate(`/showtime/${movieScreeningId}`);
+        } else {
+            navigate('/login');
+        }
+    };
+
     return (
         <div className="Movie">
             <div id="content">
                 <div id="movie-details-container">
                     <div id="img_container">
                         <img src={movie.image ? `data:image/jpeg;base64,${movie.image}` : movie.title}
-                            alt="Movie Poster" />
-                        <RankContainer rank={movie.rank} />
+                             alt="Movie Poster"/>
+                        <RankContainer rank={movie.rank}/>
                     </div>
                     <div id="details_container">
                         <div id="title_container">
@@ -80,7 +98,7 @@ function Movie() {
                             <p><strong>Production:</strong> {movie.production}</p>
                             <p><strong>Original Language:</strong> {movie.originallanguage}</p>
                             <div id="buy-button">
-                                <button onClick={scrollToShowtime}>Buy Ticket</button>
+                                <button onClick={handleBuyTicket}>Buy Ticket</button>
                             </div>
                         </div>
 
@@ -134,10 +152,7 @@ function Movie() {
                                                 </div>
                                             </div>
                                             <div id="button_container">
-                                                <Link to={`/showtime/${showtime.moviescreeningid}`}
-                                                    className="showtime-link">
-                                                    <button> Choose perfect seat</button>
-                                                </Link>
+                                                <button onClick={() => handleChooseSeat(showtime.moviescreeningid)}>Choose perfect seat</button>
                                             </div>
                                         </div>
                                     </li>

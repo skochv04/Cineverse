@@ -180,6 +180,7 @@
     background-color: #282828;
     padding: 20px;
     border-radius: 8px;
+    border: 2px solid rgba(0, 0, 0, 0.6);
     margin-bottom: 20px;
     box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.6);
     display: flex;
@@ -187,7 +188,6 @@
 }
 
 .ticket-card:hover {
-    scale: 1.02;
     cursor: pointer;
     border: 2px solid whitesmoke;
 }
