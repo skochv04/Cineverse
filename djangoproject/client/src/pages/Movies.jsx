@@ -49,9 +49,6 @@ function Movies() {
 
     return (
         <div className="Movies">
-            <div id="header_container">
-                <Header />
-            </div>
             <div id="content">
                 <div className="filter-sort-container">
                     <div className="search">

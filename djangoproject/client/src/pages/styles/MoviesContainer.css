@@ -1,5 +1,5 @@
 #movies_container {
-    padding: 30% 5% 10%;
+    padding: 15% 5%;
     height: auto;
     min-height: 200vh;
 }
@@ -17,7 +17,6 @@
 }
 
 #soon_movies, #best_rate_movies {
-    background-color: black;
     height: 85vh;
 }
 

@@ -4,16 +4,18 @@ import "./styles/Showtime.css";
 import { getCsrfToken } from "../utils/csrf.js";
 import { useParams } from "react-router-dom";
 import Loading from "./Loading.jsx";
-import ErrorMessage from "./ErrorMessage";  // Importujemy nowy komponent
-import { handleServerError } from "../utils/errorHandler.js";  // Importujemy funkcję obsługi błędów
+import Modal from "./Modal"; // Імпортуємо новий компонент
+import { handleServerError } from "../utils/errorHandler.js"; // Імпортуємо функцію обробки помилок
 
-function Showtime() {
+function Showtime({ username }) {
     const { moviescreeningID } = useParams();
     const [selectedSeat, setSelectedSeat] = useState(null);
     const [occupiedSeats, setOccupiedSeats] = useState([]);
     const [showtime, setShowtime] = useState(null);
-    const [error, setError] = useState(null);
+    const [message, setMessage] = useState(null); // Message can be success or error
+    const [isSuccess, setIsSuccess] = useState(true);
     const [seatType, setSeatType] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchShowtime = async () => {
@@ -25,7 +27,9 @@ function Showtime() {
                 setShowtime(data);
             } catch (error) {
                 console.error('Error fetching Showtime:', error);
-                setError(error.message);
+                setMessage(error.message);
+                setIsSuccess(false);
+                setIsModalOpen(true);
             }
         };
 
@@ -38,13 +42,29 @@ function Showtime() {
                 setOccupiedSeats(data);
             } catch (error) {
                 console.error('Error fetching occupied seats:', error);
-                setError(error.message);
+                setMessage(error.message);
+                setIsSuccess(false);
+                setIsModalOpen(true);
             }
         };
 
         fetchShowtime();
         fetchOccupiedSeats();
     }, [moviescreeningID]);
+
+    const fetchOccupiedSeats = async () => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/occupied_seats/${moviescreeningID}`);
+            await handleServerError(response);
+            const data = await response.json();
+            setOccupiedSeats(data);
+        } catch (error) {
+            console.error('Error fetching occupied seats:', error);
+            setMessage(error.message);
+            setIsSuccess(false);
+            setIsModalOpen(true);
+        }
+    };
 
     const handleSelectSeat = (seat) => {
         setSelectedSeat(seat);
@@ -71,7 +91,7 @@ function Showtime() {
         return occupiedSeats.some(seatObj => seatObj.seat_number === seatId);
     };
 
-        const generateSeats = () => {
+    const generateSeats = () => {
         const rows = [];
         let seatsInRow = 6;
 
@@ -105,11 +125,18 @@ function Showtime() {
                     seat_number: newSeatNumber,
                     movie_screening_id: newMovieScreeningId,
                     available: false,
+                    username: username,
                 }),
             });
             await handleServerError(response);
+            setMessage('Seat reserved successfully!');
+            setIsSuccess(true);
+            setIsModalOpen(true);
+            await fetchOccupiedSeats();
         } catch (error) {
-            setError(error.message);
+            setMessage(error.message);
+            setIsSuccess(false);
+            setIsModalOpen(true);
         }
     };
 
@@ -128,11 +155,18 @@ function Showtime() {
                     seat_number: newSeatNumber,
                     movie_screening_id: newMovieScreeningId,
                     available: false,
+                    username: username,
                 }),
             });
             await handleServerError(response);
+            setMessage('Seat purchased successfully!');
+            setIsSuccess(true);
+            setIsModalOpen(true);
+            await fetchOccupiedSeats();
         } catch (error) {
-            setError(error.message);
+            setMessage(error.message);
+            setIsSuccess(false);
+            setIsModalOpen(true);
         }
     };
 
@@ -147,15 +181,18 @@ function Showtime() {
         return null;
     };
 
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setMessage(null);
+        //setMessageType('error');
+    };
+
     if (!showtime) {
-        return <div><Loading/></div>;
+        return <div><Loading /></div>;
     }
 
     return (
         <div className="Showtime">
-            <div id="header_container">
-                <Header />
-            </div>
             <div id="showtime-info">
                 <h2>Chosen Date: <span>{showtime.date}</span> at <span>{showtime.starttime}</span></h2>
             </div>
@@ -195,7 +232,7 @@ function Showtime() {
                                             : rowIndex === 8
                                                 ? 'availableSeatPremium'
                                                 : 'availableSeat'
-                                        } ${selectedSeat === seat ? 'selected' : ''}`}
+                                            } ${selectedSeat === seat ? 'selected' : ''}`}
                                         onClick={() =>
                                             !isSeatOccupied(seat) && handleSelectSeat(seat)
                                         }
@@ -214,7 +251,13 @@ function Showtime() {
                                 <div id="price"><h5>Price: </h5>{getSeatPrice()}</div>
                             </div>
                         </div>
-                        {error && <ErrorMessage message={error} clearError={() => setError(null)} />}  {/* Używamy komponentu ErrorMessage */}
+                        {message && (
+                            <Modal
+                                message={message}
+                                onClose={closeModal}
+                                isSuccess={isSuccess}
+                            />
+                        )}  {/* Використовуємо компонент Modal */}
                         <div id="button-container">
                             <div>
                                 <button

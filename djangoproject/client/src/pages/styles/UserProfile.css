@@ -6,23 +6,13 @@
     min-height: 100vh;
     height: auto;
     width: 100vw;
+    padding-top: 12vh;
     background-size: cover;
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.8) 100%) center;
     align-items: center;
     justify-content: flex-start;
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
-}
-
-
-#header_container {
-    display: flex;
-    width: 100%;
-    height: 10vh;
-    align-items: center;
-    align-content: center;
-    background-color: transparent;
-    transition: background-color 0.3s ease;
 }
 
 #tab-buttons {
@@ -161,6 +151,7 @@
     justify-content: flex-end;
     padding: 0 20px;
 }
+
 .change-password-btn {
     background-color: #ff9800;
     width: 25%;
@@ -190,6 +181,7 @@
     background-color: #282828;
     padding: 20px;
     border-radius: 8px;
+    border: 2px solid rgba(0, 0, 0, 0.6);
     margin-bottom: 20px;
     box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.6);
     display: flex;
@@ -197,7 +189,6 @@
 }
 
 .ticket-card:hover {
-    scale: 1.02;
     cursor: pointer;
     border: 2px solid whitesmoke;
 }
@@ -220,7 +211,8 @@
     max-width: 40%;
 }
 
-.ticket-info p strong, #ticket-title p {
+.ticket-info p strong,
+#ticket-title p {
     color: #ffffff;
 }
 
@@ -289,46 +281,4 @@
 .ticket-actions .cancel-btn:hover {
     background-color: #e53935;
     border: 3px solid whitesmoke;
-}
-
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.75);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal {
-    width: 300px;
-    height: 150px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    background-color: #1e1e1e;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-    padding: 20px;
-}
-
-.modal p {
-    font-size: 18px;
-}
-
-.close-btn {
-    background-color: #f16000;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
-.close-btn:hover {
-    background-color: #e0671c;
 }

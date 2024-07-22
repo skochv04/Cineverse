@@ -1,33 +1,20 @@
-import React, {useEffect, useState} from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Header from './Header';
-import './styles/Login.css'
-import Cookies from 'js-cookie';
+import './styles/Login.css';
+import axios from 'axios';
 
-const client = axios.create({
-    baseURL: "http://127.0.0.1:8000",
-    withCredentials: true,
-});
-
-async function getCsrfToken() {
-    await client.get("/set_csrf_token/");
-}
-
-const csrfToken = Cookies.get('csrftoken');
-
-function Login({ setCurrentUser }) {
+function Login({ setIsLogin, setUsername }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loginAttempt, setLoginAttempt] = useState(false);
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
 
-    useEffect(() => {
-        getCsrfToken().then(() => {
-            const csrfToken = Cookies.get('csrftoken');
-            console.log("CSRF Token after getCsrfToken:", csrfToken);
-        });
-    }, []);
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            handleSubmit(event);
+        }
+    };
 
     const validateForm = () => {
         let formIsValid = true;
@@ -47,41 +34,47 @@ function Login({ setCurrentUser }) {
         return formIsValid;
     };
 
-    async function handleSubmit(e) {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (validateForm()) {
-            await getCsrfToken();
-            const csrfToken = Cookies.get('csrftoken');
-            console.log("CSRF Token before login:", csrfToken);
-            client.post(
-                "/api/login/",
-                {
-                    email: email,
-                    password: password
-                }, {
-                    headers: {
-                        'X-CSRFToken': csrfToken
-                    }
-                }
-            ).then(function (res) {
-                if (res.data.success) {
-                    setCurrentUser(true);
-                    navigate(res.data.redirect_url);
-                } else {
-                    setErrors({ server: res.data.error || 'Failed to log in' });
-                }
-            }).catch(function (error) {
-                console.error("There was an error logging in:", error);
-                setErrors({ server: 'Failed to log in. Please try again.' });
+            const response = await fetch('http://localhost:8000/api/login/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    email,
+                    password
+                })
             });
+            const content = await response.json();
+            if (response.ok) {
+                setIsLogin(true);
+                localStorage.setItem('isLogin', true);
+                setLoginAttempt(true);
+                const response = await fetch('http://localhost:8000/api/user/', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+
+                });
+                const content = await response.json();
+                setUsername(content.username);
+                localStorage.setItem('username', content.username);
+                navigate('/user_profile');
+            } else {
+                console.error('Login error:', content);
+            }
         }
-    }
+    };
+
+    useEffect(() => {
+        if (loginAttempt) {
+            setLoginAttempt(false);
+        }
+    }, [loginAttempt]);
 
     return (
         <div className="Login">
-            <div id="header_container">
-                <Header />
-            </div>
             <div id="content">
                 <div className="login-form-container">
                     <h2 className="title">Log in</h2>
@@ -93,6 +86,7 @@ function Login({ setCurrentUser }) {
                             placeholder={errors.email || "Email"}
                             value={email}
                             onChange={e => setEmail(e.target.value)}
+                            onKeyPress={handleKeyPress}
                         />
                         <input
                             type="password"
@@ -100,6 +94,7 @@ function Login({ setCurrentUser }) {
                             placeholder={errors.password || "Password"}
                             value={password}
                             onChange={e => setPassword(e.target.value)}
+                            onKeyPress={handleKeyPress}
                         />
                         <button type="submit" className="button">Log in</button>
                         <p className="message">
@@ -113,3 +108,6 @@ function Login({ setCurrentUser }) {
 }
 
 export default Login;
+
+
+

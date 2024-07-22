@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import Header from './Header';
-import './styles/Registration.css'
+import './styles/Registration.css';
+import axios from 'axios';
 
 const client = axios.create({
     baseURL: "http://127.0.0.1:8000"
 });
 
-function Registration({ setCurrentUser }) {
+function Registration() {
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -38,35 +38,24 @@ function Registration({ setCurrentUser }) {
         return formIsValid;
     };
 
-    function handleSubmit(e) {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (validateForm()) {
-            client.post(
-                "/api/register/",
-                {
-                    email: email,
-                    username: username,
-                    password: password
-                }
-            ).then(function (res) {
-                if (res.data.success) {
-                    setCurrentUser(true);
-                    navigate(res.data.redirect_url);
-                } else {
-                    setErrors({ server: res.data.error || 'Failed to register' });
-                }
-            }).catch(function (error) {
-                console.error("There was an error registering:", error);
+            try {
+                await client.post('/api/register/', {
+                    email,
+                    username,
+                    password
+                });
+                navigate('/login')
+            } catch (error) {
                 setErrors({ server: 'Failed to register. Please try again.' });
-            });
+            }
         }
-    }
+    };
 
     return (
         <div className="Registration">
-            <div id="header_container">
-                <Header />
-            </div>
             <div id="content">
                 <div className="registration-form-container">
                     <h2 className="title">Register</h2>

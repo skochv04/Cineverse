@@ -6,7 +6,7 @@
 body{
   width: 100vw;
   height: 100vh;
-  background-color: #141414;
+  background-color: rgb(18, 18, 18);
 }
 
 #root {
@@ -22,7 +22,7 @@ body{
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image: url("./assets/mountains.jpg");
+  background-color: rgb(18, 18, 18);
   background-size: cover;
   box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.5);
 }

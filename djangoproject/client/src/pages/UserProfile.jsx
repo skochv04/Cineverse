@@ -1,30 +1,19 @@
-import React, {useState, useEffect} from "react";
-import axios from 'axios';
-import Header from "./Header.jsx";
+import React, { useState } from "react";
 import "./styles/UserProfile.css";
+import { useNavigate } from "react-router-dom";
+import Modal from "./Modal"; // Імпорт модального вікна
 
-const Modal = ({message, onClose}) => {
-    return (
-        <div className="modal-overlay">
-            <div className="modal">
-                <p>{message}</p>
-                <button onClick={onClose} className="close-btn">Close</button>
-            </div>
-        </div>
-    );
-};
-
-function UserProfile() {
+function UserProfile({ tickets, setTickets, username }) {
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [showCurrentPassword, setShowCurrentPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
-    const [tickets, setTickets] = useState([]);
     const [activeTab, setActiveTab] = useState("tickets");
     const [notification, setNotification] = useState("");
     const [error, setError] = useState("");
-    const [animating, setAnimating] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(true);
+    const navigate = useNavigate();
 
     const toggleShowCurrentPassword = () => {
         setShowCurrentPassword(!showCurrentPassword);
@@ -33,21 +22,6 @@ function UserProfile() {
     const toggleShowNewPassword = () => {
         setShowNewPassword(!showNewPassword);
     };
-
-    const specific_userID = 6;
-
-    useEffect(() => {
-        const fetchTickets = async () => {
-            try {
-                const ticketsResponse = await axios.get(`http://127.0.0.1:8000/user/${specific_userID}/tickets`);
-                setTickets(ticketsResponse.data);
-            } catch (error) {
-                console.error('Error fetching tickets:', error);
-            }
-        };
-        fetchTickets();
-    }, [specific_userID]);
-
 
     const handleReservation = async (ticketId, status) => {
         try {
@@ -70,14 +44,15 @@ function UserProfile() {
             const result = await response.json();
             console.log(result.message);
 
-            // Update tickets state
-            setTickets(tickets.map(ticket => ticket.ticket_id === ticketId ? {...ticket, status} : ticket));
-            setNotification("Ticket status updated successfully!");
-            setIsModalOpen(true); // Show success modal
+            setTickets(tickets.map(ticket => ticket.ticket_id === ticketId ? { ...ticket, status } : ticket));
+            setNotification("Ticket status has been changed successfully");
+            setIsSuccess(true);
+            setIsModalOpen(true);
         } catch (error) {
             console.error(error.message);
-            setError("An error occurred while updating the ticket status.");
-            setIsModalOpen(true); // Show error modal
+            setError("Some problems occurred during changing the status. Please, try again later");
+            setIsSuccess(false);
+            setIsModalOpen(true);
         }
     };
 
@@ -97,7 +72,7 @@ function UserProfile() {
                                 <li key={ticket.ticket_id} className="ticket-card">
                                     <div className="ticket-container">
                                         <div id="ticket-title">
-                                            <p><h3>{ticket.title}</h3></p>
+                                            <h3>{ticket.title}</h3>
                                         </div>
                                         <div className="ticket-info">
                                             <p><strong>Date: </strong>{ticket.date}</p>
@@ -109,17 +84,12 @@ function UserProfile() {
                                         <div className="ticket-info">
                                             <p><strong>Price:</strong> {ticket.price}</p>
                                             <p><strong>Status:</strong> {ticket.status}</p>
-                                            <p><strong>Ordered
-                                                On:</strong> {ticket.ordered_on_date} at {ticket.ordered_on_time}</p>
+                                            <p><strong>Ordered On:</strong> {ticket.ordered_on_date} at {ticket.ordered_on_time}</p>
                                         </div>
                                         {ticket.status.trim() === 'New' && (
                                             <div className="ticket-actions">
-                                                <button onClick={() => handleReservation(ticket.ticket_id, 'Confirmed')}
-                                                        className="buy-btn">Buy reserved seat
-                                                </button>
-                                                <button onClick={() => handleReservation(ticket.ticket_id, 'Canceled')}
-                                                        className="cancel-btn">Cancel reservation
-                                                </button>
+                                                <button onClick={() => handleReservation(ticket.ticket_id, 'Confirmed')} className="buy-btn">Buy reserved seat</button>
+                                                <button onClick={() => handleReservation(ticket.ticket_id, 'Canceled')} className="cancel-btn">Cancel reservation</button>
                                             </div>
                                         )}
                                     </div>
@@ -136,7 +106,7 @@ function UserProfile() {
                 <div className="section settings">
                     <form>
                         <h3>Change Password</h3>
-                        <hr className="underline"/>
+                        <hr className="underline" />
                         <div className="input-group">
                             <label htmlFor="currentPassword">Current Password</label>
                             <input
@@ -172,8 +142,7 @@ function UserProfile() {
                         <div className="password-requirements-container">
                             <p className="password-requirements">
                                 Password must be at least 8 characters long and include at least 3 of the following:
-                                uppercase
-                                letter, lowercase letter, number, special character.
+                                uppercase letter, lowercase letter, number, special character.
                             </p>
                         </div>
                         <div id="change-password-btn-container">
@@ -189,25 +158,16 @@ function UserProfile() {
 
     return (
         <div className="UserProfile">
-            <div id="header_container">
-                <Header/>
-            </div>
             <div className="welcome-section">
-                <h1>Welcome, [Username]!</h1>
+                <h1>Welcome, {username}!</h1>
                 <p>We're glad to have you back.</p>
             </div>
             <div id="content">
                 <div id="tab-buttons">
-                    <button
-                        className={activeTab === "tickets" ? "active" : ""}
-                        onClick={() => setActiveTab("tickets")}
-                    >
+                    <button className={activeTab === "tickets" ? "active" : ""} onClick={() => setActiveTab("tickets")}>
                         My tickets
                     </button>
-                    <button
-                        className={activeTab === "profile" ? "active" : ""}
-                        onClick={() => setActiveTab("profile")}
-                    >
+                    <button className={activeTab === "profile" ? "active" : ""} onClick={() => setActiveTab("profile")}>
                         My profile
                     </button>
                 </div>
@@ -215,6 +175,7 @@ function UserProfile() {
                     <Modal
                         message={notification || error}
                         onClose={closeModal}
+                        isSuccess={isSuccess}
                     />
                 )}
                 {renderContent()}

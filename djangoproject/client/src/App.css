@@ -30,6 +30,7 @@ main {
     min-height: 100vh;
     height: auto;
     width: 100%;
+    background-color: rgb(18, 18, 18);
 }
 
 footer {
@@ -42,4 +43,5 @@ footer {
     align-items: center;
     justify-content: center;
 }
+
 
