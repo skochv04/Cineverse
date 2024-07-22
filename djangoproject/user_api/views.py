@@ -226,13 +226,23 @@ def handle_movie_category(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
-def get_tickets_for_user(request, user_id):
+def get_tickets_for_user(request, user_name):
+
     with connection.cursor() as cursor:
         cursor.execute("""
-            SELECT * FROM get_tickets_for_user(%s) where date >= (%s)
+            SELECT user_id FROM user_api_appuser WHERE username = %s
+        """, [user_name])
+        user_id_row = cursor.fetchone()
+        if user_id_row is None:
+            return JsonResponse({'error': 'User not found'}, status=404)
+        user_id = user_id_row[0]
+
+        cursor.execute("""
+            SELECT * FROM get_tickets_for_user(%s) WHERE date >= %s
         """, [user_id, specific_date])
         columns = [col[0] for col in cursor.description]
         results = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
     return JsonResponse(results, safe=False)
 
 @require_GET
@@ -397,10 +407,18 @@ def reserve_movie_screening_seat(data):
     try:
         seat_number = data['seat_number']
         movie_screening_id = data['movie_screening_id']
-        available = data['available']
+        # available = data['available']
+        username = data['username']
         with connection.cursor() as cursor:
+            cursor.execute("SELECT user_id FROM user_api_appuser WHERE username = %s", [username])
+            user_id_row = cursor.fetchone()
+            if user_id_row is None:
+                return JsonResponse({'error': 'User not found'}, status=404)
+            user_id = user_id_row[0]
+
             cursor.execute("CALL reserve_movie_screening_seat(%s, %s, %s, %s, %s);",
-                           [specific_customer, seat_number, movie_screening_id, specific_date, specific_time])
+                           [user_id, seat_number, movie_screening_id, specific_date, specific_time])
+
         return JsonResponse({'message': 'Seat reserved successfully'}, status=201)
     except KeyError as e:
         return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
@@ -412,9 +430,16 @@ def buy_movie_screening_seat(data):
     try:
         seat_number = data['seat_number']
         movie_screening_id = data['movie_screening_id']
+        username = data['username']
         with connection.cursor() as cursor:
+            cursor.execute("SELECT user_id FROM user_api_appuser WHERE username = %s", [username])
+            user_id_row = cursor.fetchone()
+            if user_id_row is None:
+                return JsonResponse({'error': 'User not found'}, status=404)
+            user_id = user_id_row[0]
+
             cursor.execute("CALL buy_movie_screening_seat(%s, %s, %s, %s, %s);",
-                           [specific_customer, seat_number, movie_screening_id, specific_date, specific_time])
+                           [user_id, seat_number, movie_screening_id, specific_date, specific_time])
         return JsonResponse({'message': 'Seat bought successfully'}, status=201)
     except KeyError as e:
         return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)

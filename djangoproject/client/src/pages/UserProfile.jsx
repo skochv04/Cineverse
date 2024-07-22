@@ -1,17 +1,8 @@
+// src/components/UserProfile.jsx
 import React, { useState } from "react";
 import "./styles/UserProfile.css";
-import {useNavigate} from "react-router-dom";
-
-const Modal = ({ message, onClose }) => {
-    return (
-        <div className="modal-overlay">
-            <div className="modal">
-                <p>{message}</p>
-                <button onClick={onClose} className="close-btn">Close</button>
-            </div>
-        </div>
-    );
-};
+import { useNavigate } from "react-router-dom";
+import Modal from "./Modal"; // Імпорт модального вікна
 
 function UserProfile({ tickets, setTickets, username }) {
     const [currentPassword, setCurrentPassword] = useState("");
@@ -97,10 +88,10 @@ function UserProfile({ tickets, setTickets, username }) {
                                         {ticket.status.trim() === 'New' && (
                                             <div className="ticket-actions">
                                                 <button onClick={() => handleReservation(ticket.ticket_id, 'Confirmed')}
-                                                        className="buy-btn">Buy reserved seat
+                                                    className="buy-btn">Buy reserved seat
                                                 </button>
                                                 <button onClick={() => handleReservation(ticket.ticket_id, 'Canceled')}
-                                                        className="cancel-btn">Cancel reservation
+                                                    className="cancel-btn">Cancel reservation
                                                 </button>
                                             </div>
                                         )}
@@ -203,4 +194,3 @@ function UserProfile({ tickets, setTickets, username }) {
 }
 
 export default UserProfile;
-

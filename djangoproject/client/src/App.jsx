@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
@@ -38,7 +38,7 @@ function App() {
                 if (!isLogin) {
                     console.log('Tickets error: You are not logged in.');
                 } else {
-                    const ticketsResponse = await axios.get(`http://127.0.0.1:8000/user/${specific_userID}/tickets`);
+                    const ticketsResponse = await axios.get(`http://127.0.0.1:8000/user/${username}/tickets`);
                     setTickets(ticketsResponse.data);
                     console.log('Tickets fetched:', ticketsResponse.data);
                 }
@@ -56,22 +56,22 @@ function App() {
     return (
         <Router>
             <main>
-                <Header isLogin={isLogin} onLogout={handleLogoutClick}/>
+                <Header isLogin={isLogin} onLogout={handleLogoutClick} />
                 <Routes>
-                    <Route path="/" element={<Home/>}/>
-                    <Route path="/login" element={<Login setIsLogin={setIsLogin} setUsername={setUsername}/>}/>
-                    <Route path="/register" element={<Registration/>}/>
-                    <Route path="/movies" element={<Movies/>}/>
-                    <Route path="/about_us" element={<AboutUs/>}/>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/login" element={<Login setIsLogin={setIsLogin} setUsername={setUsername} />} />
+                    <Route path="/register" element={<Registration />} />
+                    <Route path="/movies" element={<Movies />} />
+                    <Route path="/about_us" element={<AboutUs />} />
                     <Route path="/user_profile"
-                           element={<UserProfile tickets={tickets} setTickets={setTickets} username={username}/>}/>
-                    <Route path="/admin" element={<Admin/>}/>
-                    <Route path="/movie/:title" element={<Movie/>}/>
-                    <Route path="/showtime/:moviescreeningID" element={<Showtime/>}/>
-                    <Route path="/*" element={<Error/>}/>
+                        element={<UserProfile tickets={tickets} setTickets={setTickets} username={username} />} />
+                    <Route path="/admin" element={<Admin />} />
+                    <Route path="/movie/:title" element={<Movie />} />
+                    <Route path="/showtime/:moviescreeningID" element={<Showtime username={username} />} />
+                    <Route path="/*" element={<Error />} />
                 </Routes>
                 <Logout open={logoutModalOpen} setLogoutModalOpen={setLogoutModalOpen} isLogin={isLogin}
-                        setIsLogin={setIsLogin} username={username} setUsername={setUsername}/>
+                    setIsLogin={setIsLogin} username={username} setUsername={setUsername} />
             </main>
         </Router>
     );

@@ -7,7 +7,7 @@ import Loading from "./Loading.jsx";
 import ErrorMessage from "./ErrorMessage";  // Importujemy nowy komponent
 import { handleServerError } from "../utils/errorHandler.js";  // Importujemy funkcję obsługi błędów
 
-function Showtime() {
+function Showtime({ username }) {
     const { moviescreeningID } = useParams();
     const [selectedSeat, setSelectedSeat] = useState(null);
     const [occupiedSeats, setOccupiedSeats] = useState([]);
@@ -71,7 +71,7 @@ function Showtime() {
         return occupiedSeats.some(seatObj => seatObj.seat_number === seatId);
     };
 
-        const generateSeats = () => {
+    const generateSeats = () => {
         const rows = [];
         let seatsInRow = 6;
 
@@ -105,6 +105,7 @@ function Showtime() {
                     seat_number: newSeatNumber,
                     movie_screening_id: newMovieScreeningId,
                     available: false,
+                    username: username,
                 }),
             });
             await handleServerError(response);
@@ -128,6 +129,7 @@ function Showtime() {
                     seat_number: newSeatNumber,
                     movie_screening_id: newMovieScreeningId,
                     available: false,
+                    username: username,
                 }),
             });
             await handleServerError(response);
@@ -148,7 +150,7 @@ function Showtime() {
     };
 
     if (!showtime) {
-        return <div><Loading/></div>;
+        return <div><Loading /></div>;
     }
 
     return (
@@ -192,7 +194,7 @@ function Showtime() {
                                             : rowIndex === 8
                                                 ? 'availableSeatPremium'
                                                 : 'availableSeat'
-                                        } ${selectedSeat === seat ? 'selected' : ''}`}
+                                            } ${selectedSeat === seat ? 'selected' : ''}`}
                                         onClick={() =>
                                             !isSeatOccupied(seat) && handleSelectSeat(seat)
                                         }
