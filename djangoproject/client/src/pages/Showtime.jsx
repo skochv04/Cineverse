@@ -12,7 +12,8 @@ function Showtime({ username }) {
     const [selectedSeat, setSelectedSeat] = useState(null);
     const [occupiedSeats, setOccupiedSeats] = useState([]);
     const [showtime, setShowtime] = useState(null);
-    const [error, setError] = useState(null);
+    const [message, setMessage] = useState(null);  // Message can be success or error
+    const [messageType, setMessageType] = useState('error'); // Default to error message
     const [seatType, setSeatType] = useState('');
 
     useEffect(() => {
@@ -25,7 +26,8 @@ function Showtime({ username }) {
                 setShowtime(data);
             } catch (error) {
                 console.error('Error fetching Showtime:', error);
-                setError(error.message);
+                setMessage(error.message);
+                setMessageType('error');
             }
         };
 
@@ -38,13 +40,27 @@ function Showtime({ username }) {
                 setOccupiedSeats(data);
             } catch (error) {
                 console.error('Error fetching occupied seats:', error);
-                setError(error.message);
+                setMessage(error.message);
+                setMessageType('error');
             }
         };
 
         fetchShowtime();
         fetchOccupiedSeats();
     }, [moviescreeningID]);
+
+    const fetchOccupiedSeats = async () => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/occupied_seats/${moviescreeningID}`);
+            await handleServerError(response);
+            const data = await response.json();
+            setOccupiedSeats(data);
+        } catch (error) {
+            console.error('Error fetching occupied seats:', error);
+            setMessage(error.message);
+            setMessageType('error');
+        }
+    };
 
     const handleSelectSeat = (seat) => {
         setSelectedSeat(seat);
@@ -109,8 +125,12 @@ function Showtime({ username }) {
                 }),
             });
             await handleServerError(response);
+            setMessage('Seat reserved successfully!');
+            setMessageType('success');
+            await fetchOccupiedSeats();
         } catch (error) {
-            setError(error.message);
+            setMessage(error.message);
+            setMessageType('error');
         }
     };
 
@@ -133,8 +153,12 @@ function Showtime({ username }) {
                 }),
             });
             await handleServerError(response);
+            setMessage('Seat purchased successfully!');
+            setMessageType('success');
+            await fetchOccupiedSeats();
         } catch (error) {
-            setError(error.message);
+            setMessage(error.message);
+            setMessageType('error');
         }
     };
 
@@ -213,7 +237,7 @@ function Showtime({ username }) {
                                 <div id="price"><h5>Price: </h5>{getSeatPrice()}</div>
                             </div>
                         </div>
-                        {error && <ErrorMessage message={error} clearError={() => setError(null)} />}  {/* Używamy komponentu ErrorMessage */}
+                        {message && <ErrorMessage message={message} type={messageType} clearMessage={() => setMessage(null)} />}  {/* Використовуємо компонент ErrorMessage */}
                         <div id="button-container">
                             <div>
                                 <button

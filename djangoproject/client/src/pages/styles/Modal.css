@@ -12,30 +12,42 @@
 }
 
 .modal {
-    width: 300px;
-    height: 150px;
+    width: 400px;
+    padding: 20px;
     display: flex;
-    flex-direction: column;
-    justify-content: space-around;
+    align-items: center;
     background-color: #1e1e1e;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
-    padding: 20px;
 }
 
-.modal p {
-    font-size: 18px;
+.status-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
 }
 
-.close-btn {
-    background-color: #f16000;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
+.modal-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffffff;
+    margin: 0;
+}
+
+.modal-message {
+    font-size: 16px;
+    color: #b0b0b0;
+    margin: 5px 0 0 0;
+}
+
+.close-icon {
+    font-size: 20px;
+    color: #ffffff;
     cursor: pointer;
-}
-
-.close-btn:hover {
-    background-color: #e0671c;
 }

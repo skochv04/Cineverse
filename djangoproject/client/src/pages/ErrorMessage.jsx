@@ -1,20 +1,19 @@
 import React, { useEffect } from 'react';
 import './styles/ErrorMessage.css';
 
-const ErrorMessage = ({ message, clearError }) => {
+const ErrorMessage = ({ message, type, clearMessage }) => {
     useEffect(() => {
         const timer = setTimeout(() => {
-            clearError();
+            clearMessage();
         }, 10000);
         return () => clearTimeout(timer);
-    }, [clearError]);
+    }, [clearMessage]);
 
     return (
-        <div className="error-message">
+        <div className={`message ${type}`}>
             <p>{message}</p>
         </div>
     );
 };
 
 export default ErrorMessage;
-

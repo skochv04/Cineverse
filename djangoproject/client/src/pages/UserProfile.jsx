@@ -1,4 +1,3 @@
-// src/components/UserProfile.jsx
 import React, { useState } from "react";
 import "./styles/UserProfile.css";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +12,7 @@ function UserProfile({ tickets, setTickets, username }) {
     const [notification, setNotification] = useState("");
     const [error, setError] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(true);
     const navigate = useNavigate();
 
     const toggleShowCurrentPassword = () => {
@@ -45,11 +45,13 @@ function UserProfile({ tickets, setTickets, username }) {
             console.log(result.message);
 
             setTickets(tickets.map(ticket => ticket.ticket_id === ticketId ? { ...ticket, status } : ticket));
-            setNotification("Ticket status updated successfully!");
+            setNotification("Ticket status has been changed successfully");
+            setIsSuccess(true);
             setIsModalOpen(true);
         } catch (error) {
             console.error(error.message);
-            setError("An error occurred while updating the ticket status.");
+            setError("Some problems occurred during changing the status. Please, try again later");
+            setIsSuccess(false);
             setIsModalOpen(true);
         }
     };
@@ -82,17 +84,12 @@ function UserProfile({ tickets, setTickets, username }) {
                                         <div className="ticket-info">
                                             <p><strong>Price:</strong> {ticket.price}</p>
                                             <p><strong>Status:</strong> {ticket.status}</p>
-                                            <p><strong>Ordered
-                                                On:</strong> {ticket.ordered_on_date} at {ticket.ordered_on_time}</p>
+                                            <p><strong>Ordered On:</strong> {ticket.ordered_on_date} at {ticket.ordered_on_time}</p>
                                         </div>
                                         {ticket.status.trim() === 'New' && (
                                             <div className="ticket-actions">
-                                                <button onClick={() => handleReservation(ticket.ticket_id, 'Confirmed')}
-                                                    className="buy-btn">Buy reserved seat
-                                                </button>
-                                                <button onClick={() => handleReservation(ticket.ticket_id, 'Canceled')}
-                                                    className="cancel-btn">Cancel reservation
-                                                </button>
+                                                <button onClick={() => handleReservation(ticket.ticket_id, 'Confirmed')} className="buy-btn">Buy reserved seat</button>
+                                                <button onClick={() => handleReservation(ticket.ticket_id, 'Canceled')} className="cancel-btn">Cancel reservation</button>
                                             </div>
                                         )}
                                     </div>
@@ -145,8 +142,7 @@ function UserProfile({ tickets, setTickets, username }) {
                         <div className="password-requirements-container">
                             <p className="password-requirements">
                                 Password must be at least 8 characters long and include at least 3 of the following:
-                                uppercase
-                                letter, lowercase letter, number, special character.
+                                uppercase letter, lowercase letter, number, special character.
                             </p>
                         </div>
                         <div id="change-password-btn-container">
@@ -168,16 +164,10 @@ function UserProfile({ tickets, setTickets, username }) {
             </div>
             <div id="content">
                 <div id="tab-buttons">
-                    <button
-                        className={activeTab === "tickets" ? "active" : ""}
-                        onClick={() => setActiveTab("tickets")}
-                    >
+                    <button className={activeTab === "tickets" ? "active" : ""} onClick={() => setActiveTab("tickets")}>
                         My tickets
                     </button>
-                    <button
-                        className={activeTab === "profile" ? "active" : ""}
-                        onClick={() => setActiveTab("profile")}
-                    >
+                    <button className={activeTab === "profile" ? "active" : ""} onClick={() => setActiveTab("profile")}>
                         My profile
                     </button>
                 </div>
@@ -185,6 +175,7 @@ function UserProfile({ tickets, setTickets, username }) {
                     <Modal
                         message={notification || error}
                         onClose={closeModal}
+                        isSuccess={isSuccess}
                     />
                 )}
                 {renderContent()}
