@@ -4,17 +4,18 @@ import "./styles/Showtime.css";
 import { getCsrfToken } from "../utils/csrf.js";
 import { useParams } from "react-router-dom";
 import Loading from "./Loading.jsx";
-import ErrorMessage from "./ErrorMessage";  // Importujemy nowy komponent
-import { handleServerError } from "../utils/errorHandler.js";  // Importujemy funkcję obsługi błędów
+import Modal from "./Modal"; // Імпортуємо новий компонент
+import { handleServerError } from "../utils/errorHandler.js"; // Імпортуємо функцію обробки помилок
 
 function Showtime({ username }) {
     const { moviescreeningID } = useParams();
     const [selectedSeat, setSelectedSeat] = useState(null);
     const [occupiedSeats, setOccupiedSeats] = useState([]);
     const [showtime, setShowtime] = useState(null);
-    const [message, setMessage] = useState(null);  // Message can be success or error
-    const [messageType, setMessageType] = useState('error'); // Default to error message
+    const [message, setMessage] = useState(null); // Message can be success or error
+    const [isSuccess, setIsSuccess] = useState(true);
     const [seatType, setSeatType] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchShowtime = async () => {
@@ -27,7 +28,8 @@ function Showtime({ username }) {
             } catch (error) {
                 console.error('Error fetching Showtime:', error);
                 setMessage(error.message);
-                setMessageType('error');
+                setIsSuccess(false);
+                setIsModalOpen(true);
             }
         };
 
@@ -41,7 +43,8 @@ function Showtime({ username }) {
             } catch (error) {
                 console.error('Error fetching occupied seats:', error);
                 setMessage(error.message);
-                setMessageType('error');
+                setIsSuccess(false);
+                setIsModalOpen(true);
             }
         };
 
@@ -58,7 +61,8 @@ function Showtime({ username }) {
         } catch (error) {
             console.error('Error fetching occupied seats:', error);
             setMessage(error.message);
-            setMessageType('error');
+            setIsSuccess(false);
+            setIsModalOpen(true);
         }
     };
 
@@ -126,11 +130,13 @@ function Showtime({ username }) {
             });
             await handleServerError(response);
             setMessage('Seat reserved successfully!');
-            setMessageType('success');
+            setIsSuccess(true);
+            setIsModalOpen(true);
             await fetchOccupiedSeats();
         } catch (error) {
             setMessage(error.message);
-            setMessageType('error');
+            setIsSuccess(false);
+            setIsModalOpen(true);
         }
     };
 
@@ -154,11 +160,13 @@ function Showtime({ username }) {
             });
             await handleServerError(response);
             setMessage('Seat purchased successfully!');
-            setMessageType('success');
+            setIsSuccess(true);
+            setIsModalOpen(true);
             await fetchOccupiedSeats();
         } catch (error) {
             setMessage(error.message);
-            setMessageType('error');
+            setIsSuccess(false);
+            setIsModalOpen(true);
         }
     };
 
@@ -171,6 +179,12 @@ function Showtime({ username }) {
             }
         }
         return null;
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setMessage(null);
+        //setMessageType('error');
     };
 
     if (!showtime) {
@@ -237,7 +251,13 @@ function Showtime({ username }) {
                                 <div id="price"><h5>Price: </h5>{getSeatPrice()}</div>
                             </div>
                         </div>
-                        {message && <ErrorMessage message={message} type={messageType} clearMessage={() => setMessage(null)} />}  {/* Використовуємо компонент ErrorMessage */}
+                        {message && (
+                            <Modal
+                                message={message}
+                                onClose={closeModal}
+                                isSuccess={isSuccess}
+                            />
+                        )}  {/* Використовуємо компонент Modal */}
                         <div id="button-container">
                             <div>
                                 <button
