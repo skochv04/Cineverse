@@ -60,7 +60,7 @@ function Login({ setIsLogin, setUsername }) {
                 const content = await response.json();
                 setUsername(content.username);
                 localStorage.setItem('username', content.username);
-                navigate('/user_profile');
+                navigate('/');
             } else {
                 console.error('Login error:', content);
             }

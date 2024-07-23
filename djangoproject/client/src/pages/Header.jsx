@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './styles/Header.css';
 import { useLocation } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 function Header({ isLogin, onLogout }) {
     const location = useLocation();
@@ -13,6 +14,16 @@ function Header({ isLogin, onLogout }) {
 
     const handleMouseLeave = () => {
         setIsUserMenuOpen(false);
+    };
+
+    const navigate = useNavigate();
+
+    const handleLogin = () => {
+        navigate('/login');
+    };
+
+    const handleRegister = () => {
+        navigate('/register');
     };
 
     return (
@@ -29,41 +40,59 @@ function Header({ isLogin, onLogout }) {
                             <div className="nav_item">
                                 <a href="/"><span>Home</span></a>
                             </div>
-                            <div className="nav_item">
+                            {/* <div className="nav_item">
                                 <a href="/about_us"><span>About us</span></a>
-                            </div>
+                            </div> */}
                             <div className="nav_item">
                                 <a href="/movies"><span>Movies</span></a>
                             </div>
                             <div id="nav_to_user"
                                 onMouseEnter={handleMouseEnter}
                                 onMouseLeave={handleMouseLeave}>
-                                <a href="/user_profile">
+                                <a href="/profile">
                                     <img src="/src/assets/user.png" alt="User Profile" />
                                 </a>
                                 {isLogin && isUserMenuOpen && (
                                     <div className="user-menu">
                                         <div className="user-menu-item">
                                             <button onClick={onLogout}>
-                                                <img src="/src/assets/user.png" alt="User Profile Icon" />
+                                                <img src="/src/assets/logout.png" alt="User Profile Icon" />
                                                 <span>Logout</span>
                                             </button>
                                         </div>
                                     </div>
                                 )}
+                                {!isLogin && isUserMenuOpen && (
+                                    <div className="user-menu">
+                                        <div className="user-menu-item">
+                                            <button onClick={handleLogin} className="user-menu-button">
+                                                <img src="/src/assets/login.png" alt="User Profile Icon" />
+                                                <span>Log in</span>
+                                            </button>
+                                        </div>
+
+                                        <div className="user-menu-item">
+                                            <button onClick={handleRegister} className="user-menu-button">
+                                                <img src="/src/assets/signup.png" alt="User Profile Icon" />
+                                                <span>Sign up</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
-                            <div id="nav_to_cart">
-                                <a href="/user_profile"><img src="/src/assets/cart.png" alt="Cart" /></a>
-                            </div>
+                            {isLogin && (
+                                <div id="nav_to_cart">
+                                    <a href="/tickets"><img src="/src/assets/cart.png" alt="Cart" /></a>
+                                </div>)}
                         </div>
                     </div>
                     <div id="mobile_navbar">
                         <div className="mobile_nav_item">
                             <a href="/"><span>Home</span></a>
                         </div>
-                        <div className="mobile_nav_item">
+                        {/* <div className="mobile_nav_item">
                             <a href="/about_us"><span>About us</span></a>
-                        </div>
+                        </div> */}
                         {isLogin ? (
                             <div className="mobile_nav_item">
                                 <button onClick={onLogout}><span>Logout</span></button>
@@ -77,10 +106,10 @@ function Header({ isLogin, onLogout }) {
                             <a href="/movies"><span>Movies</span></a>
                         </div>
                         <div className="mobile_nav_item">
-                            <a href="/user_profile"><img src="/src/assets/user.png" alt="User" /></a>
+                            <a href="/profile"><img src="/src/assets/user.png" alt="User" /></a>
                         </div>
                         <div className="mobile_nav_item">
-                            <a href="/user_profile"><img src="/src/assets/cart.png" alt="Cart" /></a>
+                            <a href="/tickets"><img src="/src/assets/cart.png" alt="Cart" /></a>
                         </div>
                     </div>
                 </div>

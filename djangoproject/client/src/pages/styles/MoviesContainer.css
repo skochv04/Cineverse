@@ -1,5 +1,5 @@
 #movies_container {
-    padding: 15% 5%;
+    padding: 0% 5%;
     height: auto;
     min-height: 200vh;
 }
@@ -16,7 +16,7 @@
     -webkit-text-fill-color: transparent;
 }
 
-#soon_movies, #best_rate_movies {
+#soon_movies,
+#best_rate_movies {
     height: 85vh;
 }
-

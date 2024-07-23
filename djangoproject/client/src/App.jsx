@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
-import AboutUs from "./pages/AboutUs.jsx";
-import UserProfile from "./pages/UserProfile.jsx";
+import Tickets from "./pages/Tickets.jsx";
+import Profile from "./pages/Profile.jsx";
 import Error from "./pages/Error.jsx";
 import Registration from "./pages/Registration.jsx";
 import Movies from "./pages/Movies.jsx";
@@ -62,9 +62,10 @@ function App() {
                     <Route path="/login" element={<Login setIsLogin={setIsLogin} setUsername={setUsername} />} />
                     <Route path="/register" element={<Registration />} />
                     <Route path="/movies" element={<Movies />} />
-                    <Route path="/about_us" element={<AboutUs />} />
-                    <Route path="/user_profile"
-                        element={<UserProfile tickets={tickets} setTickets={setTickets} username={username} />} />
+                    <Route path="/profile"
+                        element={<Profile username={username} />} />
+                    <Route path="/tickets"
+                        element={<Tickets tickets={tickets} setTickets={setTickets} username={username} />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/movie/:title" element={<Movie />} />
                     <Route path="/showtime/:moviescreeningID" element={<Showtime username={username} />} />
