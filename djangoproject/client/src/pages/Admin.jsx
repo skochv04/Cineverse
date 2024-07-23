@@ -86,19 +86,19 @@ function Admin() {
 
     const handleClick = (movie) => {
         setSelectedMovie(movie);
-        setModalContent({ title: movie.title, action: null }); // Змінюємо заголовок на назву фільму
-        setModalIsOpen(true); // Відкриваємо модальне вікно
+        setModalContent({ title: movie.title, action: null });
+        setModalIsOpen(true);
     };
 
     const handleBack = () => {
-        setSelectedMovie(null); // Очищаємо вибраний фільм
-        setModalContent({ title: "View Movies", action: null }); // Повертаємо заголовок на "View Movies"
+        setSelectedMovie(null);
+        setModalContent({ title: "View Movies", action: null });
     };
 
     const handleScreeningClick = (screening) => {
         setSelectedScreening(screening);
-        setModalContent({ title: screening.title, action: null }); // Змінюємо заголовок на назву фільму
-        setModalIsOpen(true); // Відкриваємо модальне вікно
+        setModalContent({ title: screening.title, action: null });
+        setModalIsOpen(true);
     };
 
     const handleScreeningBack = () => {
@@ -108,13 +108,13 @@ function Admin() {
 
     const handleRevenueClick = () => {
         fetchRevenue();
-        setModalIsOpen(true); // Відкриваємо модальне вікно
+        setModalIsOpen(true);
     };
 
     const handleHallClick = () => {
         setHall(null);
         fetchHall();
-        setModalIsOpen(true); // Відкриваємо модальне вікно
+        setModalIsOpen(true);
     };
 
     const closeModal = () => {
@@ -142,7 +142,7 @@ function Admin() {
 
             if (!response.ok) {
                 const errorDetails = await response.json();
-                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`);
+                throw new Error(`${errorDetails.error}`);
             }
 
             setError(modalContent.title === "Add New Category" ? "Category was added successfully!" : "Category was deleted successfully!");
@@ -177,7 +177,7 @@ function Admin() {
 
             if (!response.ok) {
                 const errorDetails = await response.json();
-                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`);
+                throw new Error(`${errorDetails.error}`);
             }
 
             setError(modalContent.title === "Movie was deleted successfully!");
@@ -225,7 +225,7 @@ function Admin() {
 
             if (!response.ok) {
                 const errorDetails = await response.json();
-                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`);
+                throw new Error(`${errorDetails.error}`);
             }
 
             setError(modalContent.title === "Add New Movie" ? "Movie was added successfully!" : "Movie was updated successfully!");
@@ -292,7 +292,7 @@ function Admin() {
 
             if (!response.ok) {
                 const errorDetails = await response.json();
-                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`);
+                throw new Error(`${errorDetails.error}`);
             }
 
             setError("Week-Templated MovieScreening were added successfully!");
@@ -344,7 +344,7 @@ function Admin() {
 
             if (!response.ok) {
                 const errorDetails = await response.json();
-                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`);
+                throw new Error(`${errorDetails.error}`);
             }
 
             setError("MovieScreening was deleted successfully!");
@@ -418,7 +418,7 @@ function Admin() {
 
             if (!response.ok) {
                 const errorDetails = await response.json();
-                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`);
+                throw new Error(`${errorDetails.error}`);
             }
             setError('');
             const revenue_data = await response.json();
@@ -465,7 +465,7 @@ function Admin() {
 
             if (!response.ok) {
                 const errorDetails = await response.json();
-                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}. Details: ${JSON.stringify(errorDetails)}`);
+                throw new Error(`${errorDetails.error}`);
             }
             setError('');
             const hall_data = await response.json();

@@ -141,7 +141,7 @@ def delete_movie_screening(request):
     except KeyError as e:
         return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({'error': str(e).split('\n')[0]}, status=500)
 
 @csrf_exempt
 def handle_movie_screening(request):
@@ -159,7 +159,7 @@ def handle_movie_screening(request):
     except KeyError as e:
         return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({'error': str(e).split('\n')[0]}, status=500)
 
 @csrf_exempt
 def handle_movie(request):
@@ -189,7 +189,7 @@ def handle_movie(request):
         except KeyError as e:
             return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+            return JsonResponse({'error': str(e).split('\n')[0]}, status=500)
 
 @csrf_exempt
 def delete_movie_by_name(request):
@@ -200,7 +200,7 @@ def delete_movie_by_name(request):
             cursor.execute("CALL delete_movie_by_name(%s);", [title])
         return JsonResponse({'message': 'Movie deleted successfully'}, status=200)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({'error': str(e).split('\n')[0]}, status=500)
 
 @csrf_exempt
 def handle_movie_category(request):
@@ -214,7 +214,7 @@ def handle_movie_category(request):
         except KeyError as e:
             return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+            return JsonResponse({'error': str(e).split('\n')[0]}, status=500)
             
     if request.method == 'DELETE':
         try:
@@ -224,7 +224,7 @@ def handle_movie_category(request):
                 cursor.execute("CALL delete_movie_category(%s);", [category_name])
             return JsonResponse({'message': 'Category deleted successfully'}, status=200)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+            return JsonResponse({'error': str(e).split('\n')[0]}, status=500)
 
 def get_tickets_for_user(request, user_name):
 

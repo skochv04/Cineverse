@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
 .Admin {
+    margin: 15vh auto 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -167,6 +168,7 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     outline: none;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .Modal .error {
