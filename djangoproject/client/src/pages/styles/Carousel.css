@@ -1,4 +1,6 @@
 /* Carousel.css */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
 .carousel-container {
     display: flex;
     flex-direction: column;
@@ -19,6 +21,7 @@
     border-radius: 10px;
     cursor: pointer;
     z-index: 1;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .carousel-slide-container:hover {
@@ -74,7 +77,7 @@
     z-index: 1;
 }
 
-.custom-swiper-slide:hover ~ .custom-swiper-slide {
+.custom-swiper-slide:hover~.custom-swiper-slide {
     z-index: 0;
 }
 

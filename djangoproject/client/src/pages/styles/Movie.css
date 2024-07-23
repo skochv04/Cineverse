@@ -67,6 +67,7 @@
     text-align: left;
     font-size: 14px;
 }
+
 #title_container {
     display: flex;
     min-width: 80%;
@@ -75,6 +76,7 @@
     align-items: flex-start;
     flex-direction: column;
 }
+
 #title_container h1 {
     margin: 0;
     padding: 0;
@@ -91,8 +93,7 @@
     font-size: 1em;
     color: #fff;
     text-transform: uppercase;
-    background-color: #e64a19;
-    border-radius: 12px;
+    background-color: #ec4402;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     display: inline-block;
     text-align: center;
@@ -135,19 +136,21 @@
 
 #buy-button button {
     width: 140px;
-    height: 50px;
-    background-color: #ff9800;
+    height: 40px;
+    background-color: #ec4402;
+    text-transform: uppercase;
+    color: white;
+    font-weight: bold;
     border: none;
     padding: 10px 20px;
     font-size: 1em;
-    border-radius: 8px;
+    border-radius: 0px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 #buy-button button:hover {
-    background-color: #3700b3;
-    border: 3px solid whitesmoke;
+    background-color: #ca3900;
 }
 
 #showtime-details {
@@ -202,7 +205,7 @@
 }
 
 .date-navigation .selected-date {
-    border-color: orange;
+    border-color: #ec4402;
 }
 
 .selected-date {
@@ -302,17 +305,20 @@
 .showtime-details button {
     padding: 10px 15px;
     font-size: 12px;
-    border: 3px solid #ff5722;
-    border-radius: 8px;
-    background-color: #ff5722;
+    border: none;
+    border-radius: 0px;
+    background-color: #ec4402;
     cursor: pointer;
     transition: background-color 0.3s;
     margin-left: auto;
+    text-transform: uppercase;
+    color: white;
+    font-weight: bold;
+
 }
 
 .showtime-details button:hover {
-    background-color: #3700b3;
-    border: 3px solid whitesmoke;
+    background-color: #ca3900;
 }
 
 #button_container {

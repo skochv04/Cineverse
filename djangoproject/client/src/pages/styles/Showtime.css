@@ -26,7 +26,7 @@
 
 #showtime-info h2 span {
     font-weight: 700;
-    color: #ff9800;
+    color: #ff4b04;
 }
 
 
@@ -68,7 +68,10 @@ h2 {
     align-items: center;
     justify-content: center;
 }
-#your_seat, #seat_type, #price {
+
+#your_seat,
+#seat_type,
+#price {
     min-width: 120px;
     max-width: 150px;
     width: 30%;
@@ -206,26 +209,41 @@ h2 {
 
 
 
-.proceed-button {
+.primary-button,
+.simple-button {
     width: 150px;
     padding: 10px 20px;
-    background-color: #1F3A6B;
     color: #fff;
-    border: 2px solid #1F3A6B;
-    border-radius: 8px;
+    border: none;
+    border-radius: 0px;
     cursor: pointer;
     transition: background-color 0.3s;
     display: block;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 12px;
 }
 
-.proceed-button:hover {
-    background-color: #1F3A6B;
-    border: 2px solid whitesmoke;
+.primary-button {
+    background-color: #ec4402;
 }
 
-.proceed-button:disabled {
+.primary-button:hover {
+    background-color: #ca3900;
+}
+
+.primary-button:disabled,
+.simple-button:disabled {
     background-color: grey;
     cursor: not-allowed;
+}
+
+.simple-button {
+    background-color: #3b3a3a;
+}
+
+.simple-button:hover {
+    background-color: #2e2e2e;
 }
 
 #button-container {
@@ -237,6 +255,7 @@ h2 {
     align-items: flex-start;
 }
 
-#button1, #button2 {
+#button1,
+#button2 {
     margin: 0 10px;
 }

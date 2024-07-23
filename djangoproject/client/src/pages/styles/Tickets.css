@@ -1,6 +1,10 @@
-/* Tickets.css */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+
 .tickets {
     margin: 15vh auto 50px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
 }
 
 .ticket-list {
@@ -67,7 +71,7 @@
     left: 10px;
     width: 50%;
     height: 1px;
-    background: linear-gradient(to right, #ff9800, rgba(255, 152, 0, 0));
+    background: linear-gradient(to right, #ff4b04, rgba(255, 152, 0, 0));
     border-radius: 10px;
 }
 
@@ -88,31 +92,31 @@
 .ticket-actions .cancel-btn {
     margin: 5px;
     padding: 10px 20px;
-    font-size: 14px;
+    font-size: 12px;
+    font-weight: bold;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
+    text-transform: uppercase;
+    border-radius: 0px;
 }
 
 .ticket-actions .buy-btn {
-    background-color: #4CAF50;
+    background-color: #ec4402;
     color: white;
-    border: 3px solid #4CAF50;
+    border: none;
 }
 
 .ticket-actions .buy-btn:hover {
-    background-color: #45a049;
-    border: 3px solid whitesmoke;
+    background-color: #ca3900;
 }
 
 .ticket-actions .cancel-btn {
-    background-color: #f44336;
-    color: white;
-    border: 3px solid #f44336;
+    background-color: #3b3a3a;
+    color: #ffffff;
 }
 
 .ticket-actions .cancel-btn:hover {
-    background-color: #e53935;
-    border: 3px solid whitesmoke;
+    background-color: #2e2e2e;
 }

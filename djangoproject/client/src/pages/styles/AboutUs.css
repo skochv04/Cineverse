@@ -1,4 +1,4 @@
-/* styles/AboutUs.css */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
 .AboutUs {
     width: 90%;
@@ -12,6 +12,7 @@
     margin: 15vh auto 50px;
     position: relative;
     overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .content {
@@ -23,11 +24,11 @@
 
 .content h2 {
     font-size: 2.5rem;
-    color: #FF5722;
+    color: #ff4b04;
     margin-bottom: 30px;
     font-weight: bold;
     text-align: center;
-    border-bottom: 2px solid #FF5722;
+    border-bottom: 2px solid #ff4b04;
     padding-bottom: 10px;
     display: inline-block;
 }

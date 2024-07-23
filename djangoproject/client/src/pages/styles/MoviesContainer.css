@@ -6,14 +6,21 @@
 
 .slider_title {
     display: flex;
-    justify-content: flex-start;
     align-items: center;
-    padding-left: 2%;
-    font-size: 17px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    background: linear-gradient(1deg, #333333, #ffffff);
+    font-size: 14px;
+    background-color: #ffffff;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+}
+
+.slider_title::before {
+    content: "";
+    display: block;
+    width: 7px;
+    height: 30px;
+    background-color: #ec4402;
+    margin-right: 15px;
 }
 
 #soon_movies,

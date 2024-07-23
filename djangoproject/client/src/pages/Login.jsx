@@ -98,7 +98,7 @@ function Login({ setIsLogin, setUsername }) {
                         />
                         <button type="submit" className="button">Log in</button>
                         <p className="message">
-                            I am new <Link to="/register" className="link">Create an account</Link>
+                            Do not have an account? <Link to="/register" className="link">Sign up</Link>
                         </p>
                     </form>
                 </div>

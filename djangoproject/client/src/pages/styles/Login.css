@@ -1,33 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
 .Login {
     display: flex;
     flex-direction: column;
     height: 100vh;
     width: 100%;
-    background: linear-gradient(to bottom, rgba(18, 18, 18, 0.9) 0%, rgba(18, 18, 18, 0.9) 100%), url("../../assets/mountains.jpg");
+    /* background: linear-gradient(to bottom, rgba(18, 18, 18, 0.9) 0%, rgba(18, 18, 18, 0.9) 100%), url("../../assets/mountains.jpg"); */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    font-family: 'Montserrat', sans-serif;
 }
 
 
 .Login .login-form-container {
-    background-color: rgba(255, 255, 255, 0.9); /* Slightly more opaque for focus */
-    padding: 25px; /* A bit more padding for a roomier feel */
-    border-radius: 15px; /* Larger border-radius for a softer look */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Stronger shadow for more depth */
+    background-color: #1e1e1e;
+    /* Slightly more opaque for focus */
+    padding: 25px;
+    /* A bit more padding for a roomier feel */
+    border-radius: 0px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    /* Stronger shadow for more depth */
     width: 20vw;
     height: 40vh;
     min-width: 350px;
     min-height: 350px;
 }
+
 .Login .content {
     width: 100%;
     height: 100%;
 }
+
 .title {
     text-align: center;
-    margin-bottom: 25px; /* A bit more space below the title */
-    color: #333; /* Darker text for contrast */
+    margin-bottom: 25px;
+    /* A bit more space below the title */
+    color: #333;
+    /* Darker text for contrast */
 }
 
 .form {
@@ -36,11 +46,15 @@
 }
 
 .input {
-    padding: 12px; /* Slightly thicker padding for better text entry */
-    margin-bottom: 18px; /* More space between inputs */
+    padding: 12px;
+    /* Slightly thicker padding for better text entry */
+    margin-bottom: 18px;
+    /* More space between inputs */
     border: 2px solid #ccc;
-    border-radius: 8px; /* Rounded corners */
-    background-color: #f8f8f8; /* Light grey background */
+    border-radius: 0px;
+    /* Rounded corners */
+    background-color: #f8f8f8;
+    /* Light grey background */
     color: #141414;
 }
 
@@ -50,15 +64,17 @@
 
 .button {
     padding: 14px;
-    background-color: #007bff; /* Bright blue to catch the eye */
+    background-color: #007bff;
+    /* Bright blue to catch the eye */
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 0px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 
     &:hover {
-        background-color: #0056b3; /* Darker blue on hover */
+        background-color: #0056b3;
+        /* Darker blue on hover */
     }
 }
 
@@ -70,8 +86,11 @@
 .link {
     color: #007bff;
     text-decoration: none;
-    font-weight: bold; /* Bold for emphasis */
+    font-weight: bold;
+
+    /* Bold for emphasis */
     &:hover {
-        text-decoration: underline; /* Underline on hover for clarity */
+        text-decoration: underline;
+        /* Underline on hover for clarity */
     }
 }

@@ -27,7 +27,7 @@ function Header({ isLogin, onLogout }) {
     };
 
     return (
-        <div className={isHome ? 'header_container-transparent' : 'header_container'}>
+        <div className={isHome ? 'header_container' : 'header_container'}>
             <div id="Header">
                 <div id="navbar_container">
                     <div id="logo_container">
@@ -45,6 +45,9 @@ function Header({ isLogin, onLogout }) {
                             </div> */}
                             <div className="nav_item">
                                 <a href="/movies"><span>Movies</span></a>
+                            </div>
+                            <div className="nav_item">
+                                <a href="/about_us"><span>About us</span></a>
                             </div>
                             <div id="nav_to_user"
                                 onMouseEnter={handleMouseEnter}

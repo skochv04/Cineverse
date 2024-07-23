@@ -263,22 +263,22 @@ function Showtime({ username }) {
                         <div id="button-container">
                             <div>
                                 <button
-                                    id="button1"
-                                    onClick={() => reserveSeat(convertSeatToId(selectedSeat), moviescreeningID)}
-                                    className="proceed-button"
+                                    id="button2"
+                                    onClick={() => buySeat(convertSeatToId(selectedSeat), moviescreeningID)}
+                                    className="primary-button"
                                     disabled={!selectedSeat || isSeatOccupied(selectedSeat)}
                                 >
-                                    Reserve seat
+                                    Buy seat
                                 </button>
                             </div>
                             <div>
                                 <button
-                                    id="button2"
-                                    onClick={() => buySeat(convertSeatToId(selectedSeat), moviescreeningID)}
-                                    className="proceed-button"
+                                    id="button1"
+                                    onClick={() => reserveSeat(convertSeatToId(selectedSeat), moviescreeningID)}
+                                    className="simple-button"
                                     disabled={!selectedSeat || isSeatOccupied(selectedSeat)}
                                 >
-                                    Buy seat
+                                    Reserve seat
                                 </button>
                             </div>
                         </div>

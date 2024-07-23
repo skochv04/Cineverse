@@ -1,5 +1,5 @@
 import React from 'react';
-import ModalConfirmation from './ModalConfirmation'; // Імпортуємо ваш новий компонент
+import ModalConfirmation from './ModalConfirmation';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 
@@ -37,9 +37,11 @@ function Logout({ open, setLogoutModalOpen, setIsLogin, setUsername }) {
         <>
             {open && (
                 <ModalConfirmation
-                    message="Are you sure you want to logout?"
+                    message="Are you sure you want to log out?"
                     onClose={handleClose}
                     onConfirm={handleLogoutConfirm}
+                    confirmText="Logout"
+                    closeText="Cancel"
                 />
             )}
         </>

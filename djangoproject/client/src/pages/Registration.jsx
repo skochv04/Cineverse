@@ -49,7 +49,7 @@ function Registration() {
                 });
                 navigate('/login')
             } catch (error) {
-                setErrors({ server: 'Failed to register. Please try again.' });
+                setErrors({ server: 'Failed to sign up. Please try again.' });
             }
         }
     };
@@ -58,7 +58,7 @@ function Registration() {
         <div className="Registration">
             <div id="content">
                 <div className="registration-form-container">
-                    <h2 className="title">Register</h2>
+                    <h2 className="title">Sign up</h2>
                     <form className="form" onSubmit={handleSubmit}>
                         {errors.server && <div className="error-message">{errors.server}</div>}
                         <input
@@ -82,7 +82,7 @@ function Registration() {
                             value={password}
                             onChange={e => setPassword(e.target.value)}
                         />
-                        <button type="submit" className="button">Register</button>
+                        <button type="submit" className="button">Sign up</button>
                         <p className="message">
                             Already have an account? <Link to="/login" className="link">Log in</Link>
                         </p>

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
+import AboutUs from "./pages/AboutUs.jsx";
 import Tickets from "./pages/Tickets.jsx";
 import Profile from "./pages/Profile.jsx";
 import Error from "./pages/Error.jsx";
@@ -62,6 +63,7 @@ function App() {
                     <Route path="/login" element={<Login setIsLogin={setIsLogin} setUsername={setUsername} />} />
                     <Route path="/register" element={<Registration />} />
                     <Route path="/movies" element={<Movies />} />
+                    <Route path="/about_us" element={<AboutUs />} />
                     <Route path="/profile"
                         element={<Profile username={username} />} />
                     <Route path="/tickets"
