@@ -373,9 +373,7 @@ def handle_request(request):
         try:
             data = json.loads(request.body)
             action = data.get('action')
-            if action == 'add_seat':
-                return add_movie_screening_seat(data)
-            elif action == 'reserve_seat':
+            if action == 'reserve_seat':
                 return reserve_movie_screening_seat(data)
             elif action == 'buy_seat':
                 return buy_movie_screening_seat(data)
@@ -384,23 +382,9 @@ def handle_request(request):
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+            return JsonResponse({'error': str(e).split('\n')[0]}, status=500)
     else:
         return JsonResponse({'error': 'Invalid HTTP method'}, status=405)
-
-
-def add_movie_screening_seat(data):
-    try:
-        seat_number = data['seat_number']
-        movie_screening_id = data['movie_screening_id']
-        available = data['available']
-        with connection.cursor() as cursor:
-            cursor.execute("CALL AddMovieScreeningSeats(%s, %s, %s);", [seat_number, movie_screening_id, available])
-        return JsonResponse({'message': 'Seat added successfully'}, status=201)
-    except KeyError as e:
-        return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
 
 
 def reserve_movie_screening_seat(data):
@@ -423,7 +407,7 @@ def reserve_movie_screening_seat(data):
     except KeyError as e:
         return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({'error': str(e).split('\n')[0]}, status=500)
 
 
 def buy_movie_screening_seat(data):
@@ -444,7 +428,7 @@ def buy_movie_screening_seat(data):
     except KeyError as e:
         return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({'error': str(e).split('\n')[0]}, status=500)
 
 
 class MovieList(generics.ListCreateAPIView):

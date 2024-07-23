@@ -11,7 +11,8 @@ function Movies() {
     const [sortOption, setSortOption] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [movies, setMovies] = useState([]);
-
+    const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+    const [isSortOpen, setIsSortOpen] = useState(false);
 
     useEffect(() => {
         fetch('http://127.0.0.1:8000/api/movies')
@@ -64,7 +65,11 @@ function Movies() {
                         <select
                             id="category"
                             value={selectedCategory}
-                            onChange={(e) => setSelectedCategory(e.target.value)}
+                            onChange={(e) => {
+                                setSelectedCategory(e.target.value);
+                                setIsCategoryOpen(false);
+                            }}
+                            onClick={() => setIsCategoryOpen(prev => !prev)}
                         >
                             <option value="">Select genres</option>
                             {categories.map((category) => (
@@ -73,18 +78,24 @@ function Movies() {
                                 </option>
                             ))}
                         </select>
+                        <span className={`icon ${isCategoryOpen ? 'open' : ''}`}>&#9662;</span>
                     </div>
                     <div className="sort">
                         <select
                             id="sort"
                             value={sortOption}
-                            onChange={(e) => setSortOption(e.target.value)}
+                            onChange={(e) => {
+                                setSortOption(e.target.value);
+                                setIsSortOpen(false);
+                            }}
+                            onClick={() => setIsSortOpen(prev => !prev)}
                         >
                             <option value="">Sort by</option>
                             {sortOptions.map((option) => (
                                 <option key={option} value={option}>{option}</option>
                             ))}
                         </select>
+                        <span className={`icon ${isSortOpen ? 'open' : ''}`}>&#9662;</span>
                     </div>
                 </div>
                 <div className="movies-list">
@@ -95,8 +106,7 @@ function Movies() {
                                 <div>{movie.title}</div>
                             </Link>
                         </div>
-                    ))
-                    }
+                    ))}
                 </div>
             </div>
         </div>
@@ -104,4 +114,3 @@ function Movies() {
 }
 
 export default Movies;
-

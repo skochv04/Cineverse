@@ -1,10 +1,19 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import './styles/Header.css';
-import {useLocation} from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
-function Header({isLogin, onLogout}) {
+function Header({ isLogin, onLogout }) {
     const location = useLocation();
     const isHome = location.pathname === '/';
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
+    const handleMouseEnter = () => {
+        setIsUserMenuOpen(true);
+    };
+
+    const handleMouseLeave = () => {
+        setIsUserMenuOpen(false);
+    };
 
     return (
         <div className={isHome ? 'header_container-transparent' : 'header_container'}>
@@ -23,23 +32,28 @@ function Header({isLogin, onLogout}) {
                             <div className="nav_item">
                                 <a href="/about_us"><span>About us</span></a>
                             </div>
-                            {isLogin ? (
-                                <div className="nav_item">
-                                    <a href="#" onClick={onLogout}><span>Logout</span></a>
-                                </div>
-                            ) : (
-                                <div className="nav_item">
-                                    <a href="/login"><span>Login</span></a>
-                                </div>
-                            )}
                             <div className="nav_item">
                                 <a href="/movies"><span>Movies</span></a>
                             </div>
-                            <div id="nav_to_login">
-                                <a href="/user_profile"><img src="/src/assets/user.png" alt="User"/></a>
+                            <div id="nav_to_user"
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}>
+                                <a href="/user_profile">
+                                    <img src="/src/assets/user.png" alt="User Profile" />
+                                </a>
+                                {isLogin && isUserMenuOpen && (
+                                    <div className="user-menu">
+                                        <div className="user-menu-item">
+                                            <button onClick={onLogout}>
+                                                <img src="/src/assets/user.png" alt="User Profile Icon" />
+                                                <span>Logout</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                             <div id="nav_to_cart">
-                                <a href="/user_profile"><img src="/src/assets/cart.png" alt="Cart"/></a>
+                                <a href="/user_profile"><img src="/src/assets/cart.png" alt="Cart" /></a>
                             </div>
                         </div>
                     </div>
@@ -63,10 +77,10 @@ function Header({isLogin, onLogout}) {
                             <a href="/movies"><span>Movies</span></a>
                         </div>
                         <div className="mobile_nav_item">
-                            <a href="/user_profile"><img src="/src/assets/user.png" alt="User"/></a>
+                            <a href="/user_profile"><img src="/src/assets/user.png" alt="User" /></a>
                         </div>
                         <div className="mobile_nav_item">
-                            <a href="/user_profile"><img src="/src/assets/cart.png" alt="Cart"/></a>
+                            <a href="/user_profile"><img src="/src/assets/cart.png" alt="Cart" /></a>
                         </div>
                     </div>
                 </div>
@@ -76,4 +90,3 @@ function Header({isLogin, onLogout}) {
 }
 
 export default Header;
-

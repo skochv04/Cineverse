@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Box, Typography, Modal, createTheme } from '@mui/material';
 import { styled } from '@mui/system';
 import axios from 'axios';
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const client = axios.create({
     baseURL: "http://127.0.0.1:8000"

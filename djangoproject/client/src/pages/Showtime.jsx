@@ -137,6 +137,7 @@ function Showtime({ username }) {
             setMessage(error.message);
             setIsSuccess(false);
             setIsModalOpen(true);
+            await fetchOccupiedSeats();
         }
     };
 
@@ -167,6 +168,7 @@ function Showtime({ username }) {
             setMessage(error.message);
             setIsSuccess(false);
             setIsModalOpen(true);
+            await fetchOccupiedSeats();
         }
     };
 
