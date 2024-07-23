@@ -13,6 +13,7 @@ import Movie from "./pages/Movie.jsx";
 import Showtime from "./pages/Showtime.jsx";
 import Admin from "./pages/Admin.jsx";
 import Header from "./pages/Header.jsx";
+import Footer from "./pages/Footer.jsx";
 import Logout from "./pages/Logout.jsx";
 import axios from "axios";
 
@@ -75,14 +76,10 @@ function App() {
                 </Routes>
                 <Logout open={logoutModalOpen} setLogoutModalOpen={setLogoutModalOpen} isLogin={isLogin}
                     setIsLogin={setIsLogin} username={username} setUsername={setUsername} />
+                <Footer></Footer>
             </main>
         </Router>
     );
 }
 
 export default App;
-
-
-
-
-

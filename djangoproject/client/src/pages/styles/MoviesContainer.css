@@ -1,7 +1,7 @@
 #movies_container {
-    padding: 0% 5%;
+    padding: 5% 5% 0 5%;
     height: auto;
-    min-height: 200vh;
+    /* min-height: 200vh; */
 }
 
 .slider_title {
@@ -23,7 +23,7 @@
     margin-right: 15px;
 }
 
-#soon_movies,
+/* #soon_movies,
 #best_rate_movies {
     height: 85vh;
-}
+} */

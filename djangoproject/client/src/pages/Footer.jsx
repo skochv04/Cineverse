@@ -7,17 +7,17 @@ function Footer() {
                 <div className="footer-section">
                     <div className="footer-section about">
                         <h2>CineVerse</h2>
-                        <p>Twoje centrum filmowe. Oglądaj, odkrywaj i ciesz się </p>
-                        <p>kinematografią z najlepszych miejsc na świecie. </p>
+                        <p>Your movie center. Watch, discover and enjoy </p>
+                        <p>cinematography from the best places in the world.</p>
                     </div>
                     <div className="footer-section contact-form">
-                        <h2>Kontakt</h2>
-                        <p>Zadzwoń do nas: +48 123 456 789</p>
-                        <p>Email: kontakt@cineverse.com</p>
+                        <h2>Contacts</h2>
+                        <p>Call us: +48 123 456 789</p>
+                        <p>Email: contact@cineverse.com</p>
                     </div>
                 </div>
                 <div className="footer-bottom">
-                    <p>© 2024 CineVerse. Wszystkie prawa zastrzeżone.</p>
+                    <p>© 2024 CineVerse. All rights reserved.</p>
                 </div>
             </div>
         </div>

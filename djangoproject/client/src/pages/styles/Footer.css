@@ -1,43 +1,57 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
 #Footer {
     color: white;
-    font-family: 'Roboto', sans-serif;
-    padding: 0 20px; /* Odpowiednie paddingi dla lepszego wyglądu */
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2); /* Lekki cień na górnej krawędzi */
+    font-family: 'Montserrat', sans-serif;
+    padding: 0 20px;
+    /* Odpowiednie paddingi dla lepszego wyglądu */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+    /* Lekki cień na górnej krawędzi */
     width: 100%;
 }
 
 .footer-content {
-    max-width: 1200px; /* Maksymalna szerokość treści */
-    margin: 0 auto; /* Wycentrowanie w poziomie */
-    padding: 10px; /* Dodatkowy padding wewnątrz */
+    max-width: 1200px;
+    /* Maksymalna szerokość treści */
+    margin: 0 auto;
+    /* Wycentrowanie w poziomie */
+    padding: 10px;
+    /* Dodatkowy padding wewnątrz */
     display: flex;
-    flex-direction: column; /* Elementy ułożone kolumnowo */
-    justify-content: center; /* Wyśrodkowanie elementów */
+    flex-direction: column;
+    /* Elementy ułożone kolumnowo */
+    justify-content: center;
+    /* Wyśrodkowanie elementów */
     align-items: center;
 }
 
 .footer-section {
-    margin-bottom: 20px; /* Margines między sekcjami */
+    margin-bottom: 20px;
+    /* Margines między sekcjami */
     display: flex;
     flex-direction: row;
     align-content: space-between;
     width: 90%;
 }
 
-.footer-section h2, .footer-section h3 {
-    margin-bottom: 5px; /* Mały margines pod nagłówkami dla lepszego oddzielenia od tekstu */
-    color: #ff8c00; /* Kolor nagłówków dla większej uwagi */
+.footer-section h2,
+.footer-section h3 {
+    margin-bottom: 5px;
+    /* Mały margines pod nagłówkami dla lepszego oddzielenia od tekstu */
+    color: #ff4b04;
+    /* Kolor nagłówków dla większej uwagi */
 }
 
 .footer-section p {
-    line-height: 1.6; /* Większa wysokość linii dla lepszej czytelności */
-    color: #ccc; /* Jasnoszary kolor tekstu dla łagodniejszego wyglądu */
+    line-height: 1.6;
+    /* Większa wysokość linii dla lepszej czytelności */
+    color: #ccc;
+    /* Jasnoszary kolor tekstu dla łagodniejszego wyglądu */
     font-size: 13px;
 }
 
-.footer-section.about, .footer-section.contact-form {
+.footer-section.about,
+.footer-section.contact-form {
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -47,9 +61,12 @@
 
 .footer-bottom {
     font-size: 13px;
-    color: #aaa; /* Jeszcze jaśniejszy kolor dla tekstu z prawami autorskimi */
-    border-top: 1px solid #444; /* Linia rozdzielająca treść */
-    padding-top: 5px; /* Padding na górze dla odstępu od linii */
+    color: #aaa;
+    /* Jeszcze jaśniejszy kolor dla tekstu z prawami autorskimi */
+    border-top: 1px solid #444;
+    /* Linia rozdzielająca treść */
+    padding-top: 5px;
+    /* Padding na górze dla odstępu od linii */
     width: 90%;
 }
 

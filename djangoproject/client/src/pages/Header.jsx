@@ -27,6 +27,7 @@ function Header({ isLogin, onLogout }) {
     };
 
     return (
+        // !!!!! change
         <div className={isHome ? 'header_container' : 'header_container'}>
             <div id="Header">
                 <div id="navbar_container">
@@ -40,9 +41,6 @@ function Header({ isLogin, onLogout }) {
                             <div className="nav_item">
                                 <a href="/"><span>Home</span></a>
                             </div>
-                            {/* <div className="nav_item">
-                                <a href="/about_us"><span>About us</span></a>
-                            </div> */}
                             <div className="nav_item">
                                 <a href="/movies"><span>Movies</span></a>
                             </div>

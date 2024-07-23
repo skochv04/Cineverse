@@ -6,7 +6,7 @@
     min-height: 100vh;
     height: 100vh;
     width: 100vw;
-    /* background: linear-gradient(to bottom, rgba(18, 18, 18, 0.9) 0%, rgba(18, 18, 18, 0.9) 100%), url("../../assets/mountains.jpg"); */
+    background: linear-gradient(to bottom, rgba(18, 18, 18, 0.5) 0%, rgba(18, 18, 18, 0.9) 100%), url("../../assets/cinema.jpg");
     background-size: cover;
     background-position: center;
     align-items: center;
