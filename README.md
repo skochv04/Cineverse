@@ -1,36 +1,47 @@
-# BD2_PROJECT
+# Cineverse
 
 Database project, carried out in the 4th semester of studies at AGH.
 
+### Project topic: 
+Cinema web page (reservations, purchase of tickets, canceling reservations)
 
-** Setup and Running
+4) Information about the technology and DBMS used:
+   - Data base server: PostgreSQL
+   - Framework: React JS
+   - Server part: Django (Python)
 
-Clone the repository:
+5) Some images of our website:
 
-git clone https://github.com/your-username/your-repo-name.git
+1. Home:
+![Opis alternatywny](img/home.png)
 
-Start the PostgreSQL database:
+2. Movies:
+![Opis alternatywny](img/movies.png)
 
-docker-compose up -d
+3. Movie details and movie showtime:
+![Opis alternatywny](img/movie.png)
+   
+4. Movie Stage: 
+![Opis alternatywny](img/stage.png)
 
+5. My tickets (without login):
+![Opis alternatywny](img/notickets.png)
 
-Set up and run the Django backend:
+6. My tickets:
+![Opis alternatywny](img/tickets.png)
 
-cd server
+7. My profile:
+![Opis alternatywny](img/changepass.png)
 
-python -m venv venv
+8. Login:
+![Opis alternatywny](img/login.png)
 
-On Windows use `venv\Scripts\activate`
+9. Register
+![Opis alternatywny](img/register.png)
 
-pip install -r requirements.txt
+10. Logout
+![Opis alternatywny](img/logout.png)
 
-python manage.py runserver
-
-
-Set up and run the React frontend:
-
-cd client
-
-npm install
-
-npm run dev
+### Authors:
+   - Wiktor Dybalski | wdybalski@student.agh.edu.pl
+   - Stas Kochevenko | skochevenko@student.agh.edu.pl
