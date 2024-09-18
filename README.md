@@ -15,26 +15,26 @@ A full-stack cinema web application that allows users to reserve seats, purchase
 1. Home:
 ![Opis alternatywny](img/h.png)
 
-2. Movies:
-![Opis alternatywny](img/ms.png)
-
-3. Movie details and movie showtime:
-![Opis alternatywny](img/m.png)
-   
-4. Movie Stage: 
-![Opis alternatywny](img/st.png)
-
-5. My tickets:
-![Opis alternatywny](img/t.png)
-
-6. My profile:
-![Opis alternatywny](img/ch.png)
-
-7 Login:
+2 Login:
 ![Opis alternatywny](img/l.png)
 
-9. Register:
+3. Register:
 ![Opis alternatywny](img/r.png)
 
-10. Admin:
+4. Movies:
+![Opis alternatywny](img/ms.png)
+
+5. Movie details and movie showtime:
+![Opis alternatywny](img/m.png)
+   
+6. Movie Stage: 
+![Opis alternatywny](img/st.png)
+
+7. My tickets:
+![Opis alternatywny](img/t.png)
+
+8. My profile:
+![Opis alternatywny](img/ch.png)
+
+9. Admin:
 ![Opis alternatywny](img/a.png)   
