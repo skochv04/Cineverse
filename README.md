@@ -33,9 +33,8 @@ A full-stack cinema web application that allows users to reserve seats, purchase
 7 Login:
 ![Opis alternatywny](img/l.png)
 
-9. Register
+9. Register:
 ![Opis alternatywny](img/r.png)
 
-### Authors:
-   - Wiktor Dybalski
-   - Stas Kochevenko
+10. Admin:
+![Opis alternatywny](img/a.png)   
