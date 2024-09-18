@@ -1,0 +1,328 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+.Movie {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    width: 100%;
+    background-color: rgb(18, 18, 18);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-family: 'Montserrat', sans-serif;
+    padding-top: 12vh;
+}
+
+#content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0 20px 0 20px;
+}
+
+#movie-details-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 90vh;
+    padding: 10px 30px 30px;
+}
+
+#img_container {
+    position: relative;
+    display: inline-block;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+}
+
+#rank_container {
+    position: absolute;
+    bottom: 12px;
+    right: 30px;
+    background-color: rgb(18, 18, 18);
+    border-radius: 50%;
+    font-weight: bold;
+}
+
+#img_container img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 18px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+}
+
+#details_container {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    color: #fff;
+    padding-top: 20px;
+    text-align: left;
+    font-size: 14px;
+}
+
+#title_container {
+    display: flex;
+    min-width: 80%;
+    text-align: left;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+#title_container h1 {
+    margin: 0;
+    padding: 0;
+    font-size: 2.2em;
+    color: #fff;
+    width: 100%;
+    text-align: left;
+    box-sizing: border-box;
+}
+
+#category_container {
+    margin: 10px 0;
+    padding: 5px 20px;
+    font-size: 1em;
+    color: #fff;
+    text-transform: uppercase;
+    background-color: #ec4402;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: inline-block;
+    text-align: center;
+}
+
+#description {
+    width: 90%;
+    margin: 20px 0;
+    text-align: left;
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+#more-details {
+    width: 92%;
+    text-align: left;
+    color: #e0e0e0;
+    padding: 20px 20px 20px 0;
+    border-radius: 10px;
+}
+
+#more-details p {
+    margin: 10px 0;
+    border-bottom: 1px solid floralwhite;
+    padding-bottom: 5px;
+}
+
+#more-details p strong {
+    color: #fff;
+}
+
+#buy-button {
+    width: 100%;
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    align-content: center;
+}
+
+#buy-button button {
+    width: 140px;
+    height: 40px;
+    background-color: #ec4402;
+    text-transform: uppercase;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    border-radius: 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#buy-button button:hover {
+    background-color: #ca3900;
+}
+
+#showtime-details {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#showtime_container {
+    display: flex;
+    min-height: 100vh;
+    height: auto;
+    justify-content: center;
+    background-color: rgb(18, 18, 18);
+    color: whitesmoke;
+    padding: 20px;
+    width: 100%;
+    margin: 20px;
+}
+
+#movie_showtime {
+    width: 80%;
+    height: auto;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#showtime_container h1 {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+    color: whitesmoke;
+}
+
+.date-navigation {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+}
+
+.date-navigation span {
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 8px;
+    color: whitesmoke;
+    border-bottom: 3px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.date-navigation .selected-date {
+    border-color: #ec4402;
+}
+
+.selected-date {
+    margin-bottom: 5px;
+}
+
+.selected-date h2 {
+    font-size: 20px;
+    text-align: center;
+}
+
+.filter-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.filter-controls button {
+    padding: 10px 20px;
+    font-size: 14px;
+    border: 1px solid whitesmoke;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.filter-controls button:hover {
+    background-color: #f0f0f0;
+}
+
+.showtime-list {
+    width: 100%;
+    border-top: 2px solid whitesmoke;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+
+.showtime-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 85%;
+    padding: 20px 0;
+    border-bottom: 1px solid whitesmoke;
+    transition: background-color 0.3s;
+}
+
+.showtime-item h3 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.showtime-item p {
+    font-size: 14px;
+    margin: 0 0 10px 0;
+    color: whitesmoke;
+}
+
+.showtime-details {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    color: whitesmoke;
+    justify-content: space-between;
+}
+
+.showtime-details div {
+    display: flex;
+    flex-direction: row;
+    margin-right: 20px;
+    margin-bottom: 10px;
+}
+
+.showtime-details div h5 {
+    margin: 0 8px 0 8px;
+    color: whitesmoke;
+    font-size: 12px;
+}
+
+.showtime-details div span {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+#button_container {
+    align-self: stretch;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.showtime-details button {
+    padding: 10px 15px;
+    font-size: 12px;
+    border: none;
+    border-radius: 0;
+    background-color: #ec4402;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-left: auto;
+    text-transform: uppercase;
+    color: white;
+    font-weight: bold;
+
+}
+
+.showtime-details button:hover {
+    background-color: #ca3900;
+}
+
+#button_container {
+    align-self: stretch;
+    display: flex;
+    justify-content: flex-end;
+}

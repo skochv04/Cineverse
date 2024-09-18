@@ -1,0 +1,23 @@
+#movies_container {
+    padding: 5% 5% 0 5%;
+    height: auto;
+}
+
+.slider_title {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    background-color: #ffffff;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+}
+
+.slider_title::before {
+    content: "";
+    display: block;
+    width: 7px;
+    height: 30px;
+    background-color: #ec4402;
+    margin-right: 15px;
+}
