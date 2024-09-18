@@ -36,5 +36,14 @@ A full-stack cinema web application that allows users to reserve seats, purchase
 8. My profile:
 ![Opis alternatywny](img/ch.png)
 
-9. Admin:
-![Opis alternatywny](img/a.png)   
+9. Admin1:
+![Opis alternatywny](img/a1.png)
+
+10. Admin2:
+![Opis alternatywny](img/a2.png)
+
+11. Admin3:
+![Opis alternatywny](img/a3.png)
+
+12. Admin4:
+![Opis alternatywny](img/a4.png)
