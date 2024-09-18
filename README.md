@@ -3,45 +3,39 @@
 Database project, carried out in the 4th semester of studies at AGH.
 
 ### Project topic: 
-Cinema web page (reservations, purchase of tickets, canceling reservations)
+A full-stack cinema web application that allows users to reserve seats, purchase tickets, and cancel bookings. It features a user-friendly interface for both moviegoers and cinema operators.
 
-4) Information about the technology and DBMS used:
+### Technology:
    - Data base server: PostgreSQL
    - Framework: React JS
    - Server part: Django (Python)
 
-5) Some images of our website:
+### Some images of our website:
 
 1. Home:
-![Opis alternatywny](img/home.png)
+![Opis alternatywny](img/h.png)
 
 2. Movies:
-![Opis alternatywny](img/movies.png)
+![Opis alternatywny](img/ms.png)
 
 3. Movie details and movie showtime:
-![Opis alternatywny](img/movie.png)
+![Opis alternatywny](img/m.png)
    
 4. Movie Stage: 
-![Opis alternatywny](img/stage.png)
+![Opis alternatywny](img/st.png)
 
-5. My tickets (without login):
-![Opis alternatywny](img/notickets.png)
+5. My tickets:
+![Opis alternatywny](img/t.png)
 
-6. My tickets:
-![Opis alternatywny](img/tickets.png)
+6. My profile:
+![Opis alternatywny](img/ch.png)
 
-7. My profile:
-![Opis alternatywny](img/changepass.png)
-
-8. Login:
-![Opis alternatywny](img/login.png)
+7 Login:
+![Opis alternatywny](img/l.png)
 
 9. Register
-![Opis alternatywny](img/register.png)
-
-10. Logout
-![Opis alternatywny](img/logout.png)
+![Opis alternatywny](img/r.png)
 
 ### Authors:
-   - Wiktor Dybalski | wdybalski@student.agh.edu.pl
-   - Stas Kochevenko | skochevenko@student.agh.edu.pl
+   - Wiktor Dybalski
+   - Stas Kochevenko
