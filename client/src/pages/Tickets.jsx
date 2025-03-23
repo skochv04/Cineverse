@@ -1,6 +1,6 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 import "./styles/Tickets.css";
-import {AuthContext} from "../contexts/AuthContext.jsx";
+import { AuthContext } from "../contexts/AuthContext.jsx";
 import axios from "axios";
 
 const client = axios.create({
@@ -8,14 +8,21 @@ const client = axios.create({
 });
 
 function Tickets() {
-    const {state} = useContext(AuthContext);
+    const { state } = useContext(AuthContext);
     const tickets = state.tickets;
 
     const handleReservation = async (ticketId, status) => {
         try {
-            const response = await client.put('/handle_reservation/', {
-                ticketid: ticketId,
-                status: status
+            const response = await fetch('http://127.0.0.1:8000/api/handle_reservation/', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    ticketid: ticketId,
+                    status: status,
+                }),
             });
 
             if (!response.ok) {
@@ -26,7 +33,8 @@ function Tickets() {
             const result = await response.json();
             console.log(result.message);
 
-            setTickets(tickets.map(ticket => ticket.ticket_id === ticketId ? {...ticket, status} : ticket));
+
+            setTickets(tickets.map(ticket => ticket.ticket_id === ticketId ? { ...ticket, status } : ticket));
             setNotification("Ticket status has been changed successfully");
             setIsSuccess(true);
             setIsModalOpen(true);
@@ -64,10 +72,10 @@ function Tickets() {
                                 {ticket.status.trim() === 'New' && (
                                     <div className="ticket-actions">
                                         <button onClick={() => handleReservation(ticket.ticket_id, 'Confirmed')}
-                                                className="buy-btn">Buy reserved seat
+                                            className="buy-btn">Buy reserved seat
                                         </button>
                                         <button onClick={() => handleReservation(ticket.ticket_id, 'Canceled')}
-                                                className="cancel-btn">Cancel reservation
+                                            className="cancel-btn">Cancel reservation
                                         </button>
                                     </div>
                                 )}

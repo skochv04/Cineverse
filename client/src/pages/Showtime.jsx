@@ -1,11 +1,11 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./styles/Showtime.css";
-import {useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Loading from "./Loading.jsx";
 import Modal from "./Modal";
-import {handleServerError} from "../utils/errorHandler.js";
-import {AuthContext} from "../contexts/AuthContext.jsx";
-import {format} from 'date-fns';
+import { handleServerError } from "../utils/errorHandler.js";
+import { AuthContext } from "../contexts/AuthContext.jsx";
+import { format } from 'date-fns';
 import axios from "axios";
 
 const client = axios.create({
@@ -13,21 +13,21 @@ const client = axios.create({
 })
 
 function Showtime() {
-    const {state} = useContext(AuthContext);
-    const {username} = state.username;
-    const {moviescreeningID} = useParams();
+    const { state } = useContext(AuthContext);
+    const username = state.username;
+    const { moviescreeningID } = useParams();
     const [selectedSeat, setSelectedSeat] = useState(null);
     const [occupiedSeats, setOccupiedSeats] = useState([]);
     const [showtime, setShowtime] = useState(null);
     const [message, setMessage] = useState(null);
     const [isSuccess, setIsSuccess] = useState(true);
     const [seatType, setSeatType] = useState('');
-    const [setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchShowtime = async () => {
             try {
-                const response = await client.post(`/showtime/${moviescreeningID}`);
+                const response = await client.get(`/showtime/${moviescreeningID}/`);
                 const data = response.data;
                 setShowtime(data);
             } catch (error) {
@@ -40,7 +40,7 @@ function Showtime() {
 
         const fetchOccupiedSeats = async () => {
             try {
-                const response = await client.post(`/api/occupied_seats/${moviescreeningID}`);
+                const response = await client.get(`/api/occupied_seats/${moviescreeningID}/`);
                 const data = response.data;
                 setOccupiedSeats(data);
             } catch (error) {
@@ -57,7 +57,7 @@ function Showtime() {
 
     const fetchOccupiedSeats = async () => {
         try {
-            const response = await client.post(`/api/occupied_seats/${moviescreeningID}`);
+            const response = await client.get(`/api/occupied_seats/${moviescreeningID}/`);
             const data = await response.data;
             setOccupiedSeats(data);
         } catch (error) {
@@ -113,21 +113,27 @@ function Showtime() {
     const seats = generateSeats();
     const reserveSeat = async (newSeatNumber, newMovieScreeningId) => {
         try {
-            await client.post('/api/handle_request/', {
-                action: 'reserve_seat',
-                seat_number: newSeatNumber,
-                movie_screening_id: newMovieScreeningId,
-                available: false,
-                username: username,
-            }, {
-                withCredentials: true
+            const response = await fetch('http://127.0.0.1:8000/api/handle_request/', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    action: 'reserve_seat',
+                    seat_number: newSeatNumber,
+                    movie_screening_id: newMovieScreeningId,
+                    available: false,
+                    username: username,
+                }),
             });
+            await handleServerError(response);
             setMessage('Seat reserved successfully!');
             setIsSuccess(true);
             setIsModalOpen(true);
             await fetchOccupiedSeats();
         } catch (error) {
-            setMessage(error.response?.data?.message || error.message);
+            setMessage(error.message);
             setIsSuccess(false);
             setIsModalOpen(true);
             await fetchOccupiedSeats();
@@ -186,7 +192,7 @@ function Showtime() {
     };
 
     if (!showtime) {
-        return <div><Loading/></div>;
+        return <div><Loading /></div>;
     }
 
     return (
@@ -202,17 +208,17 @@ function Showtime() {
                                 <svg className="screen-svg" viewBox="0 0 100 20" preserveAspectRatio="none">
                                     <defs>
                                         <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                            <stop offset="0%" style={{stopColor: "whitesmoke", stopOpacity: 1}}/>
-                                            <stop offset="10%" style={{stopColor: "whitesmoke", stopOpacity: 0.5}}/>
-                                            <stop offset="20%" style={{stopColor: 'whitesmoke', stopOpacity: 0.4}}/>
-                                            <stop offset="40%" style={{stopColor: 'whitesmoke', stopOpacity: 0.3}}/>
-                                            <stop offset="60%" style={{stopColor: 'whitesmoke', stopOpacity: 0.2}}/>
-                                            <stop offset="80%" style={{stopColor: 'whitesmoke', stopOpacity: 0.1}}/>
-                                            <stop offset="100%" style={{stopColor: 'whitesmoke', stopOpacity: 0}}/>
+                                            <stop offset="0%" style={{ stopColor: "whitesmoke", stopOpacity: 1 }} />
+                                            <stop offset="10%" style={{ stopColor: "whitesmoke", stopOpacity: 0.5 }} />
+                                            <stop offset="20%" style={{ stopColor: 'whitesmoke', stopOpacity: 0.4 }} />
+                                            <stop offset="40%" style={{ stopColor: 'whitesmoke', stopOpacity: 0.3 }} />
+                                            <stop offset="60%" style={{ stopColor: 'whitesmoke', stopOpacity: 0.2 }} />
+                                            <stop offset="80%" style={{ stopColor: 'whitesmoke', stopOpacity: 0.1 }} />
+                                            <stop offset="100%" style={{ stopColor: 'whitesmoke', stopOpacity: 0 }} />
                                         </linearGradient>
                                     </defs>
-                                    <path d="M0,4 Q50,0 100,4 L96,15 L4,15 Z" fill="url(#gradient)"/>
-                                    <path d="M0,4 Q50,0 100,4" stroke="white" fill="none" strokeWidth="1"/>
+                                    <path d="M0,4 Q50,0 100,4 L96,15 L4,15 Z" fill="url(#gradient)" />
+                                    <path d="M0,4 Q50,0 100,4" stroke="white" fill="none" strokeWidth="1" />
                                 </svg>
                             </div>
                         </div>
@@ -220,7 +226,7 @@ function Showtime() {
                             <div
                                 key={rowIndex}
                                 className="seat-row"
-                                style={{justifyContent: rowIndex > 3 ? 'center' : 'start'}}
+                                style={{ justifyContent: rowIndex > 3 ? 'center' : 'start' }}
                             >
                                 {row.map((seat) => (
                                     <div
@@ -230,7 +236,7 @@ function Showtime() {
                                             : rowIndex === 8
                                                 ? 'availableSeatPremium'
                                                 : 'availableSeat'
-                                        } ${selectedSeat === seat ? 'selected' : ''}`}
+                                            } ${selectedSeat === seat ? 'selected' : ''}`}
                                         onClick={() =>
                                             !isSeatOccupied(seat) && handleSelectSeat(seat)
                                         }

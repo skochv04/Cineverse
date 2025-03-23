@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './styles/Registration.css';
 import axios from 'axios';
 
@@ -50,13 +50,13 @@ function Registration() {
                 });
                 navigate('/login')
             } catch (error) {
-                setErrors({server: 'Failed to sign up. Please try again.'});
+                setErrors({ server: 'Failed to sign up. Please try again.' });
             }
         }
     };
 
     const handleChange = (e) => {
-        const { name, value} = e.target;
+        const { name, value } = e.target;
         setUser({
             ...user,
             [name]: value
@@ -72,25 +72,32 @@ function Registration() {
                         {errors.server && <div className="error-message">{errors.server}</div>}
                         <input
                             type="email"
+                            name="email"
                             className={`input ${errors.email ? 'error-input' : ''}`}
-                            placeholder={errors.email || "Email"}
+                            placeholder="Email"
                             value={user.email}
                             onChange={handleChange}
                         />
+                        {errors.email && <div className="error-message">{errors.email}</div>}
                         <input
                             type="text"
+                            name="username"
                             className={`input ${errors.username ? 'error-input' : ''}`}
-                            placeholder={errors.username || "Username"}
-                            value={username}
+                            placeholder="Username"
+                            value={user.username}
                             onChange={handleChange}
                         />
+                        {errors.username && <div className="error-message">{errors.username}</div>}
+
                         <input
                             type="password"
+                            name="password"
                             className={`input ${errors.password ? 'error-input' : ''}`}
-                            placeholder={errors.password || "Password"}
-                            value={password}
+                            placeholder="Password"
+                            value={user.password}
                             onChange={handleChange}
                         />
+                        {errors.password && <div className="error-message">{errors.password}</div>}
                         <button type="submit" className="button">Sign up</button>
                         <p className="message">
                             Already have an account? <Link to="/login" className="link">Log in</Link>

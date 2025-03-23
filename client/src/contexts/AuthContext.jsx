@@ -1,4 +1,4 @@
-import React, {createContext, useEffect, useReducer} from "react";
+import React, { createContext, useEffect, useReducer } from "react";
 import axios from "axios";
 import cookies from "react-modal/lib/helpers/classList.js";
 import Cookies from "js-cookie";
@@ -18,22 +18,22 @@ const reducer = (state, action) => {
         case 'LOGIN':
             localStorage.setItem('isLogin', 'true');
             localStorage.setItem('username', action.payload.username);
-            return {...state, isLogin: true, username: action.payload.username};
+            return { ...state, isLogin: true, username: action.payload.username };
         case 'LOGOUT':
             localStorage.removeItem('isLogin');
             localStorage.removeItem('username');
             Cookies.remove('jwt');
-            return {...state, isLogin: false, username: '', tickets: []};
+            return { ...state, isLogin: false, username: '', tickets: [] };
         case 'SET_CURRENT_MOVIES':
-            return {...state, currentMovies: action.payload.currentMovies};
+            return { ...state, currentMovies: action.payload.currentMovies };
         case 'SET_UPCOMING_MOVIES':
-            return {...state, upcomingMovies: action.payload.upcomingMovies};
+            return { ...state, upcomingMovies: action.payload.upcomingMovies };
         case 'SET_MOVIES':
-            return {...state, movies: action.payload.movies};
+            return { ...state, movies: action.payload.movies };
         case 'SET_TICKETS':
-            return {...state, tickets: action.payload.tickets};
+            return { ...state, tickets: action.payload.tickets };
         case 'SET_CATEGORIES':
-            return {...state, categories: action.payload.categories};
+            return { ...state, categories: action.payload.categories };
         default:
             return state;
     }
@@ -41,14 +41,14 @@ const reducer = (state, action) => {
 
 export const AuthContext = createContext(null);
 
-export default function AuthContextProvider({children}) {
+export default function AuthContextProvider({ children }) {
     const [state, dispatch] = useReducer(reducer, initialState);
 
     useEffect(() => {
         const isLogin = localStorage.getItem('isLogin') === 'true';
         const username = localStorage.getItem('username') || 'NewComer';
         if (isLogin) {
-            dispatch({type: 'LOGIN', payload: {username}});
+            dispatch({ type: 'LOGIN', payload: { username } });
         }
     }, [])
 
@@ -87,7 +87,7 @@ export default function AuthContextProvider({children}) {
         const fetchMovies = async () => {
             try {
                 const response = await axios.get('http://127.0.0.1:8000/api/movies');
-                dispatch({type: 'SET_MOVIES', payload: {movies: response.data}});
+                dispatch({ type: 'SET_MOVIES', payload: { movies: response.data } });
             } catch (error) {
                 console.error('Error fetching movies:', error);
             }
@@ -99,7 +99,7 @@ export default function AuthContextProvider({children}) {
         const fetchCategories = async () => {
             try {
                 const response = await axios.get('http://127.0.0.1:8000/api/categories');
-                dispatch({type: 'SET_CATEGORIES', payload: {categories: response.data}});
+                dispatch({ type: 'SET_CATEGORIES', payload: { categories: response.data } });
             } catch (error) {
                 console.error('Error fetching movie categories:', error);
             }
@@ -115,8 +115,8 @@ export default function AuthContextProvider({children}) {
                     return;
                 }
 
-                const ticketsResponse = await axios.get(`http://127.0.0.1:8000/user/${state.username}/tickets`);
-                dispatch({type: 'SET_TICKETS', payload: {tickets: ticketsResponse.data}});
+                const ticketsResponse = await axios.get(`http://127.0.0.1:8000/user/${state.username}/tickets/`);
+                dispatch({ type: 'SET_TICKETS', payload: { tickets: ticketsResponse.data } });
             } catch (error) {
                 console.error('Error fetching tickets:', error);
             }
@@ -126,7 +126,7 @@ export default function AuthContextProvider({children}) {
     }, [state.isLogin, state.username]);
 
     return (
-        <AuthContext.Provider value={{state, dispatch}}>
+        <AuthContext.Provider value={{ state, dispatch }}>
             {children}
         </AuthContext.Provider>
     );

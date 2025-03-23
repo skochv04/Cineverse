@@ -12,7 +12,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from server.djangoproject.settings import SECRET_KEY
+from djangoproject.settings import SECRET_KEY
 from .models import AppUser
 from .models import OccupiedSeat
 from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer, OccupiedSeatSerializer
@@ -330,7 +330,6 @@ def handle_request(request):
         return JsonResponse({'error': 'Invalid HTTP method'}, status=405)
 
 
-@require_POST
 def reserve_movie_screening_seat(data):
     try:
         seat_number = data['seat_number']
@@ -353,7 +352,6 @@ def reserve_movie_screening_seat(data):
         return JsonResponse({'error': str(e).split('\n')[0]}, status=500)
 
 
-@require_POST
 def buy_movie_screening_seat(data):
     try:
         seat_number = data['seat_number']
