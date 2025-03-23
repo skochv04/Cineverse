@@ -14,4 +14,4 @@ Python project, carried out in the 4th semester of studies at AGH.
    - Framework: React JS
    - Server part: Django (Python)
    
-[![web-page_banner](img/Main.png)](https://youtu.be/ba-O6UYtpy8)
+[![web-page_banner](img/baner.png)](https://youtu.be/ba-O6UYtpy8)
