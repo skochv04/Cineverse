@@ -41,4 +41,3 @@ It provides an intuitive and user-friendly interface for both moviegoers and cin
 - cd client
 - npm install
 - npm run dev
-```sh
