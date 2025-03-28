@@ -30,9 +30,9 @@ pip install -r requirements.txt
 ```
 
 ### 2️⃣ Set up the database
+- Start PostgreSQL server
+- Import the provided database schema:
 ```bash
-Start PostgreSQL server
-Import the provided database schema:
 psql -U your_username -d your_database -f CinemaDatabase.sql
 ```
 
