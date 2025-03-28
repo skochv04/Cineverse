@@ -24,20 +24,27 @@ It provides an intuitive and user-friendly interface for both moviegoers and cin
 ## 🚀 How to Run the Application?
 
 ### 1️⃣ Install dependencies
-
-- cd server
-- pip install -r requirements.txt
+```bash
+cd server
+pip install -r requirements.txt
+```
 
 ### 2️⃣ Set up the database
-- Start PostgreSQL server
-- Import the provided database schema:
-- psql -U your_username -d your_database -f CinemaDatabase.sql
+```bash
+Start PostgreSQL server
+Import the provided database schema:
+psql -U your_username -d your_database -f CinemaDatabase.sql
+```
 
 ### 3️⃣ Run the backend server
-- cd server
-- python manage.py runserver
+```bash
+cd server
+python manage.py runserver
+```
 
 ### 4️⃣ Run the frontend
-- cd client
-- npm install
-- npm run dev
+```bash
+cd client
+npm install
+npm run dev
+```
