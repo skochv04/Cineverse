@@ -3,7 +3,7 @@
 A Python-based full-stack cinema web application, developed as part of the 4th semester of studies at AGH.
 
 ## 👥 Team Members:
-- **Stas Kochevenko** | skochv04@gmail.com  
+- **Stas Kochevenko**  
 - **Wiktor Dybalski**
 
 ## 📌 Project Overview:
