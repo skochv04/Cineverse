@@ -23,26 +23,32 @@ It provides an intuitive and user-friendly interface for both moviegoers and cin
 
 ## 🚀 How to Run the Application?
 
-### 1️⃣ Install dependencies
+### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/skochv04/Cineverse  
+cd repository
+```
+
+### 2️⃣ Install dependencies
 ```bash
 cd server
 pip install -r requirements.txt
 ```
 
-### 2️⃣ Set up the database
+### 3️⃣ Set up the database
 - Start PostgreSQL server
 - Import the provided database schema:
 ```bash
 psql -U your_username -d your_database -f CinemaDatabase.sql
 ```
 
-### 3️⃣ Run the backend server
+### 4️⃣ Run the backend server
 ```bash
 cd server
 python manage.py runserver
 ```
 
-### 4️⃣ Run the frontend
+### 5️⃣ Run the frontend
 ```bash
 cd client
 npm install
